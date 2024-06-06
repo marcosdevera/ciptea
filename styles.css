@@ -1,0 +1,132 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+.id-card {
+    width: 250px;
+    height: 400px;
+    position: relative;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 10px; /* Espaçamento ao redor de cada carteirinha */
+}
+
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('images/frente.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.2;
+    z-index: 1;
+}
+
+.header-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-image: url('images/frente.png');
+    background-size: contain; /* Alterar para contain para que a imagem se ajuste ao contêiner */
+    background-repeat: no-repeat; /* Impedir a repetição da imagem */
+    width: 250px;
+    height: 170px; /* Ajuste a altura conforme necessário */
+    background-color: rgb(5, 5, 77);
+    z-index: 2;
+}
+
+
+.header-background-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-image: url('images/back.png');
+    background-size: contain; /* Alterar para contain para que a imagem se ajuste ao contêiner */
+    background-repeat: no-repeat; /* Impedir a repetição da imagem */
+    width: 250px;
+    height: 170px; /* Ajuste a altura conforme necessário */
+    background-color: rgb(5, 5, 77);
+    z-index: 2;
+}
+
+
+/* .header-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-image: url('images/frente.png');
+    width: 250px;
+    height: 170px; 
+    background-color: rgb(5, 5, 77);
+    z-index: 2;
+} */
+
+.photo {
+    width: 80px; /* Diminuir a largura da foto */
+    height: 100px; /* Diminuir a altura da foto */
+    border: 2px solid #fff;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 60px; /* Aumentar a margem superior para descer a foto mais */
+    z-index: 3;
+}
+
+.photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.info {
+    margin-top: 5px;
+    padding: 10px;
+    color: #333;
+    text-align: left;
+    z-index: 3;
+}
+
+.info p {
+    margin: 5px 0;
+}
+
+.nome {
+    font-size: 16px; /* Tamanho de fonte atual */
+    margin-top: 70px; /* Ajuste a posição para baixo se necessário */
+}
+
+.detalhes {
+    font-size: 12px; /* Tamanho de fonte menor */
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgb(00, 34, 87);
+    color: yellow;
+    padding: 5px; /* Reduzindo o padding para tornar o rodapé um pouco menor */
+    text-align: center;
+    font-size: 12px; /* Reduzindo o tamanho da fonte */
+}
+
+.back-info {
+    margin-top: 170px; /* Ajuste a margem superior para descer os campos */
+}

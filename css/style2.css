@@ -1,0 +1,81 @@
+body {
+    font-family: Arial, sans-serif;
+  }
+  
+  .card {
+    width: 86mm;
+    height: 54mm;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 10px auto;
+    padding: 5mm;
+  }
+  
+  .header,
+  .header2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2mm;
+  }
+  
+  .header-image {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .camacari,
+  .camacari2 {
+    max-width: 50mm; /* Ajuste o tamanho do logo conforme necessário */
+  }
+  
+  .background-photo,
+  .background-photo2 {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+  
+  .listra,
+  .listra2 {
+    width: 100%;
+    height: auto;
+  }
+  
+  .photo,
+  .photo2 {
+    width: 30mm; /* Ajuste conforme necessário */
+    height: auto;
+    margin: 0 auto;
+    display: block;
+  }
+  
+  .profile-img {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+  }
+  
+  .content,
+  .content2 {
+    padding: 2mm;
+  }
+  
+  .info,
+  .info2 {
+    font-size: 8pt; /* Reduz o tamanho da fonte */
+  }
+  
+  .info p,
+  .info2 p {
+    margin: 1mm 0;
+  }
+  
+  .bottom-info {
+    text-align: center;
+    font-size: 6pt; /* Reduz o tamanho da fonte */
+    margin-top: 1mm;
+  }
+  

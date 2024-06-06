@@ -1,0 +1,81 @@
+function tamanho(upload){
+		if(upload.value != ""){
+			//Tamanho
+			var size = upload.files[0].size;
+			if(size > 350000) { //150 Kb        
+				alert("Arquivo da foto é maior que o tamanho máximo permitido.\r\nTamanho máximo 300Kb.");
+				return false;
+			} else {       
+				return true;
+			}
+		}
+		return true;
+	}
+	function tipoImg(upload){
+		valido = false;
+		if(upload.value != ""){
+			//extensao
+			extensao = upload.value.substring(upload.value.lastIndexOf(".")).toLowerCase();
+			extensoes = new Array('.jpg','.png');
+			for(var i = 0; i <= 3; i++){
+				if(extensoes[i] == extensao){
+					valido = true;
+					break;
+				}
+			}
+			if(!valido){
+				alert("Tipo de Arquivo da foto não permitido.\r\nApenas .jpg ou .png.");
+				return false;
+			}else{
+				return true;
+			}
+		}
+		return true;
+	}
+	$('#sky-form').submit(function(){
+		valida = true;
+		if(!tamanho(document.getElementById("vch_anexo1"))){
+			valida = false;
+		}
+		if(!tipoImg(document.getElementById("vch_anexo1"))){
+			valida = false;
+		}
+		return valida;
+	});
+
+
+
+
+    $finfo = new finfo();
+	$nome_novo = date("ymdhis");
+	if($_FILES['vch_foto_carteira']['name'] != ""){
+		$tipo = explode("/",$finfo->file($_FILES['vch_foto_carteira']['tmp_name'], FILEINFO_MIME_TYPE));
+		switch($tipo[1]){
+			case "jpeg": $ext = ".jpg";
+						 break;
+			case "gif": $ext = ".gif";
+						 break;
+			case "png": $ext = ".png";
+						 break;
+		}
+		if(($tipo[1] != "jpeg")&&($tipo[1] != "gif")&&($tipo[1] != "png")){
+			//die("Erro ao Efetuar Inscrição! ERRO 02 - FOTO!");
+			header("location: index.php?erro=Erro no Envio da Foto. Tipo de Arquivo Inválido!ERRO 02.&vch_cpf=".$vch_cpf."&cod_selecao=".$cod_selecao);
+			die();
+		}
+		$vch_foto_carteira = $_FILES['vch_foto_carteira']['name'];		
+		$vch_foto = $vch_cpf."_".$nome_novo.$ext;
+		$uploaddir = "anexo/";
+		$uploadfile = $uploaddir . $vch_foto;
+		//die($uploadfile);
+		if(!move_uploaded_file($_FILES['vch_foto_carteira']['tmp_name'], $uploadfile)){
+			shell_exec("rm ".$uploadfile);
+			//die("Erro ao Efetuar Inscrição! ERRO 03 - FOTO 2");
+			header("location: index.php?erro=Erro no Envio da Foto! Favor entrar em contato em 3621-6666. ERRO 03.&vch_cpf=".$vch_cpf);
+			die();
+		}
+	}else{
+		//die("Erro ao Efetuar Inscrição! ERRO 04 - FOTO 3");
+		header("location: index.php?erro=Erro no Envio da Foto. Arquivo não enviado! Favor entrar em contato em 3621-6666. ERRO 04.&vch_cpf=".$vch_cpf);
+		die();
+	}

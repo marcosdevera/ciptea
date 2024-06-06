@@ -1,0 +1,292 @@
+body {
+  font-family: "Arial", sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.card {
+  width: 200px; /* Ajuste a largura desejada */
+  height: auto; /* Altura automática para ajustar ao conteúdo */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 10px auto; /* Centraliza a carteirinha */
+  padding: 10px;
+}
+
+.header {
+  background-color: #252970;
+  width: 100%;
+  /* border-radius: 50%; */
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Isso separará as imagens */
+}
+
+.header-image {
+  max-width: 100%;
+  /* width: 45%; */
+  height: auto;
+  max-height: 100px; /* Defina a altura máxima desejada */
+  margin-bottom: 10px; /* Adiciona espaço entre a imagem e o título */
+}
+
+.camacari {
+  height: 98px;
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+#camacarilogo{
+  width: 66,25px;
+  height: 80px;
+  margin-left: auto;
+}
+
+/* .background-photo {
+  background-color: #252970;
+  width: 100%;
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+}
+
+.photo {
+  width: 150px;
+  height: 150px;
+  background-color: #14163d;
+  border-radius: 50%;
+  margin-bottom: 15px;
+} */
+
+.background-photo {
+  background-color: #252970;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* Adicionado position: relative */
+}
+
+.listra {
+  position: absolute;
+  top: 5;
+  left: 0;
+  z-index: 1; /* Ajuste o valor de z-index para um número maior */
+}
+
+.photo {
+  width: 100px;
+  height: 100px;
+  background-color: #14163d;
+  margin-bottom: 15px;
+  overflow: hidden;
+  position: relative; /* Adicionado position: relative */
+  z-index: 2; /* Certifique-se de que a imagem de perfil está acima do fundo */
+}
+
+.profile-img {
+  max-width: 100%;
+  height: auto;
+}
+
+.content {
+  display: flex;
+  align-items: center; /* Move o conteúdo para o topo */
+  justify-content: center;
+  flex-direction: column; /* Alterado para uma coluna para empilhar os elementos */
+  width: 100%;
+  height: 100%;
+}
+
+.info {
+  font-size: 6px; /* Reduz o tamanho da fonte */
+  line-height: 0.8; /* Ajuste a altura da linha para reduzir o espaçamento */
+  text-align: left;
+  padding: 8px;
+  flex-grow: 1;
+  margin-top: auto;
+}
+
+
+.info .texto {
+  width: 100%;
+  font-size: 10px;
+}
+
+
+
+.info p {
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+/* .info strong + p {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 14px;
+} */
+
+.respostas {
+  /* border: 1px solid #000000;
+  border-radius: 3px; */
+  font-size: 7px;
+  display: inline-block; /* Adiciona display: inline-block para evitar que ocupem a largura total  */
+}
+
+.bottom-info {
+  text-align: center;
+  /* padding: 10px; */
+  width: 100%;
+  color: yellow;
+  font-size: 14px;
+  margin-top: -150px;
+  background-color: #252970;
+}
+
+
+.card2 {
+  background-color: #252970;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 200px; /* Ajustado para uma orientação vertical */
+  height: auto; /* Ajustado para uma orientação vertical */
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header2 {
+  background-color: #252970;
+  width: 100%;
+  /* border-radius: 50%; */
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Isso separará as imagens */
+}
+
+.header-image2 {
+  max-width: 100%;
+  height: auto;
+  max-height: 100px; /* Defina a altura máxima desejada */
+  margin-bottom: 10px; /* Adiciona espaço entre a imagem e o título */
+}
+
+.camacari2 {
+  height: 98px;
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+#camacarilogo{
+  width: 66,25px;
+  height: 80px;
+  margin-left: auto;
+}
+
+/* .background-photo {
+  background-color: #252970;
+  width: 100%;
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+}
+
+.photo {
+  width: 150px;
+  height: 150px;
+  background-color: #14163d;
+  border-radius: 50%;
+  margin-bottom: 15px;
+} */
+
+.background-photo2 {
+  background-color: #252970;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* Adicionado position: relative */
+}
+
+.listra2 {
+  position: absolute;
+  top: 5;
+  left: 0;
+  z-index: 1; /* Ajuste o valor de z-index para um número maior */
+}
+
+.photo2 {
+  width: 150px;
+  height: 150px;
+  opacity: 0;
+  background-color: #252970; 
+  margin-bottom: 15px;
+  overflow: hidden;
+  position: relative; /* Adicionado position: relative */
+  z-index: 2; /* Certifique-se de que a imagem de perfil está acima do fundo */
+}
+
+
+.profile-img2 {
+  max-width: 100%;
+  height: auto;
+}
+
+.content2 {
+  display: flex;
+  align-items: center; /* Move o conteúdo para o topo */
+  justify-content: center;
+  flex-direction: column; /* Alterado para uma coluna para empilhar os elementos */
+  width: 100%;
+  height: 100%;
+}
+
+.info2 {
+  text-align: left;
+  padding: 10px;
+  flex-grow: 1;
+  margin-top: auto;
+}
+
+.info2 p {
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+/* .info strong + p {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 14px;
+} */
+
+.respostas {
+  /* border: 1px solid #000000;
+  border-radius: 3px; */
+  font-size: 15px;
+  display: inline-block; /* Adiciona display: inline-block para evitar que ocupem a largura total  */
+}
+#primeira_resposta{
+  font-size: 15px;
+  display: inline-block; /* Adiciona display: inline-block para evitar que ocupem a largura total  */
+  margin-top: -500px;
+}
+
+.bottom-info2 {
+  text-align: center;
+  padding: 10px;
+  width: 100%;
+  color: yellow;
+  font-size: 14px;
+  margin-top: auto;
+  background-color: #252970;
+}

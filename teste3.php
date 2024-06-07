@@ -57,16 +57,16 @@
             <div class="text-container">
                 <a href="#" class="step-link" data-target="#info1">Cadastro de dados pessoais</a>
                 <div id="info1" class="additional-info">
-                    <p>Additional information for step 1.</p>
+                    <p>Caso queira alterar seus dados, clique <a href="#">aqui</a>. Para visualizar os dados que você cadastrou, clique <a href="#">aqui</a>.</p>
                 </div>
             </div>
         </div>
         <div class="circle-container">
             <div class="circle locked" id="circle2">2</div>
             <div class="text-container">
-                <a href="#" class="step-link" data-target="#info2">Step 2: Description for step 2.</a>
+                <a href="#" class="step-link" data-target="#info2">Download do requerimento. Clique aqui para detalhes.</a>
                 <div id="info2" class="additional-info">
-                    <p>Additional information for step 2.</p>
+                    <p>O requerimento contem os dados... faça download, assine, tire uma foto e envie ele clicando no botão abaixo.</p>
                 </div>
             </div>
         </div>

@@ -179,8 +179,8 @@
 <body>
 <div class="container">
     <div class="header">
-        <a href="index_n.php">
-            <img src="images/ciptea.png" alt="Descrição da imagem">
+        <a href="index.php">
+            <img src="images/ciptea.png" alt="ciptea_logo">
         </a>
     </div>
     <h2>Passos para Cadastro de Dados</h2>

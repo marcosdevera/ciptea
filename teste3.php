@@ -179,7 +179,7 @@
 <body>
 <div class="container">
     <div class="header">
-        <a href="cadastro_inicial_n.php">
+        <a href="index_n.php">
             <img src="images/ciptea.png" alt="Descrição da imagem">
         </a>
     </div>

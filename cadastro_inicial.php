@@ -231,28 +231,21 @@ function formatarCEP(cep) {
 </head>
 <body>
     <form name="form" action="processamento/processar_usuario.php" method="POST" enctype="multipart/form-data" onsubmit="return validarSenhas()">
-        <h2>Cadastro de Pessoa</h2>
-        <label>O requerente possui um documento com foto?</label>
-        <input type="radio" name="opt_documento" id="opt_sim" value="sim">Sim</label>
-        <input type="radio" name="opt_documento" id="opt_nao" value="nao">Não</label>
+        <h2>Cadastro da pessoa com TEA e de seu representante legal (se houver) </h2>
         <br><br>
         <label for="vch_nome">Nome:</label>
         <input type="text" name="vch_nome" id="vch_nome" required>
         <label for="vch_nome">Nome Social:</label>
         <input type="text" name="vch_nome_social" id="vch_nome_social">
-
         <br><br>
         <label for="sexo">SEXO:</label>
         <input type="radio" name="sexo" id="sexo" value="1" required>Masculino</label>
         <input type="radio" name="sexo" id="sexo" value="2" required>Feminino</label>
         <br><br>
-
         <label for="cid">CID (O CID está presente no relatório médico):</label>
         <input type="text" name="cid" id="cid">
-
         <label for="vch_tipo_sanguineo">Tipo sanguineo:</label>
         <input type="text" name="vch_tipo_sanguineo" id="vch_tipo_sanguineo">
-
         <label for="vch_telefone">Telefone da pessoa:</label>
         <input type="text" name="vch_telefone" id="vch_telefone" oninput="aplicarMascaraTelefone('vch_telefone')" maxlength="15">
         <label for="vch_telefone_contato">Contato em caso de emergência:</label>
@@ -271,27 +264,13 @@ function formatarCEP(cep) {
         <input type="date" name="sdt_nascimento" id="sdt_nascimento" required>
         <label for="endereco">Endereço:</label>
         <input type="text" name="endereco" id="endereco" required>
-        <label for="num">Número da residência:</label>
-        <input type="number" name="num" id="num">
-        <label for="comp">Complemento:</label>
-        <input type="text" name="comp_responsavel" id="comp_responsavel" > 
         <label for="bairro">Bairro:</label>
         <input type="text" name="bairro" id="bairro" required>
         <label for="cep">CEP:</label>
         <input type="text" name="cep" id="cep" oninput="aplicarMascaraCEP('cep')" maxlength="9" required>
         <label for="cidade">Cidade:</label>
         <input type="text" name="cidade" id="cidade" required>
-        <label for="laudo">Envie seu laudo:</label>
-        <input type="file" name="laudo" id="laudo" required>
-        <label for="foto">Envie uma foto 3x4 para a carteirinha:</label>
-        <input type="file" name="foto" id="foto" required>
-        <label for="comp_residencia">Comprovante de residência:</label>
-        <input type="file" name="comp_residencia" id="comp_residencia" required>
 
-        <div id="documento">
-            <label for="doc_foto">Documento com foto:</label>
-            <input type="file" name="doc_foto" id="doc_foto" required>
-        </div>
         
         <label for="bool_representante_legal">Possui Representante Legal?</label>
         <select name="bool_representante_legal" id="bool_representante_legal" required>

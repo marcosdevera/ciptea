@@ -3,6 +3,7 @@
 include_once('conexao.class.php');
 include_once('avaliador.class.php');
 
+
 class Usuario {
 
     private Avaliador $avaliador;
@@ -63,7 +64,9 @@ class Usuario {
         return $this->cod_usuario;
     }
 
-   public function inserirUsuarios(){
+    //public function inserirUsuarios() old
+    //public function inserirUsuarios(não tava passando as variaveis para o funcionamento) old
+   public function inserirUsuarios($vch_login, $vch_senha, $int_perfil, $int_situacao ){
     $pdo = Database::conexao();
     $insert = $pdo->prepare("INSERT INTO ciptea.usuario(vch_login, vch_senha, int_perfil, int_situacao) 
         VALUES (:vch_login, :vch_senha, :int_perfil, :int_situacao)");

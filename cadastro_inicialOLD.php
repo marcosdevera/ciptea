@@ -230,7 +230,7 @@ function formatarCEP(cep) {
 </script>
 </head>
 <body>
-    <form name="form" action="processamento/processar_usuario.php" method="POST" enctype="multipart/form-data">
+    <form name="form" action="processamento/processar_usuario.php" method="POST" enctype="multipart/form-data" onsubmit="return validarSenhas()">
         <h2>Cadastro de Pessoa</h2>
         <label>O requerente possui um documento com foto?</label>
         <input type="radio" name="opt_documento" id="opt_sim" value="sim">Sim</label>
@@ -247,7 +247,7 @@ function formatarCEP(cep) {
         <input type="radio" name="sexo" id="sexo" value="2" required>Feminino</label>
         <br><br>
 
-        <label for="cid">CID:</label>
+        <label for="cid">CID (O CID está presente no relatório médico):</label>
         <input type="text" name="cid" id="cid">
 
         <label for="vch_tipo_sanguineo">Tipo sanguineo:</label>
@@ -329,8 +329,10 @@ function formatarCEP(cep) {
         <br><br>
         <label for="vch_login">Email (Será utilizado para acessar o sistema):</label>
         <input type="text" name="vch_login" id="vch_login" onblur="verificarLogin()" onclick="exibirAlerta()">
-        <label for="vch_senha">Senha (mínimo de 8 caracteres):</label>
+        <label for="vch_senha">Criar senha de acesso (mínimo de 8 caracteres):</label>
         <input type="password" name="vch_senha" id="vch_senha" minlength="8">
+        <label for="vch_confirm_senha">Confirmar senha de acesso:</label>
+        <input type="password" name="vch_confirm_senha" id="vch_confirm_senha" minlength="8">
         <input type="checkbox" id="showPassword"> Mostrar senha            
         </div>
         <input type="hidden" name="MM_action" class="MM_action" value="1">
@@ -350,10 +352,13 @@ function formatarCEP(cep) {
 
         document.getElementById('showPassword').addEventListener('change', function() {
             var passwordField = document.getElementById('vch_senha');
+            var ConfirmpasswordField = document.getElementById('vch_confirm_senha');
             if (this.checked) {
                 passwordField.type = 'text';
+                ConfirmpasswordField.type = 'text';
             } else {
                 passwordField.type = 'password';
+                ConfirmpasswordField.type = 'password';
             }
         });
 
@@ -408,6 +413,43 @@ function formatarCEP(cep) {
             };
             xhr.send('login=' + login);
         }
+        
+
+        // Função para verificar se as senhas são iguais antes de enviar o formulário
+        function validarSenhas() {
+            var senha = document.getElementById("vch_senha").value;
+            var confirmacao = document.getElementById("vch_confirm_senha").value;
+
+            // Verifica se as senhas são diferentes
+            if (senha !== confirmacao) {
+                alert("As senhas digitadas não são iguais. Para realizar o cadastro as senhas abaixo precisam ser iguais.");
+                return false; // Impede o envio do formulário
+            }
+
+            return true; // Permite o envio do formulário se as senhas forem iguais
+        }
+
+        function validarEmail(email) {
+        // Expressão regular para validar o formato do email
+        const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!regexEmail.test(email)) {
+            return false; // Formato de email inválido
+        }
+
+        // Dividir o email para obter o domínio
+        const partes = email.split('@');
+        const dominio = partes[1];
+
+        // Verificar se o domínio termina com .com ou .com.br
+        if (dominio.endsWith('.com') || dominio.endsWith('.com.br')) {
+            // Aqui você pode adicionar uma verificação adicional de validade do domínio
+            // Esta parte é mais complexa e pode requerer o uso de serviços externos
+            return true;
+        }
+
+        return false;
+    }
     </script>
 </body>
 </html>

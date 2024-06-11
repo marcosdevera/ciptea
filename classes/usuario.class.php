@@ -66,17 +66,24 @@ class Usuario {
 
     //public function inserirUsuarios() old
     //public function inserirUsuarios(não tava passando as variaveis para o funcionamento) old
-   public function inserirUsuarios($vch_login, $vch_senha, $int_perfil, $int_situacao ){
-    $pdo = Database::conexao();
-    $insert = $pdo->prepare("INSERT INTO ciptea.usuario(vch_login, vch_senha, int_perfil, int_situacao) 
-        VALUES (:vch_login, :vch_senha, :int_perfil, :int_situacao)");
-        $insert->bindParam(':vch_login', $vch_login);
-        $insert->bindParam(':vch_senha', $vch_senha);
-        $insert->bindParam(':int_perfil', $int_perfil);
-        $insert->bindParam(':int_situacao', $int_situacao);
-        $insert->execute();    
+   
+    
+    public function inserirUsuarios($vch_login, $vch_senha, $int_perfil, $int_situacao ){
+    try{
+        $pdo = Database::conexao();
+        $int_situacao = 1;
+        $insert = $pdo->prepare("INSERT INTO ciptea.usuario(vch_login, vch_senha, int_perfil, int_situacao) 
+            VALUES (:vch_login, :vch_senha, :int_perfil, :int_situacao)");
+            $insert->bindParam(':vch_login', $vch_login);
+            $insert->bindParam(':vch_senha', $vch_senha);
+            $insert->bindParam(':int_perfil', $int_perfil);
+            $insert->bindParam(':int_situacao', $int_situacao);
+            $insert->execute();   
+    }
+catch(PDOException $e) {
+    echo ''. $e->getMessage();
    }
-
+}
    public function inserirUsuarioAvaliador($avaliador){
     try{
         $pdo = Database::conexao();

@@ -9,13 +9,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            background: url('images/background_system.jpg') no-repeat center center fixed;
+            background: url('images/background_login2.webp') no-repeat center center fixed;
             background-size: cover;
             font-family: 'Poppins', sans-serif;
         }
 
         .container {
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(255, 255, 255, 0.8);
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);

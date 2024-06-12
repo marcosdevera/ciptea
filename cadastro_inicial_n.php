@@ -192,9 +192,6 @@
                     <label for="vch_endereco_responsavel">Endereço do Responsável Legal:</label>
                     <input type="text" name="vch_endereco_responsavel" id="vch_endereco_responsavel">
 
-                    <label for="num_responsavel">Número da residência:</label>
-                    <input type="number" name="num_responsavel" id="num_responsavel">
-
                     <label for="comp_responsavel">Complemento:</label>
                     <input type="text" name="comp_responsavel" id="comp_responsavel">
 

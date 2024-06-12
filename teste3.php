@@ -27,7 +27,6 @@
             margin-bottom: 20px;
             display: flex;
             align-items: center;
-            flex-wrap: wrap;
         }
 
         .step-icon {
@@ -182,142 +181,87 @@
         <a href="index.php">
             <img src="images/ciptea.png" alt="ciptea_logo">
         </a>
+        <h1>Cadastro CIPTEA</h1>
     </div>
-    <h2>Passos para Cadastro de Dados</h2>
+
+    <h2>Passos para Cadastro</h2>
     <div class="step">
-        <div class="step-icon unlocked" style="background-color: #007bff;"><i class="fas fa-user"></i></div>
+        <div class="step-icon unlocked"><i class="fas fa-user"></i></div>
         <div>
-            <h4>1. Preencher Dados Pessoais</h4>
-            <p>Preencha seus dados pessoais no formulário de cadastro.</p>
+            <h4>1. Dados Pessoais</h4>
+            <p>Preencha seus dados pessoais.</p>
         </div>
     </div>
     <div class="step">
-        <div class="step-icon locked" style="background-color: #ffc107;"><i class="fas fa-id-card"></i></div>
+        <div class="step-icon unlocked"><i class="fas fa-id-card"></i></div>
         <div>
-            <h4>2. Submeter Requerimento</h4>
-            <p>Baixe e envie o requerimento assinado.</p>
+            <h4>2. Requerimento</h4>
             <button class="download-button">Baixar Requerimento</button>
-            <div class="upload-section locked" onclick="document.getElementById('requerimento-upload').click()">
+            <div class="upload-section" onclick="document.getElementById('requerimento-upload').click()">
                 <input type="file" id="requerimento-upload" onchange="markCompleted(this)">
                 <p>Clique ou arraste o requerimento assinado aqui.</p>
+                <img src="images/exemplo-requerimento.png" alt="Exemplo de Requerimento">
             </div>
         </div>
     </div>
-
-    <h2>Passos para Foto 3x4</h2>
     <div class="step">
-        <div class="step-icon locked" style="background-color: #ffc107;"><i class="fas fa-camera"></i></div>
+        <div class="step-icon unlocked"><i class="fas fa-camera"></i></div>
         <div>
-            <h4>1. Acesso à Seção de Upload</h4>
-            <p>Acesse a seção para envio da foto 3x4.</p>
+            <h4>3. Foto 3x4</h4>
+            <div class="upload-section" onclick="document.getElementById('foto-34').click()">
+                <input type="file" id="foto-34" onchange="markCompleted(this)">
+                <p>Clique ou arraste a foto 3x4 aqui.</p>
+                <img src="images/exemplo3.4.png" alt="Exemplo de Foto 3/4">
+            </div>
         </div>
     </div>
     <div class="step">
-        <div class="step-icon locked" style="background-color: #ffc107;"><i class="fas fa-info-circle"></i></div>
+        <div class="step-icon unlocked"><i class="fas fa-id-card"></i></div>
         <div>
-            <h4>2. Informação sobre o Arquivo</h4>
-            <p>Instruções sobre formato e tamanho da foto.</p>
-        </div>
-    </div>
-    <div class="step upload-section locked" onclick="document.getElementById('foto-34').click()">
-        <input type="file" id="foto-34" onchange="markCompleted(this)">
-        <p>Clique ou arraste a foto aqui.</p>
-        <img src="images/exemplo3.4.png" alt="Exemplo de Foto 3/4">
-        <button class="upload-button">Enviar Foto 3x4</button>
-    </div>
-    <div class="step">
-        <div class="step-icon locked" style="background-color: #ffc107;"><i class="fas fa-check-circle"></i></div>
-        <div>
-            <h4>4. Verificação e Submissão</h4>
-            <p>Confirme e envie a foto após a verificação.</p>
-        </div>
-    </div>
-
-    <h2>Passos para Documento de Identidade</h2>
-    <div class="step">
-        <div class="step-icon locked" style="background-color: #ffc107;"><i class="fas fa-id-card"></i></div>
-        <div>
-            <h4>1. Acesso à Seção de Upload</h4>
-            <p>Acesse a seção para envio do documento de identidade.</p>
+            <h4>4. Documento de Identidade</h4>
+            <div class="upload-section" onclick="document.getElementById('documento-identidade').click()">
+                <input type="file" id="documento-identidade" onchange="markCompleted(this)">
+                <p>Clique ou arraste o documento de identidade aqui.</p>
+                <img src="images/novacarteira.jpeg" alt="Exemplo de Documento de Identidade">
+            </div>
         </div>
     </div>
     <div class="step">
-        <div class="step-icon locked" style="background-color: #ffc107;"><i class="fas fa-info-circle"></i></div>
+        <div class="step-icon unlocked"><i class="fas fa-home"></i></div>
         <div>
-            <h4>2. Informação sobre o Arquivo</h4>
-            <p>Instruções sobre formatos e requisitos do documento.</p>
-        </div>
-    </div>
-    <div class="step upload-section locked" onclick="document.getElementById('documento-identidade').click()">
-        <input type="file" id="documento-identidade" onchange="markCompleted(this)">
-        <p>Clique ou arraste o documento aqui.</p>
-        <img src="images/novacarteira.jpeg" alt="Exemplo de Documento de Identidade">
-        <button class="upload-button">Enviar Documento de Identidade</button>
-    </div>
-    <div class="step">
-        <div class="step-icon locked" style="background-color: #ffc107;"><i class="fas fa-check-circle"></i></div>
-        <div>
-            <h4>4. Verificação e Submissão</h4>
-            <p>Confirme e envie o documento após a verificação.</p>
-        </div>
-    </div>
-
-    <h2>Passos para Comprovante de Residência</h2>
-    <div class="step">
-        <div class="step-icon locked" style="background-color: #ffc107;"><i class="fas fa-home"></i></div>
-        <div>
-            <h4>1. Acesso à Seção de Upload</h4>
-            <p>Acesse a seção para envio do comprovante de residência.</p>
+            <h4>5. Comprovante de Residência</h4>
+            <div class="upload-section" onclick="document.getElementById('comprovante-residencia').click()">
+                <input type="file" id="comprovante-residencia" onchange="markCompleted(this)">
+                <p>Clique ou arraste o comprovante aqui.</p>
+                <img src="images/comprovante-residencia.webp" alt="Exemplo de Comprovante de Residência">
+            </div>
         </div>
     </div>
     <div class="step">
-        <div class="step-icon locked" style="background-color: #ffc107;"><i class="fas fa-info-circle"></i></div>
+        <div class="step-icon unlocked"><i class="fas fa-file-medical"></i></div>
         <div>
-            <h4>2. Informação sobre o Arquivo</h4>
-            <p>Instruções sobre formatos e requisitos do comprovante (ex.: conta de luz, água, telefone, etc.).</p>
+            <h4>6. Laudo Médico</h4>
+            <div class="upload-section" onclick="document.getElementById('laudo-medico').click()">
+                <input type="file" id="laudo-medico" onchange="markCompleted(this)">
+                <p>Clique ou arraste o laudo médico aqui.</p>
+                <img src="images/seu-modelo-de-laudo-medico.png" alt="Exemplo de Laudo Médico">
+            </div>
         </div>
-    </div>
-    <div class="step upload-section locked" onclick="document.getElementById('comprovante-residencia').click()">
-        <input type="file" id="comprovante-residencia" onchange="markCompleted(this)">
-        <p>Clique ou arraste o comprovante aqui.</p>
-        <img src="images/comprovante-residencia.webp" alt="Exemplo de Comprovante de Residência">
-        <button class="upload-button">Enviar Comprovante de Residência</button>
-    </div>
-    <div class=" step">
-        <div class="step-icon locked" style="background-color: #ffc107;"><i class="fas fa-check-circle"></i></div>
-        <div>
-            <h4>4. Verificação e Submissão</h4>
-            <p>Confirme e envie o comprovante após a verificação.</p>
-        </div>
-    </div>
-
-    <h2>Passos para Laudo Médico</h2>
-    <div class="step">
-        <div class="step-icon locked" style="background-color: #ffc107;"><i class="fas fa-file-medical"></i></div>
-        <div>
-            <h4>1. Acesso à Seção de Upload</h4>
-            <p>Acesse a seção para envio do laudo médico.</p>
-        </div>
-    </div>
-    <div class="step upload-section locked" onclick="document.getElementById('laudo-medico').click()">
-        <input type="file" id="laudo-medico" onchange="markCompleted(this)">
-        <p>Clique ou arraste o laudo médico aqui.</p>
-        <img src="images/seu-modelo-de-laudo-medico.png" alt="Exemplo de Laudo Médico">
-        <button class="upload-button">Enviar Laudo Médico</button>
     </div>
     <div class="step">
-        <div class="step-icon locked" style="background-color: #ffc107;"><i class="fas fa-check-circle"></i></div>
+        <div class="step-icon unlocked"><i class="fas fa-check-circle"></i></div>
         <div>
-            <h4>3. Verificação e Submissão</h4>
-            <p>Confirme e envie o laudo após a verificação.</p>
+            <h4>7. Confirmação</h4>
+            <p>Confirme e envie os documentos.</p>
+            <button class="upload-button">Enviar Documentos</button>
         </div>
     </div>
 
     <h2>Validação da Carteira</h2>
     <div class="step">
-        <div class="step-icon pending" style="background-color: #ffc107;"><i class="fas fa-id-badge"></i></div>
+        <div class="step-icon pending" id="validator-step"><i class="fas fa-id-badge"></i></div>
         <div>
-            <h4>1. Validação da Carteira</h4>
+            <h4>Validação da Carteira</h4>
             <p>Aguarde a validação da sua carteira. Ela ficará amarela até ser aprovada.</p>
         </div>
     </div>
@@ -355,19 +299,10 @@
         var section = input.closest('.step');
         var icon = section.querySelector('.step-icon');
         icon.classList.add('completed');
-        icon.classList.remove('locked', 'unlocked');
+        icon.classList.remove('unlocked');
 
         // Atualiza o próximo passo
         var nextStep = section.nextElementSibling;
-        while (nextStep && !nextStep.querySelector('input[type="file"]')) {
-            var nextIcon = nextStep.querySelector('.step-icon');
-            if (nextIcon) {
-                nextIcon.classList.remove('locked');
-                nextIcon.classList.add('unlocked');
-            }
-            nextStep = nextStep.nextElementSibling;
-        }
-
         if (nextStep && nextStep.querySelector('.step-icon')) {
             var nextIcon = nextStep.querySelector('.step-icon');
             nextIcon.classList.remove('locked');
@@ -382,10 +317,15 @@
         });
 
         if (allCompleted) {
-            var walletStep = document.querySelector('.step-icon.locked');
-            if (walletStep) {
-                walletStep.classList.add('pending');
-                walletStep.classList.remove('locked');
+            var confirmButton = document.querySelector('.upload-button');
+            confirmButton.classList.add('active');
+            confirmButton.disabled = false;
+
+            // Habilita o passo de validação
+            var validatorStep = document.getElementById('validator-step');
+            if (validatorStep) {
+                validatorStep.classList.add('pending');
+                validatorStep.classList.remove('locked');
             }
         }
     }

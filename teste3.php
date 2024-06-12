@@ -15,7 +15,7 @@
         }
 
         .container {
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.95);
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
@@ -46,7 +46,7 @@
         }
 
         .step-icon.unlocked {
-            background-color: #007bff;
+            background-color: #808080;
         }
 
         .step-icon.completed {
@@ -196,11 +196,12 @@
         <div class="step-icon unlocked"><i class="fas fa-id-card"></i></div>
         <div>
             <h4>2. Requerimento</h4>
+            <p>Para obter a carteira, primeira faça o download do requerimento, imprima, assine. Em seguida tire uma foto e envie assinado.
             <button class="download-button">Baixar Requerimento</button>
             <div class="upload-section" onclick="document.getElementById('requerimento-upload').click()">
                 <input type="file" id="requerimento-upload" onchange="markCompleted(this)">
-                <p>Clique ou arraste o requerimento assinado aqui.</p>
-                <img src="images/exemplo-requerimento.png" alt="Exemplo de Requerimento">
+                <p>Clique ou arraste o requerimento assinado aqui para enviar.</p>
+             
             </div>
         </div>
     </div>
@@ -208,6 +209,7 @@
         <div class="step-icon unlocked"><i class="fas fa-camera"></i></div>
         <div>
             <h4>3. Foto 3x4</h4>
+            <p>Agora você vai enviar a foto que vai aparecer na carteira, como o exemplo abaixo</p>
             <div class="upload-section" onclick="document.getElementById('foto-34').click()">
                 <input type="file" id="foto-34" onchange="markCompleted(this)">
                 <p>Clique ou arraste a foto 3x4 aqui.</p>
@@ -219,6 +221,7 @@
         <div class="step-icon unlocked"><i class="fas fa-id-card"></i></div>
         <div>
             <h4>4. Documento de Identidade</h4>
+            <p>Envie a imagem de um documento de indentificação com foto (RG, CNH e etc) conforme o exemplo abaixo</p>
             <div class="upload-section" onclick="document.getElementById('documento-identidade').click()">
                 <input type="file" id="documento-identidade" onchange="markCompleted(this)">
                 <p>Clique ou arraste o documento de identidade aqui.</p>
@@ -230,6 +233,7 @@
         <div class="step-icon unlocked"><i class="fas fa-home"></i></div>
         <div>
             <h4>5. Comprovante de Residência</h4>
+            <p>Envie uma foto visivel de um comprovante de residencia, como exemplo abaixo</p>
             <div class="upload-section" onclick="document.getElementById('comprovante-residencia').click()">
                 <input type="file" id="comprovante-residencia" onchange="markCompleted(this)">
                 <p>Clique ou arraste o comprovante aqui.</p>
@@ -241,10 +245,12 @@
         <div class="step-icon unlocked"><i class="fas fa-file-medical"></i></div>
         <div>
             <h4>6. Laudo Médico</h4>
+            <p>Envie o laudo medico da pessoa que vai usar a carteira.</p>
             <div class="upload-section" onclick="document.getElementById('laudo-medico').click()">
                 <input type="file" id="laudo-medico" onchange="markCompleted(this)">
                 <p>Clique ou arraste o laudo médico aqui.</p>
                 <img src="images/seu-modelo-de-laudo-medico.png" alt="Exemplo de Laudo Médico">
+                <button class="upload-button">Enviar Documentos</button>
             </div>
         </div>
     </div>

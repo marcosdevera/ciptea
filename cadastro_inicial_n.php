@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: url('images/background_system.jpg') no-repeat center center fixed;
+            background: url('images/background_login2.webp') no-repeat center center fixed;
             background-size: cover;
             margin: 0;
             padding: 0;

@@ -5,8 +5,12 @@ include_once('responsavel.class.php');
 include_once('documentos.class.php');
 include_once('usuario.class.php');
 
-class Pessoa
+
+class Pessoa 
 {
+
+    
+    
     private Responsavel $responsavel;
     private Documentos $laudo;
     private Documentos $foto;
@@ -33,7 +37,9 @@ class Pessoa
     private $vch_num_cartao_sus;
     private $bool_representante_legal;
 
-    public function setResposavel($responsavel)
+    
+
+    public function setResponsavel($responsavel)
     {
         $this->responsavel = $responsavel;
     }
@@ -283,6 +289,7 @@ class Pessoa
         return $this->bool_representante_legal;
     }
 
+    
     //public function inserirPessoa($laudo, $foto, $comprovante, $documento, $usuario)
     public function inserirPessoa($usuario)
     {
@@ -396,12 +403,15 @@ class Pessoa
         }
     }
 
-    public function inserirPessoaResponsavel($laudo, $foto, $comprovante, $documento, $usuario)
+
+    public function inserirPessoaResponsavel($responsavel, $usuario)
     {
         try {
             $pdo = Database::conexao();
             // Iniciando a transação
             $pdo->beginTransaction();
+            
+            //$responsavel = new Responsavel();
 
             // Inserindo os dados na tabela pessoa
             $consulta = $pdo->prepare("INSERT INTO ciptea.dados_pessoa(vch_nome, vch_nome_social, vch_telefone, vch_telefone_contato, cid, vch_tipo_sanguineo, int_sexo, vch_nome_pai, vch_nome_mae, sdt_nascimento, endereco, bairro, cep, cidade, vch_rg, vch_cpf, vch_num_cartao_sus, bool_representante_legal) 
@@ -427,6 +437,9 @@ class Pessoa
             $consulta->execute();
             // Obtendo o ID gerado pela inserção na tabela pessoa
             $codPessoa = $pdo->lastInsertId();
+
+            
+            $this->setResponsavel($responsavel);
 
             $vch_nome_resp = $this->responsavel->getVchNomeResponsavel();
             $vch_telefone_resp = $this->responsavel->getVchTelefoneResponsavel();
@@ -456,57 +469,57 @@ class Pessoa
             $stmtResponsavel->execute();
 
 
-            $data_atual = date('Y-m-d H:i:s');
-            $this->setLaudo($laudo);
-            $this->setFoto($foto);
-            $cod_tipo_laudo = $this->laudo->getCodTipoDocumento();
-            $vch_documento_laudo = $this->laudo->getVchDocumento();
-            $status_laudo = $this->laudo->getStatus();
+            // $data_atual = date('Y-m-d H:i:s');
+            // $this->setLaudo($laudo);
+            // $this->setFoto($foto);
+            // $cod_tipo_laudo = $this->laudo->getCodTipoDocumento();
+            // $vch_documento_laudo = $this->laudo->getVchDocumento();
+            // $status_laudo = $this->laudo->getStatus();
 
-            $cod_tipo_foto = $this->foto->getCodTipoDocumento();
-            $vch_documento_foto = $this->foto->getVchDocumento();
-            $status_foto = $this->foto->getStatus();
+            // $cod_tipo_foto = $this->foto->getCodTipoDocumento();
+            // $vch_documento_foto = $this->foto->getVchDocumento();
+            // $status_foto = $this->foto->getStatus();
 
-            $this->setComprovante($comprovante);
-            $cod_tipo_comprovante = $this->comprovante->getCodTipoDocumento();
-            $vch_documento_comprovante = $this->comprovante->getVchDocumento();
-            $status_comprovante = $this->comprovante->getStatus();
+            // $this->setComprovante($comprovante);
+            // $cod_tipo_comprovante = $this->comprovante->getCodTipoDocumento();
+            // $vch_documento_comprovante = $this->comprovante->getVchDocumento();
+            // $status_comprovante = $this->comprovante->getStatus();
 
-            $this->setDocumento($documento);
-            $cod_tipo_documento = $this->documento->getCodTipoDocumento();
-            $vch_documento_documento = $this->documento->getVchDocumento();
-            $status_documento = $this->documento->getStatus();
+            // $this->setDocumento($documento);
+            // $cod_tipo_documento = $this->documento->getCodTipoDocumento();
+            // $vch_documento_documento = $this->documento->getVchDocumento();
+            // $status_documento = $this->documento->getStatus();
 
-            $consulta_documentos = $pdo->prepare("INSERT INTO ciptea.documentos(cod_pessoa, cod_tipo_documento, vch_documento, sdt_insercao, status) 
-            VALUES (:cod_pessoa, :cod_tipo_documento, :vch_documento, :sdt_insercao, :status)");
+            // $consulta_documentos = $pdo->prepare("INSERT INTO ciptea.documentos(cod_pessoa, cod_tipo_documento, vch_documento, sdt_insercao, status) 
+            // VALUES (:cod_pessoa, :cod_tipo_documento, :vch_documento, :sdt_insercao, :status)");
 
-            $consulta_documentos->bindParam(':cod_pessoa', $codPessoa);
-            $consulta_documentos->bindParam(':cod_tipo_documento', $cod_tipo_laudo);
-            $consulta_documentos->bindParam(':vch_documento', $vch_documento_laudo);
-            $consulta_documentos->bindParam(':sdt_insercao', $data_atual);
-            $consulta_documentos->bindParam(':status', $status_laudo);
-            $consulta_documentos->execute();
+            // $consulta_documentos->bindParam(':cod_pessoa', $codPessoa);
+            // $consulta_documentos->bindParam(':cod_tipo_documento', $cod_tipo_laudo);
+            // $consulta_documentos->bindParam(':vch_documento', $vch_documento_laudo);
+            // $consulta_documentos->bindParam(':sdt_insercao', $data_atual);
+            // $consulta_documentos->bindParam(':status', $status_laudo);
+            // $consulta_documentos->execute();
 
-            $consulta_documentos->bindParam(':cod_pessoa', $codPessoa);
-            $consulta_documentos->bindParam(':cod_tipo_documento', $cod_tipo_foto);
-            $consulta_documentos->bindParam(':vch_documento', $vch_documento_foto);
-            $consulta_documentos->bindParam(':sdt_insercao', $data_atual);
-            $consulta_documentos->bindParam(':status', $status_foto);
-            $consulta_documentos->execute();
+            // $consulta_documentos->bindParam(':cod_pessoa', $codPessoa);
+            // $consulta_documentos->bindParam(':cod_tipo_documento', $cod_tipo_foto);
+            // $consulta_documentos->bindParam(':vch_documento', $vch_documento_foto);
+            // $consulta_documentos->bindParam(':sdt_insercao', $data_atual);
+            // $consulta_documentos->bindParam(':status', $status_foto);
+            // $consulta_documentos->execute();
 
-            $consulta_documentos->bindParam(':cod_pessoa', $codPessoa);
-            $consulta_documentos->bindParam(':cod_tipo_documento', $cod_tipo_comprovante);
-            $consulta_documentos->bindParam(':vch_documento', $vch_documento_comprovante);
-            $consulta_documentos->bindParam(':sdt_insercao', $data_atual);
-            $consulta_documentos->bindParam(':status', $status_comprovante);
-            $consulta_documentos->execute();
+            // $consulta_documentos->bindParam(':cod_pessoa', $codPessoa);
+            // $consulta_documentos->bindParam(':cod_tipo_documento', $cod_tipo_comprovante);
+            // $consulta_documentos->bindParam(':vch_documento', $vch_documento_comprovante);
+            // $consulta_documentos->bindParam(':sdt_insercao', $data_atual);
+            // $consulta_documentos->bindParam(':status', $status_comprovante);
+            // $consulta_documentos->execute();
 
-            $consulta_documentos->bindParam(':cod_pessoa', $codPessoa);
-            $consulta_documentos->bindParam(':cod_tipo_documento', $cod_tipo_documento);
-            $consulta_documentos->bindParam(':vch_documento', $vch_documento_documento);
-            $consulta_documentos->bindParam(':sdt_insercao', $data_atual);
-            $consulta_documentos->bindParam(':status', $status_documento);
-            $consulta_documentos->execute();
+            // $consulta_documentos->bindParam(':cod_pessoa', $codPessoa);
+            // $consulta_documentos->bindParam(':cod_tipo_documento', $cod_tipo_documento);
+            // $consulta_documentos->bindParam(':vch_documento', $vch_documento_documento);
+            // $consulta_documentos->bindParam(':sdt_insercao', $data_atual);
+            // $consulta_documentos->bindParam(':status', $status_documento);
+            // $consulta_documentos->execute();
 
             $this->setUsuario($usuario);
             $vch_login = $this->usuario->getVch_login();

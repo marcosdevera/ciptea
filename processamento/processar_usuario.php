@@ -9,6 +9,9 @@ include_once('../classes/obs.class.php');
 include_once('../classes/documentos.class.php');
 include_once('../classes/responsavel.class.php');
 
+
+try {
+
 $pessoa = new Pessoa();
 $responsavel = new Responsavel();
 $usuario = new Usuario();
@@ -143,8 +146,17 @@ if (isset($_POST['vch_senha'])) {
     $usuario->setVch_senha(password_hash($_POST['vch_senha'], PASSWORD_DEFAULT));
 }
 
-try {
+$usuario->setInt_situacao(1);
+
+if($_POST['bool_representante_legal'] == 1){
+    $pessoa->inserirPessoaResponsavel($responsavel, $usuario);
+}
+else{
+   
     $pessoa->inserirPessoa($usuario);
+    
+}
+    
     //$pessoa->save(); old save
    
     echo "Cadastro realizado com sucesso!";

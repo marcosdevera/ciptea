@@ -1,7 +1,6 @@
 <?php
 if(isset($_GET['msg'])){
     if($_GET['msg'] == 1){
-        // die ("Valor da url chegou");
         $login_dec = base64_decode($_GET['login']);
 
         // Mascarar o email
@@ -34,77 +33,120 @@ if(isset($_GET['msg'])){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Recuperação de Senha</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="images/imagemtopo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        @font-face {
+            font-family: 'shogie';
+            src: url('css/fonts/Shogie.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            background: url('images/background_login2.webp') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f0f0f0;
         }
-        
+
         .container {
-            background-color: #ffffff;
-            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.95);
             padding: 20px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+            margin: auto;
+            text-align: center;
         }
-        
+
+        h2 {
+            font-family: 'shogie', sans-serif;
+            font-size: 2.8em;
+            color: #007bff;
+            margin: 0 0 20px 0;
+        }
+
         input[type="text"],
-        input[type="password"] {
-            width: calc(100% - 16px);
-            padding: 8px;
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
             margin-bottom: 10px;
             border-radius: 4px;
             border: 1px solid #ccc;
+            font-size: 16px;
         }
-        
-        input[type="submit"],
-        input[type="button"] {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
+
+        input[type="submit"] {
             background-color: #007bff;
             color: #fff;
+            border: none;
             cursor: pointer;
-            font-size: 16px;
-            margin-bottom: 10px; /* Adicionando margem entre os botões */
+            transition: background-color 0.3s;
         }
-        
-        input[type="submit"]:hover,
-        input[type="button"]:hover {
+
+        input[type="submit"]:hover {
             background-color: #0056b3;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #000;
+            text-align: center;
+        }
+
+        @media (max-width: 767px) {
+            .container {
+                padding: 15px;
+                max-width: 90%;
+            }
+
+            h2 {
+                font-size: 2.2em;
+            }
+
+            input[type="text"],
+            input[type="submit"] {
+                font-size: 14px;
+            }
         }
     </style>
     <script>
         function pegarCPF() {
-        var cpfInput = document.getElementById('vch_cpf');
-        cpfInput.value = formatarCPF(cpfInput.value);
+            var cpfInput = document.getElementById('vch_cpf');
+            cpfInput.value = formatarCPF(cpfInput.value);
         }
 
         function formatarCPF(cpf) {
-        cpf = cpf.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
-        cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2'); // Adiciona o primeiro ponto
-        cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2'); // Adiciona o segundo ponto
-        cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Adiciona o hífen
-        return cpf;
+            cpf = cpf.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2'); // Adiciona o primeiro ponto
+            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2'); // Adiciona o segundo ponto
+            cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Adiciona o hífen
+            return cpf;
         }
     </script>
 </head>
 <body>
     <div class="container">
-        <h2>Recuperação de senha</h2>
+        <h2>Recuperação de Senha</h2>
         <form action="processamento/processar_recuperacao.php" method="POST">
             <input type="text" name="vch_cpf" id="vch_cpf" oninput="pegarCPF()" placeholder="Digite o CPF cadastrado" required>
             <input type="hidden" name="MM_action" id="MM_action" value="1"> 
             <input type="submit" value="Enviar">
         </form>
+        <div class="footer">
+            © 2024 Prefeitura de Camaçari
+        </div>
     </div>
 </body>
 </html>

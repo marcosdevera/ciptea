@@ -1,111 +1,127 @@
-<?php
-if(isset($_GET['msg'])){
-    if($_GET['msg'] == 1){
-        echo "<script>alert('Usuário criado com sucesso! Acesse o sistema utilizando o Email e senha cadastrados durante o cadastro');</script>";
-    }
-    if($_GET['msg'] == 2){
-        echo "<script>alert('Email ou senha incorretos, por favor, tente novamente');</script>";
-    }
-}
-?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="stylesheet" href="css/style.css"> -->
-
     <title>Login</title>
+    <link rel="icon" href="images/imagemtopo.png" type="image/png">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        @font-face {
+            font-family: 'shogie';
+            src: url('css/fonts/Shogie.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            background: url('images/background_login2.webp') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .header-image {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+            margin: auto;
+            text-align: center;
+        }
+
+        h2 {
+            font-family: 'shogie', sans-serif;
+            font-size: 2.8em;
+            color: #007bff;
+            margin: 0 0 20px 0;
+        }
+
+        input[type="text"],
+        input[type="password"],
         input[type="submit"],
-    input[type="button"] {
-        width: 100%;
-        padding: 10px;
-        border: none;
-        border-radius: 4px;
-        background-color: #007bff;
-        color: #fff;
-        cursor: pointer;
-        font-size: 16px;
-        margin-bottom: 10px;  /*Adicionando margem entre os botões*/ 
-    } 
-    body {
-    background-image: url('images/background_login2.webp'); /* Certifique-se de que o caminho para a imagem está correto */
-    background-size: cover;
-    background-position: center; /* Centraliza a imagem de fundo */
-    height: 100vh; /* Ocupa a altura total da janela */
-    margin: 0; /* Remove margens padrão */
-    padding: 0; /* Remove preenchimento padrão */
-    display: flex;
-    justify-content: center; /* Centraliza horizontalmente */
-    align-items: center; /* Centraliza verticalmente */
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0; /* Cor de fundo se a imagem não carregar */
-}
+        input[type="button"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
 
-.container {
-    background-color: rgba(255, 255, 255, 0.9); /* Fundo branco semi-transparente */
-    padding: 20px; /* Espaço interno */
-    border-radius: 8px; /* Bordas arredondadas */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra leve */
-    max-width: 800px; /* Aumentar a largura máxima para 800px */
-    width: 80%; /* Permitir que o contêiner ocupe 80% da largura disponível */
-    margin: 0 auto; /* Centraliza horizontalmente */
-}
+        input[type="submit"],
+        input[type="button"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-@font-face {
-    font-family: 'shogie';
-    src: url('css/fonts/Shogie.otf') format('opentype'); /* Certifique-se de que o caminho para a fonte está correto */
-    font-weight: normal;
-    font-style: normal;
-}
+        input[type="submit"]:hover,
+        input[type="button"]:hover {
+            background-color: #0056b3;
+        }
 
-h2 {
-    font-family: 'shogie', sans-serif; /* Certifique-se de que a fonte 'shogie' está carregada */
-    font-size: 2.8em;
-    color: #5800ff; /* Cor do texto */
-    text-align: center; /* Centraliza o texto */
-    margin: 0; /* Remove margens padrão */
-    padding-bottom: 20px; /* Espaço abaixo do título */
-}
+        a {
+            color: #007bff;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            width: 100%;
+        }
 
-input[type="text"],
-input[type="password"] {
-    width: calc(100% - 16px); /* Ajusta a largura para caber no contêiner com um pouco de margem */
-    padding: 10px; /* Espaço interno */
-    margin-bottom: 10px; /* Espaço inferior entre os campos */
-    border-radius: 4px; /* Bordas arredondadas */
-    border: 1px solid #ccc; /* Borda dos campos */
-}
+        a:hover {
+            text-decoration: underline;
+        }
 
-input[type="submit"],
-input[type="button"] {
-    width: 100%; /* Botão ocupa toda a largura do contêiner */
-    padding: 10px; /* Espaço interno */
-    background-color: #007bff; /* Cor de fundo padrão do botão */
-    color: white; /* Cor do texto */
-    border: none; /* Remove borda */
-    border-radius: 4px; /* Bordas arredondadas */
-    cursor: pointer; /* Cursor muda ao passar o mouse */
-}
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #000000;
+        }
 
-input[type="submit"]:hover,
-input[type="button"]:hover {
-    background-color: #0056b3; /* Cor de fundo ao passar o mouse */
-}
+        @media (max-width: 767px) {
+            .container {
+                padding: 15px;
+                max-width: 90%;
+            }
 
-a {
-    color: #007bff; /* Cor do link */
-    text-decoration: none; /* Remove sublinhado padrão */
-}
+            h2 {
+                font-size: 2.2em;
+            }
 
-a:hover {
-    text-decoration: underline; /* Adiciona sublinhado ao passar o mouse */
-}
+            input[type="text"],
+            input[type="password"],
+            input[type="submit"],
+            input[type="button"] {
+                font-size: 14px;
+            }
 
+            .footer {
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 <body>
+    <img src="images/image.png" alt="Laço" class="header-image">
     <div class="container">
         <h2>CIPTEA</h2>
         <form action="processamento/processar_login.php" method="POST">
@@ -114,7 +130,10 @@ a:hover {
             <input type="submit" class="btn btn-primary" value="Logar">
         </form>
         <a href="cadastro_inicial.php"><input type="button" value="Não tem cadastro? Clique aqui"></a>
-        <a href="recuperar_senha.php" style="margin-left: 13.5em;">Esqueci minha senha</a>
+        <a href="recuperar_senha.php">Esqueci minha senha</a>
+        <div class="footer">
+            © 2024 Prefeitura de Camaçari
+        </div>
     </div>
 </body>
 </html>

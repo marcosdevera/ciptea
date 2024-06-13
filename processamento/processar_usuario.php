@@ -162,5 +162,7 @@ else{
     echo "Cadastro realizado com sucesso!";
 } catch (Exception $e) {
     echo "Erro ao realizar o cadastro: " . $e->getMessage();
+    header("Location: ../cadastro_inicialUP.php");
+    exit();
 }
 ?>

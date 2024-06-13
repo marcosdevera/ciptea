@@ -217,7 +217,7 @@
         <div class="step-icon unlocked"><i class="fas fa-user"></i></div>
         <div>
             <h4>1. Dados Pessoais</h4>
-            <p>Preencha seus dados pessoais.</p>
+            <p>Preencheu seus dados pessoais, caso queira editar clique <a href="">aqui</a>.</p>
         </div>
     </div>
     <div class="step">
@@ -281,7 +281,6 @@
             <div class="upload-section" onclick="document.getElementById('laudo-medico').click()">
                 <input type="file" id="laudo-medico" onchange="handleFileUpload(this)">
                 <p>Clique ou arraste o laudo médico aqui.</p>
-                <img src="images/seu-modelo-de-laudo-medico.png" alt="Exemplo de Laudo Médico">
                 <div class="uploaded-file" id="laudo-medico-uploaded"></div>
             </div>
         </div>

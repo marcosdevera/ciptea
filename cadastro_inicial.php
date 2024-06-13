@@ -138,6 +138,18 @@
                     <input type="text" class="form-control" name="vch_telefone" id="vch_telefone" oninput="aplicarMascaraTelefone('vch_telefone')" maxlength="15" required>
                 </div>
                 <div class="form-group">
+                    <label for="cid">CID:</label>
+                    <input type="text" class="form-control" name="cid" id="cid" required>
+                </div>
+                <div class="form-group">
+                    <label for="vch_nome_pai">Nome do Pai:</label>
+                    <input type="text" class="form-control" name="vch_nome_pai" id="vch_nome_pai" maxlength="50" required>
+                </div>
+                <div class="form-group">
+                    <label for="vch_nome_mae">Nome da Mãe:</label>
+                    <input type="text" class="form-control" name="vch_nome_mae" id="vch_nome_mae" maxlength="50" required>
+                </div>
+                <div class="form-group">
                     <label for="vch_cpf">CPF:</label>
                     <input type="text" class="form-control" name="vch_cpf" id="vch_cpf" oninput="formatarCPF('vch_cpf')" onblur="validarCPFOnBlur('vch_cpf')" maxlength="14" required>
                 </div>
@@ -145,41 +157,28 @@
                     <label for="vch_rg">RG:</label>
                     <input type="text" class="form-control" name="vch_rg" id="vch_rg" onkeyup="formatarRG()" maxlength="13" required>
                 </div>
+                <div class="form-group">
+                    <label for="vch_num_cartao_sus">Número do Cartão do SUS:</label>
+                    <input type="text" class="form-control" name="vch_num_cartao_sus" id="vch_num_cartao_sus" oninput="formatarCNS()" maxlength="18" required>
+                </div>
+                <div class="form-group">
+                    <label for="vch_tipo_sanguineo">Tipo Sanguíneo:</label>
+                    <input type="text" class="form-control" name="vch_tipo_sanguineo" id="vch_tipo_sanguineo" maxlength="2" required>
+                </div>
             </div>
             <div class="step" id="step3">
-                <h2>Endereço</h2>
+                <h2>Representante Legal</h2>
                 <div class="form-group">
-                    <label for="endereco">Endereço:</label>
-                    <input type="text" class="form-control" name="endereco" id="endereco" required>
-                </div>
-                <div class="form-group">
-                    <label for="bairro">Bairro:</label>
-                    <input type="text" class="form-control" name="bairro" id="bairro" required>
-                </div>
-                <div class="form-group">
-                    <label for="cep">CEP:</label>
-                    <input type="text" class="form-control" name="cep" id="cep" oninput="aplicarMascaraCEP('cep')" maxlength="9" required>
-                </div>
-                <div class="form-group">
-                    <label for="cidade">Cidade:</label>
-                    <input type="text" class="form-control" name="cidade" id="cidade" required>
-                </div>
-            </div>
-            <div class="step" id="step4">
-                <h2>Possui Representante Legal?</h2>
-                <div class="form-group">
-                    <label for="bool_representante_legal">Possui Representante Legal?</label>
-                    <select name="bool_representante_legal" class="form-control" id="bool_representante_legal" required>
-                        <option value="">Selecione...</option>
-                        <option value="0" selected>Não</option>
-                        <option value="1">Sim</option>
+                    <label for="tem_representante">Possui Representante Legal?</label>
+                    <select class="form-control" name="tem_representante" id="tem_representante" onchange="toggleRepresentanteLegal()">
+                        <option value="não">Não</option>
+                        <option value="sim">Sim</option>
                     </select>
                 </div>
-                <div class="representante_legal" style="display: none;">
-                    <h3>Informações do Representante Legal</h3>
+                <div id="representante_legal" style="display: none;">
                     <div class="form-group">
-                        <label for="vch_nome_reponsavel">Nome do Responsável Legal:</label>
-                        <input type="text" class="form-control" name="vch_nome_reponsavel" id="vch_nome_reponsavel">
+                        <label for="vch_nome_representante">Nome do Representante:</label>
+                        <input type="text" class="form-control" name="vch_nome_representante" id="vch_nome_representante">
                     </div>
                     <div class="form-group">
                         <label for="sexo_responsavel_legal">Sexo do Responsável:</label>
@@ -189,19 +188,19 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="vch_telefone_responsavel">Telefone do Responsável Legal:</label>
+                        <label for="vch_telefone_responsavel">Telefone do Responsável:</label>
                         <input type="text" class="form-control" name="vch_telefone_responsavel" id="vch_telefone_responsavel" oninput="aplicarMascaraTelefone('vch_telefone_responsavel')" maxlength="15">
                     </div>
                     <div class="form-group">
-                        <label for="vch_cpf_responsavel">CPF do Responsável Legal:</label>
+                        <label for="vch_cpf_responsavel">CPF do Responsável:</label>
                         <input type="text" class="form-control" name="vch_cpf_responsavel" id="vch_cpf_responsavel" oninput="formatarCPF('vch_cpf_responsavel')" onblur="validarCPFOnBlur('vch_cpf_responsavel')" maxlength="14">
                     </div>
                     <div class="form-group">
-                        <label for="vch_cep_responsavel">CEP do Responsável Legal:</label>
+                        <label for="vch_cep_responsavel">CEP do Responsável:</label>
                         <input type="text" class="form-control" name="vch_cep_responsavel" id="vch_cep_responsavel" oninput="aplicarMascaraCEP('vch_cep_responsavel')" maxlength="9">
                     </div>
                     <div class="form-group">
-                        <label for="vch_endereco_responsavel">Endereço do Responsável Legal:</label>
+                        <label for="vch_endereco_responsavel">Endereço do Responsável:</label>
                         <input type="text" class="form-control" name="vch_endereco_responsavel" id="vch_endereco_responsavel">
                     </div>
                     <div class="form-group">
@@ -209,13 +208,40 @@
                         <input type="text" class="form-control" name="comp_responsavel" id="comp_responsavel">
                     </div>
                     <div class="form-group">
-                        <label for="vch_bairro_responsavel">Bairro do Responsável Legal:</label>
+                        <label for="vch_bairro_responsavel">Bairro do Responsável:</label>
                         <input type="text" class="form-control" name="vch_bairro_responsavel" id="vch_bairro_responsavel">
                     </div>
                     <div class="form-group">
-                        <label for="vch_cidade_responsavel">Cidade do Responsável Legal:</label>
+                        <label for="vch_cidade_responsavel">Cidade do Responsável:</label>
                         <input type="text" class="form-control" name="vch_cidade_responsavel" id="vch_cidade_responsavel">
                     </div>
+                </div>
+            </div>
+            <div class="step" id="step4">
+                <h2>Endereço</h2>
+                <div class="form-group">
+                    <label for="vch_endereco">Endereço:</label>
+                    <input type="text" class="form-control" name="vch_endereco" id="vch_endereco" required>
+                </div>
+                <div class="form-group">
+                    <label for="vch_numero">Número:</label>
+                    <input type="text" class="form-control" name="vch_numero" id="vch_numero" required>
+                </div>
+                <div class="form-group">
+                    <label for="vch_bairro">Bairro:</label>
+                    <input type="text" class="form-control" name="vch_bairro" id="vch_bairro" required>
+                </div>
+                <div class="form-group">
+                    <label for="vch_cidade">Cidade:</label>
+                    <input type="text" class="form-control" name="vch_cidade" id="vch_cidade" required>
+                </div>
+                <div class="form-group">
+                    <label for="vch_uf">Estado:</label>
+                    <input type="text" class="form-control" name="vch_uf" id="vch_uf" maxlength="2" required>
+                </div>
+                <div class="form-group">
+                    <label for="vch_cep">CEP:</label>
+                    <input type="text" class="form-control" name="vch_cep" id="vch_cep" oninput="formatarCEP('vch_cep')" maxlength="9" required>
                 </div>
             </div>
             <div class="step" id="step5">
@@ -240,6 +266,7 @@
             <div class="buttons">
                 <button type="button" class="prev btn btn-secondary" onclick="nextPrev(-1)">Anterior</button>
                 <button type="button" class="next btn btn-primary" onclick="nextPrev(1)">Próximo</button>
+                <button type="submit" class="submit btn btn-primary" style="display: none;">Enviar</button>
             </div>
         </form>
     </div>
@@ -261,9 +288,11 @@
                 document.querySelector(".prev").style.display = "inline";
             }
             if (n == (steps.length - 1)) {
-                document.querySelector(".next").innerHTML = "Cadastrar";
+                document.querySelector(".next").style.display = "none";
+                document.querySelector(".submit").style.display = "inline";
             } else {
-                document.querySelector(".next").innerHTML = "Próximo";
+                document.querySelector(".next").style.display = "inline";
+                document.querySelector(".submit").style.display = "none";
             }
         }
 
@@ -311,11 +340,11 @@
                 verificarLogin();
             });
 
-            $('#bool_representante_legal').change(function(){
-                if($(this).val() == '1'){
-                    $('.representante_legal').show();
+            $('#tem_representante').change(function(){
+                if($(this).val() == 'sim'){
+                    $('#representante_legal').show();
                 } else {
-                    $('.representante_legal').hide();
+                    $('#representante_legal').hide();
                 }
             });
         });

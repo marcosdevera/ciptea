@@ -121,7 +121,7 @@
     </style>
 </head>
 <body>
-    <img src="images/image.png" alt="Laço" class="header-image">
+   
     <div class="container">
         <h2>CIPTEA</h2>
         <form action="processamento/processar_login.php" method="POST">

@@ -220,28 +220,20 @@
             <div class="step" id="step4">
                 <h2>Endereço</h2>
                 <div class="form-group">
-                    <label for="vch_endereco">Endereço:</label>
-                    <input type="text" class="form-control" name="vch_endereco" id="vch_endereco" required>
+                    <label for="endereco">Endereço:</label>
+                    <input type="text" class="form-control" name="endereco" id="endereco" required>
                 </div>
                 <div class="form-group">
-                    <label for="vch_numero">Número:</label>
-                    <input type="text" class="form-control" name="vch_numero" id="vch_numero" required>
+                    <label for="bairro">Bairro:</label>
+                    <input type="text" class="form-control" name="bairro" id="bairro" required>
                 </div>
                 <div class="form-group">
-                    <label for="vch_bairro">Bairro:</label>
-                    <input type="text" class="form-control" name="vch_bairro" id="vch_bairro" required>
+                    <label for="cidade">Cidade:</label>
+                    <input type="text" class="form-control" name="cidade" id="cidade" required>
                 </div>
                 <div class="form-group">
-                    <label for="vch_cidade">Cidade:</label>
-                    <input type="text" class="form-control" name="vch_cidade" id="vch_cidade" required>
-                </div>
-                <div class="form-group">
-                    <label for="vch_uf">Estado:</label>
-                    <input type="text" class="form-control" name="vch_uf" id="vch_uf" maxlength="2" required>
-                </div>
-                <div class="form-group">
-                    <label for="vch_cep">CEP:</label>
-                    <input type="text" class="form-control" name="vch_cep" id="vch_cep" oninput="formatarCEP('vch_cep')" maxlength="9" required>
+                    <label for="cep">CEP:</label>
+                    <input type="text" class="form-control" name="cep" id="cep" oninput="formatarCEP('cep')" maxlength="9" required>
                 </div>
             </div>
             <div class="step" id="step5">

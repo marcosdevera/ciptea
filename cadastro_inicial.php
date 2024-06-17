@@ -170,9 +170,9 @@
                 <h2>Representante Legal</h2>
                 <div class="form-group">
                     <label for="tem_representante">Possui Representante Legal?</label>
-                    <select class="form-control" name="tem_representante" id="tem_representante" onchange="toggleRepresentanteLegal()">
-                        <option value="não">Não</option>
-                        <option value="sim">Sim</option>
+                    <select class="form-control" name="bool_representante_legal" id="tem_representante" onchange="toggleRepresentanteLegal()">
+                        <option value="0">Não</option>
+                        <option value="1">Sim</option>
                     </select>
                 </div>
                 <div id="representante_legal" style="display: none;">
@@ -330,7 +330,7 @@
             });
 
             $('#tem_representante').change(function(){
-                if($(this).val() == 'sim'){
+                if($(this).val() == '1'){
                     $('#representante_legal').show();
                 } else {
                     $('#representante_legal').hide();

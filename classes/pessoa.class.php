@@ -553,7 +553,8 @@ class Pessoa
         }
     }
 
-    public function atualizarPessoa($sl, $sf, $sc, $sd, $sr, $laudo, $foto, $comprovante, $documento, $requerimento, $cod_usuario, $cod_pessoa){
+    
+    public function atualizarPessoa($cod_usuario){
         try {
             $pdo = Database::conexao();
             // Iniciando a transação
@@ -597,81 +598,81 @@ class Pessoa
             // Obtendo o ID gerado pela inserção na tabela pessoa
             // $codPessoa = $pdo->lastInsertId();
 
-            if($sl == 1){
-                $this->setLaudo($laudo);
-                $vch_documento_laudo = $this->laudo->getVchDocumento();
-                $status_laudo = $this->laudo->getStatus();
-                $update_documentos = $pdo->prepare("UPDATE ciptea.documentos 
-                SET vch_documento = :vch_documento,
-                    status = :status, sdt_insercao = :sdt_insercao 
-                WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 2");
-                $update_documentos->bindParam(':cod_pessoa', $cod_pessoa);
-                $update_documentos->bindParam(':vch_documento', $vch_documento_laudo);
-                $update_documentos->bindParam(':status', $status_laudo);
-                $update_documentos->bindParam(':sdt_insercao', $data_atual);
-                $update_documentos->execute();
-            }
-            if($sf == 1){
-                $this->setFoto($foto);
-                $vch_documento_foto = $this->foto->getVchDocumento();
-                $status_foto = $this->foto->getStatus();
+            // if($sl == 1){
+            //     $this->setLaudo($laudo);
+            //     $vch_documento_laudo = $this->laudo->getVchDocumento();
+            //     $status_laudo = $this->laudo->getStatus();
+            //     $update_documentos = $pdo->prepare("UPDATE ciptea.documentos 
+            //     SET vch_documento = :vch_documento,
+            //         status = :status, sdt_insercao = :sdt_insercao 
+            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 2");
+            //     $update_documentos->bindParam(':cod_pessoa', $cod_pessoa);
+            //     $update_documentos->bindParam(':vch_documento', $vch_documento_laudo);
+            //     $update_documentos->bindParam(':status', $status_laudo);
+            //     $update_documentos->bindParam(':sdt_insercao', $data_atual);
+            //     $update_documentos->execute();
+            // }
+            // if($sf == 1){
+            //     $this->setFoto($foto);
+            //     $vch_documento_foto = $this->foto->getVchDocumento();
+            //     $status_foto = $this->foto->getStatus();
 
-                $update_documentos2 = $pdo->prepare("UPDATE ciptea.documentos 
-                SET vch_documento = :vch_documento,
-                    status = :status, sdt_insercao = :sdt_insercao 
-                WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 1");
-                $update_documentos2->bindParam(':cod_pessoa', $cod_pessoa);
-                $update_documentos2->bindParam(':vch_documento', $vch_documento_foto);
-                $update_documentos2->bindParam(':status', $status_foto);
-                $update_documentos2->bindParam(':sdt_insercao', $data_atual);
-                $update_documentos2->execute();
-            }
-            if($sc == 1){
-                $this->setComprovante($comprovante);
-                $vch_documento_comprovante = $this->comprovante->getVchDocumento();
-                $status_comprovante = $this->comprovante->getStatus();
+            //     $update_documentos2 = $pdo->prepare("UPDATE ciptea.documentos 
+            //     SET vch_documento = :vch_documento,
+            //         status = :status, sdt_insercao = :sdt_insercao 
+            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 1");
+            //     $update_documentos2->bindParam(':cod_pessoa', $cod_pessoa);
+            //     $update_documentos2->bindParam(':vch_documento', $vch_documento_foto);
+            //     $update_documentos2->bindParam(':status', $status_foto);
+            //     $update_documentos2->bindParam(':sdt_insercao', $data_atual);
+            //     $update_documentos2->execute();
+            // }
+            // if($sc == 1){
+            //     $this->setComprovante($comprovante);
+            //     $vch_documento_comprovante = $this->comprovante->getVchDocumento();
+            //     $status_comprovante = $this->comprovante->getStatus();
 
-                $update_documentos3 = $pdo->prepare("UPDATE ciptea.documentos 
-                SET vch_documento = :vch_documento,
-                    status = :status, sdt_insercao = :sdt_insercao  
-                WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 3");
-                $update_documentos3->bindParam(':cod_pessoa', $cod_pessoa);
-                $update_documentos3->bindParam(':vch_documento', $vch_documento_comprovante);
-                $update_documentos3->bindParam(':status', $status_comprovante);
-                $update_documentos3->bindParam(':sdt_insercao', $data_atual);
-                $update_documentos3->execute();    
-            }
-            if($sd == 1){
-                $this->setDocumento($documento);
-                $vch_documento_documento = $this->documento->getVchDocumento();
-                $status_documento = $this->documento->getStatus();
+            //     $update_documentos3 = $pdo->prepare("UPDATE ciptea.documentos 
+            //     SET vch_documento = :vch_documento,
+            //         status = :status, sdt_insercao = :sdt_insercao  
+            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 3");
+            //     $update_documentos3->bindParam(':cod_pessoa', $cod_pessoa);
+            //     $update_documentos3->bindParam(':vch_documento', $vch_documento_comprovante);
+            //     $update_documentos3->bindParam(':status', $status_comprovante);
+            //     $update_documentos3->bindParam(':sdt_insercao', $data_atual);
+            //     $update_documentos3->execute();    
+            // }
+            // if($sd == 1){
+            //     $this->setDocumento($documento);
+            //     $vch_documento_documento = $this->documento->getVchDocumento();
+            //     $status_documento = $this->documento->getStatus();
 
-                $update_documentos4 = $pdo->prepare("UPDATE ciptea.documentos 
-                SET vch_documento = :vch_documento,
-                    status = :status, sdt_insercao = :sdt_insercao 
-                WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 4");
-                $update_documentos4->bindParam(':cod_pessoa', $cod_pessoa);
-                $update_documentos4->bindParam(':vch_documento', $vch_documento_documento);
-                $update_documentos4->bindParam(':status', $status_documento);
-                $update_documentos4->bindParam(':sdt_insercao', $data_atual);
-                $update_documentos4->execute();    
-            }
+            //     $update_documentos4 = $pdo->prepare("UPDATE ciptea.documentos 
+            //     SET vch_documento = :vch_documento,
+            //         status = :status, sdt_insercao = :sdt_insercao 
+            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 4");
+            //     $update_documentos4->bindParam(':cod_pessoa', $cod_pessoa);
+            //     $update_documentos4->bindParam(':vch_documento', $vch_documento_documento);
+            //     $update_documentos4->bindParam(':status', $status_documento);
+            //     $update_documentos4->bindParam(':sdt_insercao', $data_atual);
+            //     $update_documentos4->execute();    
+            // }
 
-            if($sr == 1){
-                $this->setRequerimento($requerimento);
-                $vch_documento_requerimento = $this->requerimento->getVchDocumento();
-                $status_requerimento = $this->requerimento->getStatus();
+            // if($sr == 1){
+            //     $this->setRequerimento($requerimento);
+            //     $vch_documento_requerimento = $this->requerimento->getVchDocumento();
+            //     $status_requerimento = $this->requerimento->getStatus();
 
-                $update_documentos5 = $pdo->prepare("UPDATE ciptea.documentos 
-                SET vch_documento = :vch_documento, 
-                    status = :status, sdt_insercao = :sdt_insercao 
-                WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 5");
-                $update_documentos5->bindParam(':cod_pessoa', $cod_pessoa);
-                $update_documentos5->bindParam(':vch_documento', $vch_documento_requerimento);
-                $update_documentos5->bindParam(':status', $status_requerimento);
-                $update_documentos5->bindParam(':sdt_insercao', $data_atual);
-                $update_documentos5->execute();    
-            }
+            //     $update_documentos5 = $pdo->prepare("UPDATE ciptea.documentos 
+            //     SET vch_documento = :vch_documento, 
+            //         status = :status, sdt_insercao = :sdt_insercao 
+            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 5");
+            //     $update_documentos5->bindParam(':cod_pessoa', $cod_pessoa);
+            //     $update_documentos5->bindParam(':vch_documento', $vch_documento_requerimento);
+            //     $update_documentos5->bindParam(':status', $status_requerimento);
+            //     $update_documentos5->bindParam(':sdt_insercao', $data_atual);
+            //     $update_documentos5->execute();    
+            // }
             // Comitando a transação
             $pdo->commit();
 
@@ -831,7 +832,7 @@ class Pessoa
     //     }        
     // }
 
-    public function atualizarPessoaResponsavel($sl, $sf, $sc, $sd, $sr, $laudo, $foto, $comprovante, $documento, $requerimento, $cod_usuario, $cod_pessoa){
+    public function atualizarPessoaResponsavel($cod_usuario){
         try {
             $pdo = Database::conexao();
             // Iniciando a transação
@@ -904,76 +905,76 @@ class Pessoa
             $stmtResponsavel->bindParam(':vch_cidade_responsavel', $vch_cidade_resp);
             $stmtResponsavel->execute();
 
-            if($sl == 1){
-                $this->setLaudo($laudo);
-                $vch_documento_laudo = $this->laudo->getVchDocumento();
-                $status_laudo = $this->laudo->getStatus();
+            // if($sl == 1){
+            //     $this->setLaudo($laudo);
+            //     $vch_documento_laudo = $this->laudo->getVchDocumento();
+            //     $status_laudo = $this->laudo->getStatus();
 
-                $update_documentos = $pdo->prepare("UPDATE ciptea.documentos 
-                SET vch_documento = :vch_documento,
-                    status = :status 
-                WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 2");
-                $update_documentos->bindParam(':cod_pessoa', $cod_pessoa);
-                $update_documentos->bindParam(':vch_documento', $vch_documento_laudo);
-                $update_documentos->bindParam(':status', $status_laudo);
-                $update_documentos->execute();
-            }
-            if($sf == 1){
-                $this->setFoto($foto);
-                $vch_documento_foto = $this->foto->getVchDocumento();
-                $status_foto = $this->foto->getStatus();
+            //     $update_documentos = $pdo->prepare("UPDATE ciptea.documentos 
+            //     SET vch_documento = :vch_documento,
+            //         status = :status 
+            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 2");
+            //     $update_documentos->bindParam(':cod_pessoa', $cod_pessoa);
+            //     $update_documentos->bindParam(':vch_documento', $vch_documento_laudo);
+            //     $update_documentos->bindParam(':status', $status_laudo);
+            //     $update_documentos->execute();
+            // }
+            // if($sf == 1){
+            //     $this->setFoto($foto);
+            //     $vch_documento_foto = $this->foto->getVchDocumento();
+            //     $status_foto = $this->foto->getStatus();
 
-                $update_documentos2 = $pdo->prepare("UPDATE ciptea.documentos 
-                SET vch_documento = :vch_documento,
-                    status = :status 
-                WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 1");
-                $update_documentos2->bindParam(':cod_pessoa', $cod_pessoa);
-                $update_documentos2->bindParam(':vch_documento', $vch_documento_foto);
-                $update_documentos2->bindParam(':status', $status_foto);
-                $update_documentos2->execute();
-            }
-            if($sc == 1){
-                $this->setComprovante($comprovante);
-                $vch_documento_comprovante = $this->comprovante->getVchDocumento();
-                $status_comprovante = $this->comprovante->getStatus();
+            //     $update_documentos2 = $pdo->prepare("UPDATE ciptea.documentos 
+            //     SET vch_documento = :vch_documento,
+            //         status = :status 
+            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 1");
+            //     $update_documentos2->bindParam(':cod_pessoa', $cod_pessoa);
+            //     $update_documentos2->bindParam(':vch_documento', $vch_documento_foto);
+            //     $update_documentos2->bindParam(':status', $status_foto);
+            //     $update_documentos2->execute();
+            // }
+            // if($sc == 1){
+            //     $this->setComprovante($comprovante);
+            //     $vch_documento_comprovante = $this->comprovante->getVchDocumento();
+            //     $status_comprovante = $this->comprovante->getStatus();
 
-                $update_documentos3 = $pdo->prepare("UPDATE ciptea.documentos 
-                SET vch_documento = :vch_documento,
-                    status = :status 
-                WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 3");
-                $update_documentos3->bindParam(':cod_pessoa', $cod_pessoa);
-                $update_documentos3->bindParam(':vch_documento', $vch_documento_comprovante);
-                $update_documentos3->bindParam(':status', $status_comprovante);
-                $update_documentos3->execute();
-            }
-            if($sd == 1){
-                $this->setDocumento($documento);
-                $vch_documento_documento = $this->documento->getVchDocumento();
-                $status_documento = $this->documento->getStatus();
+            //     $update_documentos3 = $pdo->prepare("UPDATE ciptea.documentos 
+            //     SET vch_documento = :vch_documento,
+            //         status = :status 
+            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 3");
+            //     $update_documentos3->bindParam(':cod_pessoa', $cod_pessoa);
+            //     $update_documentos3->bindParam(':vch_documento', $vch_documento_comprovante);
+            //     $update_documentos3->bindParam(':status', $status_comprovante);
+            //     $update_documentos3->execute();
+            // }
+            // if($sd == 1){
+            //     $this->setDocumento($documento);
+            //     $vch_documento_documento = $this->documento->getVchDocumento();
+            //     $status_documento = $this->documento->getStatus();
 
-                $update_documentos4 = $pdo->prepare("UPDATE ciptea.documentos 
-                SET vch_documento = :vch_documento,
-                    status = :status 
-                WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 4");
-                $update_documentos4->bindParam(':cod_pessoa', $cod_pessoa);
-                $update_documentos4->bindParam(':vch_documento', $vch_documento_documento);
-                $update_documentos4->bindParam(':status', $status_documento);
-                $update_documentos4->execute();
-            }
-            if($sr == 1){
-                $this->setRequerimento($requerimento);
-                $vch_documento_requerimento = $this->requerimento->getVchDocumento();
-                $status_requerimento = $this->requerimento->getStatus();
+            //     $update_documentos4 = $pdo->prepare("UPDATE ciptea.documentos 
+            //     SET vch_documento = :vch_documento,
+            //         status = :status 
+            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 4");
+            //     $update_documentos4->bindParam(':cod_pessoa', $cod_pessoa);
+            //     $update_documentos4->bindParam(':vch_documento', $vch_documento_documento);
+            //     $update_documentos4->bindParam(':status', $status_documento);
+            //     $update_documentos4->execute();
+            // }
+            // if($sr == 1){
+            //     $this->setRequerimento($requerimento);
+            //     $vch_documento_requerimento = $this->requerimento->getVchDocumento();
+            //     $status_requerimento = $this->requerimento->getStatus();
 
-                $update_documentos5 = $pdo->prepare("UPDATE ciptea.documentos 
-                SET vch_documento = :vch_documento,
-                    status = :status 
-                WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 5");
-                $update_documentos5->bindParam(':cod_pessoa', $cod_pessoa);
-                $update_documentos5->bindParam(':vch_documento', $vch_documento_requerimento);
-                $update_documentos5->bindParam(':status', $status_requerimento);
-                $update_documentos5->execute();
-            }
+            //     $update_documentos5 = $pdo->prepare("UPDATE ciptea.documentos 
+            //     SET vch_documento = :vch_documento,
+            //         status = :status 
+            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 5");
+            //     $update_documentos5->bindParam(':cod_pessoa', $cod_pessoa);
+            //     $update_documentos5->bindParam(':vch_documento', $vch_documento_requerimento);
+            //     $update_documentos5->bindParam(':status', $status_requerimento);
+            //     $update_documentos5->execute();
+            // }
             // Comitando a transação
             $pdo->commit();
 

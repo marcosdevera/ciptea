@@ -169,7 +169,11 @@
             <div class="step" id="step3">
                 <h2>Representante Legal</h2>
                 <div class="form-group">
+<<<<<<< Updated upstream
                     <label for="tem_representante">Possui Representante Legal?</label>
+=======
+                    <label for="tem_represetante">Possui Representante Legal?</label>
+>>>>>>> Stashed changes
                     <select class="form-control" name="bool_representante_legal" id="tem_representante" onchange="toggleRepresentanteLegal()">
                         <option value="0">Não</option>
                         <option value="1">Sim</option>
@@ -525,6 +529,19 @@
             var telefone = inputTelefone.value;
             inputTelefone.value = formatarTelefone(telefone);
         }
+
+        function toggleRepresentanteLegal(){
+            var temRepresentante =document.getElementById('tem_representante').value;
+            var representanteLegalDiv = document.getElementById('representante_legal');
+            if(temRepresentante == '1'){
+                representanteLegalDiv.style.display = 'block';
+            }else{
+                representanteLegalDiv.style.display = 'none';
+            }
+        }
+
+
+
     </script>
 </body>
 </html>

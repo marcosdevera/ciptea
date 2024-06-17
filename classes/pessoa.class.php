@@ -298,7 +298,7 @@ class Pessoa
             $pdo->beginTransaction();
 
             $consulta = $pdo->prepare("INSERT INTO ciptea.dados_pessoa(vch_nome, vch_nome_social, vch_telefone, vch_telefone_contato, cid, vch_tipo_sanguineo, int_sexo, vch_nome_pai, vch_nome_mae, sdt_nascimento, endereco, bairro, cep, cidade, vch_rg, vch_cpf, vch_num_cartao_sus, bool_representante_legal) 
-            VALUES (:vch_nome, :vch_nome_social, :vch_telefone, :vch_telefone_contato, :cid, :vch_tipo_sanguineo, :int_sexo, :vch_nome_pai, :vch_nome_mae, :sdt_nascimento, :endereco, :bairro, :cep, :cidade, :vch_rg, :vch_cpf, :vch_num_cartao_sus, :bool_representante_legal)");
+                                      VALUES (:vch_nome, :vch_nome_social, :vch_telefone, :vch_telefone_contato, :cid, :vch_tipo_sanguineo, :int_sexo, :vch_nome_pai, :vch_nome_mae, :sdt_nascimento, :endereco, :bairro, :cep, :cidade, :vch_rg, :vch_cpf, :vch_num_cartao_sus, :bool_representante_legal)");
             $consulta->bindParam(':vch_nome', $this->vch_nome);
             $consulta->bindParam(':vch_nome_social', $this->vch_nome_social);
             $consulta->bindParam(':vch_telefone_contato', $this->vch_telefone_contato);
@@ -322,57 +322,7 @@ class Pessoa
             $codPessoa = $pdo->lastInsertId();
 
 
-            $data_atual = date('Y-m-d H:i:s');
-            // //$this->setLaudo($laudo);
-            // $cod_tipo_laudo = $this->laudo->getCodTipoDocumento();
-            // $vch_documento_laudo = $this->laudo->getVchDocumento();
-            // $status_laudo = $this->laudo->getStatus();
-
-            // //$this->setFoto($foto);
-            // $cod_tipo_foto = $this->foto->getCodTipoDocumento();
-            // $vch_documento_foto = $this->foto->getVchDocumento();
-            // $status_foto = $this->foto->getStatus();
-
-            // //$this->setComprovante($comprovante);
-            // $cod_tipo_comprovante = $this->comprovante->getCodTipoDocumento();
-            // $vch_documento_comprovante = $this->comprovante->getVchDocumento();
-            // $status_comprovante = $this->comprovante->getStatus();
-
-           //$this->setDocumento($documento);
-            // $cod_tipo_documento = $this->documento->getCodTipoDocumento();
-            // $vch_documento_documento = $this->documento->getVchDocumento();
-            // $status_documento = $this->documento->getStatus(); 
-
-            // $consulta_documentos = $pdo->prepare("INSERT INTO ciptea.documentos(cod_pessoa, cod_tipo_documento, vch_documento, sdt_insercao, status) 
-            // VALUES (:cod_pessoa, :cod_tipo_documento, :vch_documento, :sdt_insercao, :status)");
-
-            // $consulta_documentos->bindParam(':cod_pessoa', $codPessoa);
-            // $consulta_documentos->bindParam(':cod_tipo_documento', $cod_tipo_laudo);
-            // $consulta_documentos->bindParam(':vch_documento', $vch_documento_laudo);
-            // $consulta_documentos->bindParam(':sdt_insercao', $data_atual);
-            // $consulta_documentos->bindParam(':status', $status_laudo);
-            // $consulta_documentos->execute();
-
-            // $consulta_documentos->bindParam(':cod_pessoa', $codPessoa);
-            // $consulta_documentos->bindParam(':cod_tipo_documento', $cod_tipo_foto);
-            // $consulta_documentos->bindParam(':vch_documento', $vch_documento_foto);
-            // $consulta_documentos->bindParam(':sdt_insercao', $data_atual);
-            // $consulta_documentos->bindParam(':status', $status_foto);
-            // $consulta_documentos->execute();
-
-            // $consulta_documentos->bindParam(':cod_pessoa', $codPessoa);
-            // $consulta_documentos->bindParam(':cod_tipo_documento', $cod_tipo_comprovante);
-            // $consulta_documentos->bindParam(':vch_documento', $vch_documento_comprovante);
-            // $consulta_documentos->bindParam(':sdt_insercao', $data_atual);
-            // $consulta_documentos->bindParam(':status', $status_comprovante);
-            // $consulta_documentos->execute();
-
-            // $consulta_documentos->bindParam(':cod_pessoa', $codPessoa);
-            // $consulta_documentos->bindParam(':cod_tipo_documento', $cod_tipo_documento);
-            // $consulta_documentos->bindParam(':vch_documento', $vch_documento_documento);
-            // $consulta_documentos->bindParam(':sdt_insercao', $data_atual);
-            // $consulta_documentos->bindParam(':status', $status_documento);
-            // $consulta_documentos->execute();
+//            $data_atual = date('Y-m-d H:i:s');
 
             $this->setUsuario($usuario);
             $vch_login = $this->usuario->getVch_login();
@@ -1040,7 +990,7 @@ class Pessoa
         FROM ciptea.dados_pessoa AS dp
         LEFT JOIN ciptea.dados_responsavel_legal as dr
         ON dp.cod_pessoa = dr.cod_pessoa
-        WHERE dp.cod_usuario = :cod_usuario;";
+        WHERE dp.cod_usuario = :cod_usuario";
         $consulta = $pdo->prepare($sql);
         $consulta->bindParam(':cod_usuario', $cod_usuario);
         $consulta->execute();

@@ -177,14 +177,14 @@
                 </div>
                 <div id="representante_legal" style="display: none;">
                     <div class="form-group">
-                        <label for="vch_nome_representante">Nome do Representante:</label>
-                        <input type="text" class="form-control" name="vch_nome_representante" id="vch_nome_representante">
+                        <label for="vch_nome_responsavel">Nome do Representante:</label>
+                        <input type="text" class="form-control" name="vch_nome_responsavel" id="vch_nome_responsavel">
                     </div>
                     <div class="form-group">
-                        <label for="sexo_responsavel_legal">Sexo do Responsável:</label>
+                        <label for="int_sexo_responsavel">Sexo do Responsável:</label>
                         <div class="radio-group">
-                            <input type="radio" name="sexo_responsavel" id="sexo_responsavel_m" value="1"><label for="sexo_responsavel_m">Masculino</label>
-                            <input type="radio" name="sexo_responsavel" id="sexo_responsavel_f" value="2"><label for="sexo_responsavel_f">Feminino</label>
+                            <input type="radio" name="int_sexo_responsavel" id="sexo_responsavel_m" value="1"><label for="sexo_responsavel_m">Masculino</label>
+                            <input type="radio" name="int_sexo_responsavel" id="sexo_responsavel_f" value="2"><label for="sexo_responsavel_f">Feminino</label>
                         </div>
                     </div>
                     <div class="form-group">
@@ -203,10 +203,7 @@
                         <label for="vch_endereco_responsavel">Endereço do Responsável:</label>
                         <input type="text" class="form-control" name="vch_endereco_responsavel" id="vch_endereco_responsavel">
                     </div>
-                    <div class="form-group">
-                        <label for="comp_responsavel">Complemento:</label>
-                        <input type="text" class="form-control" name="comp_responsavel" id="comp_responsavel">
-                    </div>
+            
                     <div class="form-group">
                         <label for="vch_bairro_responsavel">Bairro do Responsável:</label>
                         <input type="text" class="form-control" name="vch_bairro_responsavel" id="vch_bairro_responsavel">

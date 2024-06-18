@@ -1,3 +1,15 @@
+<?php
+    include_once("classes/pessoa.class.php");
+    include_once("sessao.php");
+
+    $p = new Pessoa();
+    $cod_usuario = $_SESSION["user_session"];
+    $result_p = $p->exibirPessoaUsuario($cod_usuario);
+    $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>

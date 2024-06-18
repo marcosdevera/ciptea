@@ -298,7 +298,7 @@ class Pessoa
             $pdo->beginTransaction();
 
             $consulta = $pdo->prepare("INSERT INTO ciptea.dados_pessoa(vch_nome, vch_nome_social, vch_telefone, vch_telefone_contato, cid, vch_tipo_sanguineo, int_sexo, vch_nome_pai, vch_nome_mae, sdt_nascimento, endereco, bairro, cep, cidade, vch_rg, vch_cpf, vch_num_cartao_sus, bool_representante_legal) 
-                                      VALUES (:vch_nome, :vch_nome_social, :vch_telefone, :vch_telefone_contato, :cid, :vch_tipo_sanguineo, :int_sexo, :vch_nome_pai, :vch_nome_mae, :sdt_nascimento, :endereco, :bairro, :cep, :cidade, :vch_rg, :vch_cpf, :vch_num_cartao_sus, :bool_representante_legal)");
+            VALUES (:vch_nome, :vch_nome_social, :vch_telefone, :vch_telefone_contato, :cid, :vch_tipo_sanguineo, :int_sexo, :vch_nome_pai, :vch_nome_mae, :sdt_nascimento, :endereco, :bairro, :cep, :cidade, :vch_rg, :vch_cpf, :vch_num_cartao_sus, :bool_representante_legal)");
             $consulta->bindParam(':vch_nome', $this->vch_nome);
             $consulta->bindParam(':vch_nome_social', $this->vch_nome_social);
             $consulta->bindParam(':vch_telefone_contato', $this->vch_telefone_contato);

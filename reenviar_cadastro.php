@@ -1,15 +1,14 @@
 <?php
-    include_once("classes/pessoa.class.php");
-    include_once("sessao.php");
+include_once("classes/pessoa.class.php");
+include_once("sessao.php");
 
-    $p = new Pessoa();
-    $cod_usuario = $_SESSION["user_session"];
-    $result_p = $p->exibirPessoaUsuario($cod_usuario);
-    $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
-
+$p = new Pessoa();
+$cod_usuario = $_SESSION["user_session"];
+$result_p = $p->exibirPessoaUsuario($cod_usuario);
+$row_p = $result_p->fetch(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,8 +21,6 @@
     <!-- Fonte personalizada do Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        
-        /* Estilo do corpo da página    <--value="<?php echo $row_p['vch_nome'] ?>"--> */
         body {
             font-family: 'Poppins', sans-serif;
             background: url('images/background_login2.webp') no-repeat center center fixed;
@@ -35,8 +32,6 @@
             align-items: center;
             height: 100vh;
         }
-
-        /* Estilo do contêiner principal */
         .container {
             background-color: rgba(255, 255, 255, 0.9);
             padding: 20px;
@@ -45,51 +40,38 @@
             max-width: 600px;
             width: 100%;
         }
-
-        /* Estilo dos passos do formulário */
         .step {
             display: none;
         }
-
         .step.active {
             display: block;
             animation: fadeIn 0.5s;
         }
-
         .step.finished {
             display: block;
             animation: fadeOut 0.5s;
         }
-
-        /* Animação de fade in */
         @keyframes fadeIn {
             from {
                 opacity: 0;
             }
-
             to {
                 opacity: 1;
             }
         }
-
-        /* Animação de fade out */
         @keyframes fadeOut {
             from {
                 opacity: 1;
             }
-
             to {
                 opacity: 0;
             }
         }
-
-        /* Estilo da barra de progresso */
         .progress-bar {
             background-color: #e0e0e0;
             border-radius: 5px;
             margin-bottom: 20px;
         }
-
         .progress {
             height: 20px;
             background-color: #007bff;
@@ -97,14 +79,11 @@
             width: 0;
             transition: width 0.3s;
         }
-
-        /* Estilo dos botões */
         .buttons {
             display: flex;
             justify-content: space-between;
             margin-top: 20px;
         }
-
         .buttons button {
             padding: 10px 20px;
             font-size: 16px;
@@ -112,31 +91,25 @@
             border-radius: 20px;
             border: none;
         }
-
         .buttons .next {
             background-color: #007bff;
             color: #fff;
         }
-
         .buttons .next:hover {
             background-color: #0056b3;
         }
-
         .buttons .prev {
             background-color: #ccc;
             color: #333;
         }
-
         .buttons .prev:hover {
             background-color: #999;
         }
     </style>
 </head>
-
 <body>
     <div class="container">
         <div class="header text-center">
-            <!-- Logo do site -->
             <img src="images/ciptea.png" alt="CIPTEA Logo" class="img-fluid">
         </div>
         <div class="progress-bar">
@@ -147,107 +120,107 @@
                 <h2>Informações Pessoais</h2>
                 <div class="form-group">
                     <label for="vch_nome">Nome:</label>
-                    <input type="text" class="form-control" name="vch_nome" id="vch_nome" value="<?php echo $row_p['vch_nome'] ?>" required>
+                    <input type="text" class="form-control" name="vch_nome" id="vch_nome" value="<?php echo isset($row_p['vch_nome']) ? $row_p['vch_nome'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="vch_nome_social">Nome Social:</label>
-                    <input type="text" class="form-control" name="vch_nome_social" id="vch_nome_social" value="<?php echo $row_p['vch_nome_social'] ?>">
+                    <input type="text" class="form-control" name="vch_nome_social" id="vch_nome_social" value="<?php echo isset($row_p['vch_nome_social']) ? $row_p['vch_nome_social'] : ''; ?>">
                 </div>
                 <div class="form-group">
                     <label for="sexo">Sexo:</label>
                     <div class="radio-group">
-        <input type="radio" name="sexo" id="sexo_m" value="1" <?php if($row_p['sexo'] == 1) { echo "checked"; } ?> required>
-        <label for="sexo_m">Masculino</label>
-    
-        <input type="radio" name="sexo" id="sexo_f" value="2" <?php if($row_p['sexo'] == 2) { echo "checked"; } ?> required>
-        <label for="sexo_f">Feminino</label>
-</div>
+                        <input type="radio" name="sexo" id="sexo_m" value="1" <?php echo isset($row_p['sexo']) && $row_p['sexo'] == 1 ? 'checked' : ''; ?> required>
+                        <label for="sexo_m">Masculino</label>
+                        <input type="radio" name="sexo" id="sexo_f" value="2" <?php echo isset($row_p['sexo']) && $row_p['sexo'] == 2 ? 'checked' : ''; ?> required>
+                        <label for="sexo_f">Feminino</label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="sdt_nascimento">Data de Nascimento:</label>
-                    <input type="date" class="form-control" name="sdt_nascimento" id="sdt_nascimento" value="<?php echo $row_p['sdt_nascimento'] ?>" required>
+                    <input type="date" class="form-control" name="sdt_nascimento" id="sdt_nascimento" value="<?php echo isset($row_p['sdt_nascimento']) ? $row_p['sdt_nascimento'] : ''; ?>" required>
                 </div>
             </div>
             <div class="step" id="step2">
                 <h2>Contato e Documento</h2>
                 <div class="form-group">
                     <label for="vch_telefone">Telefone:</label>
-                    <input type="text" class="form-control" name="vch_telefone" id="vch_telefone" oninput="aplicarMascaraTelefone('vch_telefone')" maxlength="15" value="<?php echo $row_p['vch_telefone'] ?>" varequired>
+                    <input type="text" class="form-control" name="vch_telefone" id="vch_telefone" oninput="aplicarMascaraTelefone('vch_telefone')" maxlength="15" value="<?php echo isset($row_p['vch_telefone']) ? $row_p['vch_telefone'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="cid">CID:</label>
-                    <input type="text" class="form-control" name="cid" id="cid" value="<?php echo $row_p['cid'] ?>"  required>
+                    <input type="text" class="form-control" name="cid" id="cid" value="<?php echo isset($row_p['cid']) ? $row_p['cid'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="vch_nome_pai">Nome do Pai:</label>
-                    <input type="text" class="form-control" name="vch_nome_pai" id="vch_nome_pai" maxlength="50" value="<?php echo $row_p['vch_nome_pai'] ?>" required>
+                    <input type="text" class="form-control" name="vch_nome_pai" id="vch_nome_pai" maxlength="50" value="<?php echo isset($row_p['vch_nome_pai']) ? $row_p['vch_nome_pai'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="vch_nome_mae">Nome da Mãe:</label>
-                    <input type="text" class="form-control" name="vch_nome_mae" id="vch_nome_mae" maxlength="50" value="<?php echo $row_p['vch_nome_mae'] ?>" required>
+                    <input type="text" class="form-control" name="vch_nome_mae" id="vch_nome_mae" maxlength="50" value="<?php echo isset($row_p['vch_nome_mae']) ? $row_p['vch_nome_mae'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="vch_cpf">CPF:</label>
-                    <input type="text" class="form-control" name="vch_cpf" id="vch_cpf" oninput="formatarCPF('vch_cpf')" onblur="validarCPFOnBlur('vch_cpf')" maxlength="14" value="<?php echo $row_p['vch_cpf'] ?>" required>
+                    <input type="text" class="form-control" name="vch_cpf" id="vch_cpf" oninput="formatarCPF('vch_cpf')" onblur="validarCPFOnBlur('vch_cpf')" maxlength="14" value="<?php echo isset($row_p['vch_cpf']) ? $row_p['vch_cpf'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="vch_rg">RG:</label>
-                    <input type="text" class="form-control" name="vch_rg" id="vch_rg" onkeyup="formatarRG()" maxlength="13" value="<?php echo $row_p['vch_rg'] ?>" required>
+                    <input type="text" class="form-control" name="vch_rg" id="vch_rg" onkeyup="formatarRG()" maxlength="13" value="<?php echo isset($row_p['vch_rg']) ? $row_p['vch_rg'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="vch_num_cartao_sus">Número do Cartão do SUS:</label>
-                    <input type="text" class="form-control" name="vch_num_cartao_sus" id="vch_num_cartao_sus" oninput="formatarCNS()" maxlength="18" value="<?php echo $row_p['vch_num_cartao_sus'] ?>" required>
+                    <input type="text" class="form-control" name="vch_num_cartao_sus" id="vch_num_cartao_sus" oninput="formatarCNS()" maxlength="18" value="<?php echo isset($row_p['vch_num_cartao_sus']) ? $row_p['vch_num_cartao_sus'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="vch_tipo_sanguineo">Tipo Sanguíneo:</label>
-                    <input type="text" class="form-control" name="vch_tipo_sanguineo" id="vch_tipo_sanguineo" maxlength="2" value="<?php echo $row_p['vch_tipo_sanguineo'] ?>"required>
+                    <input type="text" class="form-control" name="vch_tipo_sanguineo" id="vch_tipo_sanguineo" maxlength="2" value="<?php echo isset($row_p['vch_tipo_sanguineo']) ? $row_p['vch_tipo_sanguineo'] : ''; ?>" required>
                 </div>
             </div>
             <div class="step" id="step3">
                 <h2>Representante Legal</h2>
                 <div class="form-group">
                     <label for="tem_representante">Possui Representante Legal?</label>
-                    <select class="form-control" name="bool_representante_legal" id="tem_representante" onchange="toggleRepresentanteLegal() " value="<?php echo $row_p['tem_representante'] ?>">
-                    <option value="0" <?php if($row_p['bool_representante_legal'] == 0){echo "selected";} ?>>Não</option>
-                    <option value="1" <?php if($row_p['bool_representante_legal'] == 1){echo "selected";} ?>>Sim</option>
+                    <select class="form-control" name="bool_representante_legal" id="tem_representante" onchange="toggleRepresentanteLegal()">
+                        <option value="0" <?php echo isset($row_p['bool_representante_legal']) && $row_p['bool_representante_legal'] == 0 ? 'selected' : ''; ?>>Não</option>
+                        <option value="1" <?php echo isset($row_p['bool_representante_legal']) && $row_p['bool_representante_legal'] == 1 ? 'selected' : ''; ?>>Sim</option>
                     </select>
                 </div>
                 <div id="representante_legal" style="display: none;">
                     <div class="form-group">
                         <label for="vch_nome_responsavel">Nome do Representante:</label>
-                        <input type="text" class="form-control" name="vch_nome_responsavel" id="vch_nome_responsavel" value="<?php echo $row_p['vch_nome_responsavel'] ?>">
+                        <input type="text" class="form-control" name="vch_nome_responsavel" id="vch_nome_responsavel" value="<?php echo isset($row_p['vch_nome_responsavel']) ? $row_p['vch_nome_responsavel'] : ''; ?>">
                     </div>
                     <div class="form-group">
                         <label for="int_sexo_responsavel">Sexo do Responsável:</label>
                         <div class="radio-group">
-                            <input type="radio" name="int_sexo_responsavel" id="sexo_responsavel_m" value="1"><label for="sexo_responsavel_m ">Masculino</label>
-                            <input type="radio" name="int_sexo_responsavel" id="sexo_responsavel_f" value="2"><label for="sexo_responsavel_f">Feminino</label>
+                            <input type="radio" name="int_sexo_responsavel" id="sexo_responsavel_m" value="1" <?php echo isset($row_p['int_sexo_responsavel']) && $row_p['int_sexo_responsavel'] == 1 ? 'checked' : ''; ?>>
+                            <label for="sexo_responsavel_m">Masculino</label>
+                            <input type="radio" name="int_sexo_responsavel" id="sexo_responsavel_f" value="2" <?php echo isset($row_p['int_sexo_responsavel']) && $row_p['int_sexo_responsavel'] == 2 ? 'checked' : ''; ?>>
+                            <label for="sexo_responsavel_f">Feminino</label>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="vch_telefone_responsavel">Telefone do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_telefone_responsavel" id="vch_telefone_responsavel" oninput="aplicarMascaraTelefone('vch_telefone_responsavel')" maxlength="15" value="<?php echo $row_p['vch_telefone_responsavel'] ?>">
+                        <input type="text" class="form-control" name="vch_telefone_responsavel" id="vch_telefone_responsavel" oninput="aplicarMascaraTelefone('vch_telefone_responsavel')" maxlength="15" value="<?php echo isset($row_p['vch_telefone_responsavel']) ? $row_p['vch_telefone_responsavel'] : ''; ?>">
                     </div>
                     <div class="form-group">
                         <label for="vch_cpf_responsavel">CPF do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_cpf_responsavel" id="vch_cpf_responsavel" oninput="formatarCPF('vch_cpf_responsavel')" onblur="validarCPFOnBlur('vch_cpf_responsavel')" maxlength="14 " value="<?php echo $row_p['vch_cpf_responsavel'] ?>">
+                        <input type="text" class="form-control" name="vch_cpf_responsavel" id="vch_cpf_responsavel" oninput="formatarCPF('vch_cpf_responsavel')" onblur="validarCPFOnBlur('vch_cpf_responsavel')" maxlength="14" value="<?php echo isset($row_p['vch_cpf_responsavel']) ? $row_p['vch_cpf_responsavel'] : ''; ?>">
                     </div>
                     <div class="form-group">
                         <label for="vch_cep_responsavel">CEP do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_cep_responsavel" id="vch_cep_responsavel" oninput="aplicarMascaraCEP('vch_cep_responsavel')" maxlength="9" value="<?php echo $row_p['vch_cep_responsavel'] ?>">
+                        <input type="text" class="form-control" name="vch_cep_responsavel" id="vch_cep_responsavel" oninput="aplicarMascaraCEP('vch_cep_responsavel')" maxlength="9" value="<?php echo isset($row_p['vch_cep_responsavel']) ? $row_p['vch_cep_responsavel'] : ''; ?>">
                     </div>
                     <div class="form-group">
                         <label for="vch_endereco_responsavel">Endereço do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_endereco_responsavel" id="vch_endereco_responsavel" value="<?php echo $row_p['vch_endereco_responsavel'] ?>">
+                        <input type="text" class="form-control" name="vch_endereco_responsavel" id="vch_endereco_responsavel" value="<?php echo isset($row_p['vch_endereco_responsavel']) ? $row_p['vch_endereco_responsavel'] : ''; ?>">
                     </div>
-
                     <div class="form-group">
                         <label for="vch_bairro_responsavel">Bairro do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_bairro_responsavel" id="vch_bairro_responsavel" value="<?php echo $row_p['vch_bairro_responsavel'] ?>">
+                        <input type="text" class="form-control" name="vch_bairro_responsavel" id="vch_bairro_responsavel" value="<?php echo isset($row_p['vch_bairro_responsavel']) ? $row_p['vch_bairro_responsavel'] : ''; ?>">
                     </div>
                     <div class="form-group">
                         <label for="vch_cidade_responsavel">Cidade do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_cidade_responsavel" id="vch_cidade_responsavel" value="<?php echo $row_p['vch_cidade_responsavel'] ?>">
+                        <input type="text" class="form-control" name="vch_cidade_responsavel" id="vch_cidade_responsavel" value="<?php echo isset($row_p['vch_cidade_responsavel']) ? $row_p['vch_cidade_responsavel'] : ''; ?>">
                     </div>
                 </div>
             </div>
@@ -255,19 +228,19 @@
                 <h2>Endereço</h2>
                 <div class="form-group">
                     <label for="endereco">Endereço:</label>
-                    <input type="text" class="form-control" name="endereco" id="endereco" value="<?php echo $row_p['endereco'] ?>" required>
+                    <input type="text" class="form-control" name="endereco" id="endereco" value="<?php echo isset($row_p['endereco']) ? $row_p['endereco'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="bairro">Bairro:</label>
-                    <input type="text" class="form-control" name="bairro" id="bairro" value="<?php echo $row_p['bairro'] ?>" required>
+                    <input type="text" class="form-control" name="bairro" id="bairro" value="<?php echo isset($row_p['bairro']) ? $row_p['bairro'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="cidade">Cidade:</label>
-                    <input type="text" class="form-control" name="cidade" id="cidade" value="<?php echo $row_p['cidade'] ?>" required>
+                    <input type="text" class="form-control" name="cidade" id="cidade" value="<?php echo isset($row_p['cidade']) ? $row_p['cidade'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="cep">CEP:</label>
-                    <input type="text" class="form-control" name="cep" id="cep" oninput="formatarCEP('cep')" maxlength="9" value="<?php echo $row_p['cep'] ?>" required>
+                    <input type="text" class="form-control" name="cep" id="cep" oninput="formatarCEP('cep')" maxlength="9" value="<?php echo isset($row_p['cep']) ? $row_p['cep'] : ''; ?>" required>
                 </div>
             </div>
             <div class="buttons">
@@ -280,11 +253,9 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // Variável para rastrear o passo atual do formulário
         var currentStep = 0;
         showStep(currentStep);
 
-        // Função para exibir o passo atual
         function showStep(n) {
             var steps = document.getElementsByClassName("step");
             steps[n].style.display = "block";
@@ -303,7 +274,6 @@
             }
         }
 
-        // Função para avançar ou retroceder entre os passos
         function nextPrev(n) {
             var steps = document.getElementsByClassName("step");
             steps[currentStep].classList.remove('active');
@@ -321,7 +291,6 @@
             }, 500);
         }
 
-        // Função para atualizar a barra de progresso
         function updateProgressBar(n) {
             var progress = document.querySelector(".progress");
             var steps = document.getElementsByClassName("step");
@@ -329,7 +298,6 @@
             progress.style.width = percent + "%";
         }
 
-        // Funções para interações específicas quando o documento estiver pronto
         $(document).ready(function() {
             $('#showPassword').change(function() {
                 var passwordField = $('#vch_senha');
@@ -348,21 +316,17 @@
             });
 
             $('#tem_representante').change(function() {
-                if ($(this).val() == '1') {
-                    $('#representante_legal').show();
-                } else {
-                    $('#representante_legal').hide();
-                }
+                toggleRepresentanteLegal();
             });
+
+            toggleRepresentanteLegal(); // Chamar para definir o estado inicial
         });
 
-        // Função para exibir um alerta
         function exibirAlerta() {
             var alertDiv = document.getElementById("alert-message");
             alertDiv.style.display = "block";
         }
 
-        // Função para verificar o login via AJAX
         function verificarLogin() {
             var login = document.getElementById('vch_login').value;
             var xhr = new XMLHttpRequest();
@@ -379,7 +343,6 @@
             xhr.send('login=' + login);
         }
 
-        // Função para validar se as senhas são iguais
         function validarSenhas() {
             var senha = document.getElementById("vch_senha").value;
             var confirmacao = document.getElementById("vch_confirm_senha").value;
@@ -390,7 +353,6 @@
             return true;
         }
 
-        // Função para formatar o CPF
         function formatCPF(cpf) {
             cpf = cpf.replace(/\D/g, '');
             cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
@@ -399,7 +361,6 @@
             return cpf;
         }
 
-        // Função para validar o CPF
         function validarCPF(cpf) {
             cpf = cpf.replace(/\D/g, '');
             if (cpf.length !== 11) return false;
@@ -439,13 +400,11 @@
             return true;
         }
 
-        // Função para formatar o CPF no campo de input
         function formatarCPF(inputId) {
             var cpfInput = document.getElementById(inputId);
             cpfInput.value = formatCPF(cpfInput.value);
         }
 
-        // Função para validar o CPF quando sair do campo de input
         function validarCPFOnBlur(inputId) {
             var cpfInput = document.getElementById(inputId);
             var cpf = cpfInput.value.replace(/\D/g, '');
@@ -472,7 +431,6 @@
             }
         }
 
-        // Função para formatar o RG
         function formatarRG() {
             var rgInput = document.getElementById('vch_rg');
             var rg = rgInput.value.replace(/\D/g, '');
@@ -490,7 +448,6 @@
             rgInput.value = rg;
         }
 
-        // Função para formatar o número do CNS
         function formatarCNS() {
             var cnsInput = document.getElementById('vch_num_cartao_sus');
             var cns = cnsInput.value.replace(/\D/g, '');
@@ -508,21 +465,18 @@
             cnsInput.value = cns;
         }
 
-        // Função para formatar o CEP
         function formatarCEP(cep) {
             cep = cep.replace(/\D/g, '');
             cep = cep.replace(/^(\d{5})(\d{1})/, '$1-$2');
             return cep;
         }
 
-        // Função para aplicar máscara no campo de input do CEP
         function aplicarMascaraCEP(inputId) {
             var inputCEP = document.getElementById(inputId);
             var cep = inputCEP.value;
             inputCEP.value = formatarCEP(cep);
         }
 
-        // Função para formatar o telefone
         function formatarTelefone(telefone) {
             telefone = telefone.replace(/\D/g, '');
             if (telefone.length === 11) {
@@ -537,15 +491,36 @@
             return telefone;
         }
 
-        // Função para aplicar máscara no campo de input do telefone
         function aplicarMascaraTelefone(id) {
             var inputTelefone = document.getElementById(id);
             var telefone = inputTelefone.value;
             inputTelefone.value = formatarTelefone(telefone);
         }
-    </script>
-</body>
 
-</html>
+        function toggleRepresentanteLegal() {
+            const representanteLegal = document.getElementById('tem_representante').value;
+            const representanteDiv = document.getElementById('representante_legal');
+            if (representanteLegal == "1") {
+                representanteDiv.style.display = "block";
+            } else {
+                representanteDiv.style.display = "none";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const boolRepresentanteLegal = "<?php echo isset($row_p['bool_representante_legal']) ? $row_p['bool_representante_legal'] : ''; ?>";
+            const sexo = "<?php echo isset($row_p['sexo']) ? $row_p['sexo'] : ''; ?>";
+
+            const selectElement = document.getElementById('tem_representante');
+            selectElement.value = boolRepresentanteLegal;
+            toggleRepresentanteLegal();
+
+            if (sexo === "1") {
+                document.getElementById('sexo_m').checked = true;
+            } else if (sexo === "2") {
+                document.getElementById('sexo_f').checked = true;
+            }
+        });
+    </script>
 </body>
 </html>

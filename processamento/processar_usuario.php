@@ -219,10 +219,12 @@ if (isset($_POST['cod_usuario']) && !empty($_POST['cod_usuario'])) {
         $pessoa->inserirPessoa($usuario);
     }
     echo "Cadastro realizado com sucesso!";
+    header("Location: ../cadastro_inicialUP.php");
+    exit();
 }
 } catch (Exception $e) {
 echo "Erro ao realizar a operação: " . $e->getMessage();
-header("Location: ../cadastro_inicialUP.php");
-exit();
+
+
 }
 ?>

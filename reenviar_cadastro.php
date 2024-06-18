@@ -3,9 +3,13 @@ include_once("classes/pessoa.class.php");
 include_once("sessao.php");
 
 $p = new Pessoa();
+
 $cod_usuario = $_SESSION["user_session"];
+
 $result_p = $p->exibirPessoaUsuario($cod_usuario);
+
 $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -115,7 +119,10 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
         <div class="progress-bar">
             <div class="progress"></div>
         </div>
-        <form name="form" id="registrationForm" action="processamento/processar_usuario.php" method="POST" enctype="multipart/form-data" onsubmit="return validarSenhas()">
+        <form name="form" action="processamento/processar_usuario.php" method="POST" enctype="multipart/form-data">
+        
+        <input type="hidden" name="cod_usuario" id="cod_usuario" value="<?php echo $cod_usuario; ?>" required>
+
             <div class="step active" id="step1">
                 <h2>Informações Pessoais</h2>
                 <div class="form-group">
@@ -129,12 +136,10 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 <div class="form-group">
                     <label for="sexo">Sexo:</label>
                     <div class="radio-group">
-                    <input type="radio" name="sexo" id="sexo_m" value="1" <?php echo (isset($row_p['int_sexo']) && $row_p['int_sexo'] == 1) ? 'checked' : ''; ?> required>
-<label for="sexo_m">Masculino</label>
-
-<input type="radio" name="sexo" id="sexo_f" value="2" <?php echo (isset($row_p['int_sexo']) && $row_p['int_sexo'] == 2) ? 'checked' : ''; ?> required>
-<label for="sexo_f">Feminino</label>
-
+                        <input type="radio" name="sexo" id="sexo_m" value="1" <?php echo isset($row_p['int_sexo']) && $row_p['int_sexo'] == 1 ? 'checked' : ''; ?> required>
+                        <label for="sexo_m">Masculino</label>
+                        <input type="radio" name="sexo" id="sexo_f" value="2" <?php echo isset($row_p['int_sexo']) && $row_p['int_sexo'] == 2 ? 'checked' : ''; ?> required>
+                        <label for="sexo_f">Feminino</label>
                     </div>
                 </div>
                 <div class="form-group">
@@ -248,7 +253,11 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             <div class="buttons">
                 <button type="button" class="prev btn btn-secondary" onclick="nextPrev(-1)">Anterior</button>
                 <button type="button" class="next btn btn-primary" onclick="nextPrev(1)">Próximo</button>
-                <button type="submit" class="submit btn btn-primary" style="display: none;">Enviar</button>
+
+                <input type="hidden" name="MM_action" class="MM_action" value="4">
+                <input type="submit" class="submit btn btn-primary" value="Alterar dados">
+                
+                
             </div>
         </form>
     </div>
@@ -523,23 +532,6 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 document.getElementById('sexo_f').checked = true;
             }
         });
-      
-        document.addEventListener('DOMContentLoaded', (event) => {
-    const intSexo = "<?php echo isset($row_p['int_sexo']) ? $row_p['int_sexo'] : ''; ?>";
-
-    if (intSexo === "1") {
-        document.getElementById('sexo_m').checked = true;
-    } else if (intSexo === "2") {
-        document.getElementById('sexo_f').checked = true;
-    }
-});
-
-
-</script>
-
-
-
-
     </script>
 </body>
 </html>

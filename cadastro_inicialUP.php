@@ -295,9 +295,10 @@
         formData.append(input.name, input.files[0]);
 
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'processar_usuario.php', true);
+        xhr.open('POST', 'processamento/processar_upload.php', true);
         xhr.onload = function() {
-            if (xhr.status === 200) {
+            
+            if (xhr.status === 200) { 
                 var response = JSON.parse(xhr.responseText);
                 if (response.success) {
                     var section = document.getElementById('step-' + step);

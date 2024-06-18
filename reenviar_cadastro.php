@@ -129,10 +129,12 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 <div class="form-group">
                     <label for="sexo">Sexo:</label>
                     <div class="radio-group">
-                        <input type="radio" name="sexo" id="sexo_m" value="1" <?php echo isset($row_p['sexo']) && $row_p['sexo'] == 1 ? 'checked' : ''; ?> required>
-                        <label for="sexo_m">Masculino</label>
-                        <input type="radio" name="sexo" id="sexo_f" value="2" <?php echo isset($row_p['sexo']) && $row_p['sexo'] == 2 ? 'checked' : ''; ?> required>
-                        <label for="sexo_f">Feminino</label>
+                    <input type="radio" name="sexo" id="sexo_m" value="1" <?php echo (isset($row_p['int_sexo']) && $row_p['int_sexo'] == 1) ? 'checked' : ''; ?> required>
+<label for="sexo_m">Masculino</label>
+
+<input type="radio" name="sexo" id="sexo_f" value="2" <?php echo (isset($row_p['int_sexo']) && $row_p['int_sexo'] == 2) ? 'checked' : ''; ?> required>
+<label for="sexo_f">Feminino</label>
+
                     </div>
                 </div>
                 <div class="form-group">
@@ -521,6 +523,23 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 document.getElementById('sexo_f').checked = true;
             }
         });
+      
+        document.addEventListener('DOMContentLoaded', (event) => {
+    const intSexo = "<?php echo isset($row_p['int_sexo']) ? $row_p['int_sexo'] : ''; ?>";
+
+    if (intSexo === "1") {
+        document.getElementById('sexo_m').checked = true;
+    } else if (intSexo === "2") {
+        document.getElementById('sexo_f').checked = true;
+    }
+});
+
+
+</script>
+
+
+
+
     </script>
 </body>
 </html>

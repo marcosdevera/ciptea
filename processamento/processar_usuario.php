@@ -168,41 +168,40 @@ if (isset($_POST['vch_senha'])) {
         }
         echo "Cadastro realizado com sucesso!";
     }
-
-    // Processamento dos arquivos enviados
-    $uploadDir = '../uploads/'; // Diretório de upload
-    $status = 1; // Status inicial dos documentos
-
-    $documentFiles = [
-        'form_requerimento' => 1,
-        'foto' => 2,
-        'doc_foto' => 3,
-        'comp_residencia' => 4,
-        'laudo' => 5
-    ];
-
-    foreach ($documentFiles as $inputName => $docType) {
-        if (isset($_FILES[$inputName]) && $_FILES[$inputName]['error'] == UPLOAD_ERR_OK) {
-            $fileTmpPath = $_FILES[$inputName]['tmp_name'];
-            $fileName = $_FILES[$inputName]['name'];
-            $destination = $uploadDir . $fileName;
-
-            if (move_uploaded_file($fileTmpPath, $destination)) {
-                // Inserir registro do documento no banco
-                $sql = "INSERT INTO ciptea.documentos (cod_pessoa, cod_tipo_documento, vch_documento, sdt_insercao, status) 
-                        VALUES (:cod_pessoa, :cod_tipo_documento, :vch_documento, NOW(), :status)";
-                $params = [
-                    ':cod_pessoa' => $codPessoa,
-                    ':cod_tipo_documento' => $docType,
-                    ':vch_documento' => $fileName,
-                    ':status' => $status
-                ];
-                $db->execute($sql, $params);
-            } else {
-                throw new Exception('Erro ao mover o arquivo ' . $fileName);
-            }
-        }
-    }
+     // Processamento dos arquivos enviados
+     $uploadDir = '../uploads/'; // Diretório de upload
+     $status = 1; // Status inicial dos documentos
+ 
+     $documentFiles = [
+         'form_requerimento' => 1,
+         'foto' => 2,
+         'doc_foto' => 3,
+         'comp_residencia' => 4,
+         'laudo' => 5
+     ];
+ 
+     foreach ($documentFiles as $inputName => $docType) {
+         if (isset($_FILES[$inputName]) && $_FILES[$inputName]['error'] == UPLOAD_ERR_OK) {
+             $fileTmpPath = $_FILES[$inputName]['tmp_name'];
+             $fileName = $_FILES[$inputName]['name'];
+             $destination = $uploadDir . $fileName;
+ 
+             if (move_uploaded_file($fileTmpPath, $destination)) {
+                 // Inserir registro do documento no banco
+                 $sql = "INSERT INTO ciptea.documentos (cod_pessoa, cod_tipo_documento, vch_documento, sdt_insercao, status) 
+                         VALUES (:cod_pessoa, :cod_tipo_documento, :vch_documento, NOW(), :status)";
+                 $params = [
+                     ':cod_pessoa' => $codPessoa,
+                     ':cod_tipo_documento' => $docType,
+                     ':vch_documento' => $fileName,
+                     ':status' => $status
+                 ];
+                 $db->execute($sql, $params);
+             } else {
+                 throw new Exception('Erro ao mover o arquivo ' . $fileName);
+             }
+         }
+     }
 
 
 if (isset($_POST['cod_usuario']) && !empty($_POST['cod_usuario'])) {

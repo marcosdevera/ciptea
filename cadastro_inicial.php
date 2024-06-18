@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!-- Metadados básicos da página -->
     <meta charset="UTF-8">
@@ -26,6 +27,7 @@
             align-items: center;
             height: 100vh;
         }
+
         /* Estilo do contêiner principal */
         .container {
             background-color: rgba(255, 255, 255, 0.9);
@@ -35,34 +37,51 @@
             max-width: 600px;
             width: 100%;
         }
+
         /* Estilo dos passos do formulário */
         .step {
             display: none;
         }
+
         .step.active {
             display: block;
             animation: fadeIn 0.5s;
         }
+
         .step.finished {
             display: block;
             animation: fadeOut 0.5s;
         }
+
         /* Animação de fade in */
         @keyframes fadeIn {
-            from {opacity: 0;}
-            to {opacity: 1;}
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
+
         /* Animação de fade out */
         @keyframes fadeOut {
-            from {opacity: 1;}
-            to {opacity: 0;}
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
         }
+
         /* Estilo da barra de progresso */
         .progress-bar {
             background-color: #e0e0e0;
             border-radius: 5px;
             margin-bottom: 20px;
         }
+
         .progress {
             height: 20px;
             background-color: #007bff;
@@ -70,12 +89,14 @@
             width: 0;
             transition: width 0.3s;
         }
+
         /* Estilo dos botões */
         .buttons {
             display: flex;
             justify-content: space-between;
             margin-top: 20px;
         }
+
         .buttons button {
             padding: 10px 20px;
             font-size: 16px;
@@ -83,22 +104,27 @@
             border-radius: 20px;
             border: none;
         }
+
         .buttons .next {
             background-color: #007bff;
             color: #fff;
         }
+
         .buttons .next:hover {
             background-color: #0056b3;
         }
+
         .buttons .prev {
             background-color: #ccc;
             color: #333;
         }
+
         .buttons .prev:hover {
             background-color: #999;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header text-center">
@@ -203,7 +229,7 @@
                         <label for="vch_endereco_responsavel">Endereço do Responsável:</label>
                         <input type="text" class="form-control" name="vch_endereco_responsavel" id="vch_endereco_responsavel">
                     </div>
-            
+
                     <div class="form-group">
                         <label for="vch_bairro_responsavel">Bairro do Responsável:</label>
                         <input type="text" class="form-control" name="vch_bairro_responsavel" id="vch_bairro_responsavel">
@@ -312,11 +338,11 @@
         }
 
         // Funções para interações específicas quando o documento estiver pronto
-        $(document).ready(function(){
-            $('#showPassword').change(function(){
+        $(document).ready(function() {
+            $('#showPassword').change(function() {
                 var passwordField = $('#vch_senha');
                 var confirmPasswordField = $('#vch_confirm_senha');
-                if($(this).is(':checked')) {
+                if ($(this).is(':checked')) {
                     passwordField.attr('type', 'text');
                     confirmPasswordField.attr('type', 'text');
                 } else {
@@ -329,8 +355,8 @@
                 verificarLogin();
             });
 
-            $('#tem_representante').change(function(){
-                if($(this).val() == '1'){
+            $('#tem_representante').change(function() {
+                if ($(this).val() == '1') {
                     $('#representante_legal').show();
                 } else {
                     $('#representante_legal').hide();
@@ -374,16 +400,16 @@
 
         // Função para formatar o CPF
         function formatCPF(cpf) {
-            cpf = cpf.replace(/\D/g, ''); 
-            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2'); 
-            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2'); 
-            cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2'); 
+            cpf = cpf.replace(/\D/g, '');
+            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+            cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
             return cpf;
         }
 
         // Função para validar o CPF
         function validarCPF(cpf) {
-            cpf = cpf.replace(/\D/g, ''); 
+            cpf = cpf.replace(/\D/g, '');
             if (cpf.length !== 11) return false;
 
             var cpfArray = cpf.split('').map(Number);
@@ -404,16 +430,16 @@
             mod = sum % 11;
             var secondDigit = mod < 2 ? 0 : 11 - mod;
             if (cpfArray[10] !== secondDigit) return false;
-            if (cpf.length !== 11 || 
-                cpf === '00000000000' || 
-                cpf === '11111111111' || 
-                cpf === '22222222222' || 
-                cpf === '33333333333' || 
-                cpf === '44444444444' || 
-                cpf === '55555555555' || 
-                cpf === '66666666666' || 
-                cpf === '77777777777' || 
-                cpf === '88888888888' || 
+            if (cpf.length !== 11 ||
+                cpf === '00000000000' ||
+                cpf === '11111111111' ||
+                cpf === '22222222222' ||
+                cpf === '33333333333' ||
+                cpf === '44444444444' ||
+                cpf === '55555555555' ||
+                cpf === '66666666666' ||
+                cpf === '77777777777' ||
+                cpf === '88888888888' ||
                 cpf === '99999999999') {
                 return false;
             }
@@ -441,7 +467,7 @@
                         if (confirm('CPF já cadastrado. Para recuperar a senha, clique em "OK" para ser redirecionado para a Aba de recuperação de senha.')) {
                             window.location.href = 'recuperar_senha.php';
                         }
-                        cpfInput.value = ''; 
+                        cpfInput.value = '';
                     }
                 }
             };
@@ -450,14 +476,14 @@
             var isValid = validarCPF(cpf);
             if (!isValid) {
                 alert('CPF inválido');
-                cpfInput.value = ''; 
+                cpfInput.value = '';
             }
         }
 
         // Função para formatar o RG
         function formatarRG() {
             var rgInput = document.getElementById('vch_rg');
-            var rg = rgInput.value.replace(/\D/g, ''); 
+            var rg = rgInput.value.replace(/\D/g, '');
 
             if (rg.length > 2) {
                 rg = rg.substring(0, 2) + '.' + rg.substring(2);
@@ -475,7 +501,7 @@
         // Função para formatar o número do CNS
         function formatarCNS() {
             var cnsInput = document.getElementById('vch_num_cartao_sus');
-            var cns = cnsInput.value.replace(/\D/g, ''); 
+            var cns = cnsInput.value.replace(/\D/g, '');
 
             if (cns.length > 3) {
                 cns = cns.substring(0, 3) + ' ' + cns.substring(3);
@@ -527,4 +553,5 @@
         }
     </script>
 </body>
+
 </html>

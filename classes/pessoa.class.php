@@ -626,7 +626,7 @@ class Pessoa
             // Comitando a transação
             $pdo->commit();
 
-            header('Location: ../pagina_usuario.php');
+            header('Location: ../cadastro_inicialUP.php');
         } catch (PDOException $e) {
             // Se ocorrer algum erro, reverta a transação
             $pdo->rollBack();
@@ -928,7 +928,7 @@ class Pessoa
             // Comitando a transação
             $pdo->commit();
 
-            header('Location: ../pagina_usuario.php');
+            header('Location: ../cadastro_inicialUP.php');
         } catch (PDOException $e) {
             // Se ocorrer algum erro, reverta a transação
             $pdo->rollBack();

@@ -168,6 +168,9 @@ if (isset($_POST['vch_senha'])) {
         }
         echo "Cadastro realizado com sucesso!";
     }
+
+    /*
+
      // Processamento dos arquivos enviados
      $uploadDir = '../uploads/'; // Diretório de upload
      $status = 1; // Status inicial dos documentos
@@ -202,10 +205,13 @@ if (isset($_POST['vch_senha'])) {
              }
          }
      }
+*/
 
-
+/*
+    
 if (isset($_POST['cod_usuario']) && !empty($_POST['cod_usuario'])) {
     // Atualiza pessoa
+
     $pessoa->atualizarPessoa($_POST['cod_usuario']);
     echo "Dados atualizados com sucesso!";
 } else {
@@ -220,7 +226,7 @@ if (isset($_POST['cod_usuario']) && !empty($_POST['cod_usuario'])) {
     echo "Cadastro realizado com sucesso!";
     header("Location: ../cadastro_inicialUP.php");
     exit();
-}
+}*/
 } catch (Exception $e) {
 echo "Erro ao realizar a operação: " . $e->getMessage();
 

@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 include_once('../classes/usuario.class.php');
 include_once('../classes/pessoa.class.php');
 include_once('../classes/obs.class.php');
-include_once('../classes/documentos.class.php');
+//include_once('../classes/documentos.class.php');
 include_once('../classes/responsavel.class.php');
 
 
@@ -14,7 +14,7 @@ try {
     $pessoa = new Pessoa();
     $responsavel = new Responsavel();
     $usuario = new Usuario();
-    $documentos = new Documentos();
+//    $documentos = new Documentos();
    
 
 $pessoa = new Pessoa();
@@ -153,11 +153,11 @@ if (isset($_POST['vch_senha'])) {
 }
 
     // Verifica se é atualização ou inserção
-    if (isset($_POST['cod_usuario']) && !empty($_POST['cod_usuario'])) {
+    if (isset($_POST['cod_pessoa']) && !empty($_POST['cod_pessoa'])) {
         // Atualiza pessoa
-        $pessoa->atualizarPessoa($_POST['cod_usuario']);
-        $codPessoa = $_POST['cod_usuario'];
-        echo "Dados atualizados com sucesso!";
+        $pessoa->atualizarPessoaResponsavel($_POST['cod_pessoa'], $responsavel);
+   //     $codPessoa = $_POST['cod_usuario'];
+   //     echo "Dados atualizados com sucesso!";
     } else {
         // Inserir nova pessoa
         $usuario->setInt_situacao(1);

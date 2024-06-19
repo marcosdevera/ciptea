@@ -4,6 +4,8 @@ include_once('conexao.class.php');
 include_once('responsavel.class.php');
 include_once('documentos.class.php');
 include_once('usuario.class.php');
+include_once('responsavel.class.php');
+
 
 
 class Pessoa 
@@ -783,12 +785,15 @@ class Pessoa
     //         echo "Erro: " . $e->getMessage();
     //     }        
     // }
+    
 
-    public function atualizarPessoaResponsavel($cod_usuario){
+    public function atualizarPessoaResponsavel($cod_pessoa, $responsavel){
         try {
             $pdo = Database::conexao();
             // Iniciando a transação
             $pdo->beginTransaction();
+
+            $this->setResponsavel($responsavel);
 
             // Inserindo os dados na tabela pessoa
             $update_pessoa = $pdo->prepare("UPDATE ciptea.dados_pessoa 
@@ -807,8 +812,8 @@ class Pessoa
                 vch_cpf = :vch_cpf,
                 vch_num_cartao_sus = :vch_num_cartao_sus,
                 bool_representante_legal = :bool_representante_legal 
-            WHERE cod_usuario = :cod_usuario");
-            $update_pessoa->bindParam(':cod_usuario', $cod_usuario);
+            WHERE cod_pessoa = :cod_pessoa");
+            $update_pessoa->bindParam(':cod_pessoa', $cod_pessoa);
             $update_pessoa->bindParam(':vch_nome', $this->vch_nome);
             $update_pessoa->bindParam(':cid', $this->cid);
             $update_pessoa->bindParam(':vch_tipo_sanguineo', $this->vch_tipo_sanguineo);
@@ -828,6 +833,8 @@ class Pessoa
             // Obtendo o ID gerado pela inserção na tabela pessoa
             // $codPessoa = $pdo->lastInsertId();
 
+            $this->responsavel->setCodPessoa($cod_pessoa);
+
             $cod_pessoa = $this->responsavel->getCodPessoa();
             $vch_nome_resp = $this->responsavel->getVchNomeResponsavel();
             $vch_telefone_resp = $this->responsavel->getVchTelefoneResponsavel();
@@ -839,14 +846,14 @@ class Pessoa
 
             // Inserindo os dados na tabela responsavel usando o ID da pessoa
             $stmtResponsavel = $pdo->prepare("UPDATE ciptea.dados_responsavel_legal 
-            SET vch_nome_responsavel = :vch_nome_responsavel,
-                vch_telefone_responsavel = :vch_telefone_responsavel,
-                vch_cpf_responsavel = :vch_cpf_responsavel,
-                vch_endereco_responsavel = :vch_endereco_responsavel,
-                vch_bairro_responsavel = :vch_bairro_responsavel,
-                vch_cep_responsavel = :vch_cep_responsavel,
-                vch_cidade_responsavel = :vch_cidade_responsavel 
-            WHERE cod_pessoa = :cod_pessoa");
+                                                SET vch_nome_responsavel = :vch_nome_responsavel,
+                                                    vch_telefone_responsavel = :vch_telefone_responsavel,
+                                                    vch_cpf_responsavel = :vch_cpf_responsavel,
+                                                    vch_endereco_responsavel = :vch_endereco_responsavel,
+                                                    vch_bairro_responsavel = :vch_bairro_responsavel,
+                                                    vch_cep_responsavel = :vch_cep_responsavel,
+                                                    vch_cidade_responsavel = :vch_cidade_responsavel 
+                                                WHERE cod_pessoa = :cod_pessoa");
             $stmtResponsavel->bindParam(':cod_pessoa', $cod_pessoa);
             $stmtResponsavel->bindParam(':vch_nome_responsavel', $vch_nome_resp);
             $stmtResponsavel->bindParam(':vch_telefone_responsavel', $vch_telefone_resp);
@@ -857,76 +864,6 @@ class Pessoa
             $stmtResponsavel->bindParam(':vch_cidade_responsavel', $vch_cidade_resp);
             $stmtResponsavel->execute();
 
-            // if($sl == 1){
-            //     $this->setLaudo($laudo);
-            //     $vch_documento_laudo = $this->laudo->getVchDocumento();
-            //     $status_laudo = $this->laudo->getStatus();
-
-            //     $update_documentos = $pdo->prepare("UPDATE ciptea.documentos 
-            //     SET vch_documento = :vch_documento,
-            //         status = :status 
-            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 2");
-            //     $update_documentos->bindParam(':cod_pessoa', $cod_pessoa);
-            //     $update_documentos->bindParam(':vch_documento', $vch_documento_laudo);
-            //     $update_documentos->bindParam(':status', $status_laudo);
-            //     $update_documentos->execute();
-            // }
-            // if($sf == 1){
-            //     $this->setFoto($foto);
-            //     $vch_documento_foto = $this->foto->getVchDocumento();
-            //     $status_foto = $this->foto->getStatus();
-
-            //     $update_documentos2 = $pdo->prepare("UPDATE ciptea.documentos 
-            //     SET vch_documento = :vch_documento,
-            //         status = :status 
-            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 1");
-            //     $update_documentos2->bindParam(':cod_pessoa', $cod_pessoa);
-            //     $update_documentos2->bindParam(':vch_documento', $vch_documento_foto);
-            //     $update_documentos2->bindParam(':status', $status_foto);
-            //     $update_documentos2->execute();
-            // }
-            // if($sc == 1){
-            //     $this->setComprovante($comprovante);
-            //     $vch_documento_comprovante = $this->comprovante->getVchDocumento();
-            //     $status_comprovante = $this->comprovante->getStatus();
-
-            //     $update_documentos3 = $pdo->prepare("UPDATE ciptea.documentos 
-            //     SET vch_documento = :vch_documento,
-            //         status = :status 
-            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 3");
-            //     $update_documentos3->bindParam(':cod_pessoa', $cod_pessoa);
-            //     $update_documentos3->bindParam(':vch_documento', $vch_documento_comprovante);
-            //     $update_documentos3->bindParam(':status', $status_comprovante);
-            //     $update_documentos3->execute();
-            // }
-            // if($sd == 1){
-            //     $this->setDocumento($documento);
-            //     $vch_documento_documento = $this->documento->getVchDocumento();
-            //     $status_documento = $this->documento->getStatus();
-
-            //     $update_documentos4 = $pdo->prepare("UPDATE ciptea.documentos 
-            //     SET vch_documento = :vch_documento,
-            //         status = :status 
-            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 4");
-            //     $update_documentos4->bindParam(':cod_pessoa', $cod_pessoa);
-            //     $update_documentos4->bindParam(':vch_documento', $vch_documento_documento);
-            //     $update_documentos4->bindParam(':status', $status_documento);
-            //     $update_documentos4->execute();
-            // }
-            // if($sr == 1){
-            //     $this->setRequerimento($requerimento);
-            //     $vch_documento_requerimento = $this->requerimento->getVchDocumento();
-            //     $status_requerimento = $this->requerimento->getStatus();
-
-            //     $update_documentos5 = $pdo->prepare("UPDATE ciptea.documentos 
-            //     SET vch_documento = :vch_documento,
-            //         status = :status 
-            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 5");
-            //     $update_documentos5->bindParam(':cod_pessoa', $cod_pessoa);
-            //     $update_documentos5->bindParam(':vch_documento', $vch_documento_requerimento);
-            //     $update_documentos5->bindParam(':status', $status_requerimento);
-            //     $update_documentos5->execute();
-            // }
             // Comitando a transação
             $pdo->commit();
 
@@ -975,20 +912,24 @@ class Pessoa
         return $consulta;
     }
 
+    /*
+    (SELECT vch_documento FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 1 AND d.cod_pessoa = dp.cod_pessoa) AS foto, 
+    (SELECT vch_documento FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 2 AND d.cod_pessoa = dp.cod_pessoa) AS laudo, 
+    (SELECT vch_documento FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 3 AND d.cod_pessoa = dp.cod_pessoa) AS comp_residencia, 
+    (SELECT vch_documento FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 4 AND d.cod_pessoa = dp.cod_pessoa) AS documento, 
+    (SELECT status FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 1 AND d.cod_pessoa = dp.cod_pessoa) AS status_foto, 
+    (SELECT status FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 2 AND d.cod_pessoa = dp.cod_pessoa) AS status_laudo, 
+    (SELECT status FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 3 AND d.cod_pessoa = dp.cod_pessoa) AS status_comprovante, 
+    (SELECT status FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 4 AND d.cod_pessoa = dp.cod_pessoa) AS status_documento, 
+    (SELECT vch_documento FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 5 AND d.cod_pessoa = dp.cod_pessoa) AS requerimento, 
+    (SELECT status FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 5 AND d.cod_pessoa = dp.cod_pessoa) AS status_requerimento    
+*/
+
+    
     public function exibirPessoaUsuario($cod_usuario){
         $pdo = Database::conexao();
-        $sql = "SELECT dp.*,dr.cod_responsavel_legal, dr.vch_nome_responsavel, dr.vch_telefone_responsavel, dr.vch_cpf_responsavel, dr.vch_endereco_responsavel, 
-                dr.vch_bairro_responsavel, dr.vch_cep_responsavel, dr.vch_cidade_responsavel, dr.int_sexo_responsavel, dr.int_num_responsavel, dr.vch_comp_responsavel, 
-         (SELECT vch_documento FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 1 AND d.cod_pessoa = dp.cod_pessoa) AS foto, 
-         (SELECT vch_documento FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 2 AND d.cod_pessoa = dp.cod_pessoa) AS laudo, 
-         (SELECT vch_documento FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 3 AND d.cod_pessoa = dp.cod_pessoa) AS comp_residencia, 
-         (SELECT vch_documento FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 4 AND d.cod_pessoa = dp.cod_pessoa) AS documento, 
-         (SELECT status FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 1 AND d.cod_pessoa = dp.cod_pessoa) AS status_foto, 
-         (SELECT status FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 2 AND d.cod_pessoa = dp.cod_pessoa) AS status_laudo, 
-         (SELECT status FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 3 AND d.cod_pessoa = dp.cod_pessoa) AS status_comprovante, 
-         (SELECT status FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 4 AND d.cod_pessoa = dp.cod_pessoa) AS status_documento, 
-         (SELECT vch_documento FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 5 AND d.cod_pessoa = dp.cod_pessoa) AS requerimento, 
-         (SELECT status FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 5 AND d.cod_pessoa = dp.cod_pessoa) AS status_requerimento    
+        $sql = "SELECT dp.*, dr.cod_responsavel_legal, dr.vch_nome_responsavel, dr.vch_telefone_responsavel, dr.vch_cpf_responsavel, dr.vch_endereco_responsavel, 
+                dr.vch_bairro_responsavel, dr.vch_cep_responsavel, dr.vch_cidade_responsavel, dr.int_sexo_responsavel, dr.int_num_responsavel, dr.vch_comp_responsavel 
         FROM ciptea.dados_pessoa AS dp
         LEFT JOIN ciptea.dados_responsavel_legal as dr
         ON dp.cod_pessoa = dr.cod_pessoa

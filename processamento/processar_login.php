@@ -14,7 +14,7 @@ if ($login->login($email, $senha)) {
         if ($_SESSION["nivel"] == 2) {
             header('Location: ../pessoa_cadastrada.php');
         } else {
-            header('Location: ../pagina_usuario.php');
+            header('Location: ../cadastro_inicialUP.php');
         }
     } else {
         header('Location: ../index.php?teste');

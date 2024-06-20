@@ -1,14 +1,13 @@
 <?php
-
-include_once('../classes/documentos.class.php');
-include_once('../sessao.php');
-include_once('../classes/pessoa.class.php');
+include_once('sessao.php');
+include_once('classes/documentos.class.php');
+include_once('classes/pessoa.class.php');
 
 $cod_pessoa = $_POST['cod_pessoa'];
 
 //Objeto que busca o requerimen to do usuario
 $d5 = new Documentos();
-$result_d1 = $d1->buscarDocumentoPessoa($cod_pessoa, 5);
+$result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5);
 
 
 ?>

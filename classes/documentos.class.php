@@ -40,7 +40,7 @@ class Documentos {
         return $this->status;
     }
 
-    public function exibirDocumentos($cod_pessoa){
+    public function exibirDocumentos($cod_pessoa) {
         $pdo = Database::conexao();
         $sql = "SELECT d.*, dp.vch_nome, dp.vch_cpf
         FROM ciptea.documentos AS d
@@ -53,7 +53,7 @@ class Documentos {
         return $consulta;
     }
 
-    public function validarDocumento(){
+    public function validarDocumento() {
         $pdo = Database::conexao();
         $sql = "UPDATE ciptea.documentos
                 SET status = :status
@@ -66,10 +66,30 @@ class Documentos {
         $cod_pessoa_encode = base64_encode($this->cod_pessoa);
         $cod_pessoa = urlencode($cod_pessoa_encode);
 
-        header('Location: ../avaliacao_documento.php?cod='. $cod_pessoa);
+        header('Location: ../avaliacao_documento.php?cod=' . $cod_pessoa);
     }
 
-    public function buscarRequerimento($cod_pessoa){
+
+    public function buscarDocumentoPessoa($cod_pessoa, $cod_tipo_documento) {
+        try{
+            $pdo = Database::conexao();
+            $sql = "SELECT *
+                    FROM ciptea.documentos
+                    WHERE cod_pessoa = :cod_pessoa and cod_tipo_documento = :cod_tipo_documento";
+            $consulta = $pdo->prepare($sql);
+            $consulta->bindParam(':cod_pessoa', $cod_pessoa);
+            $consulta->bindParam(':cod_tipo_documento', $cod_tipo_documento);
+            $consulta->execute();
+            return $consulta;
+        }catch(PDOException $e){
+            echo $e->getMessage();            
+
+        }    
+    }
+
+
+
+    public function buscarRequerimento($cod_pessoa) {
         $pdo = Database::conexao();
         $sql = "SELECT *
         FROM ciptea.documentos
@@ -80,7 +100,7 @@ class Documentos {
         return $consulta;
     }
 
-    public function inserirRequerimento(){
+    public function inserirRequerimento() {
         $pdo = Database::conexao();
         $data_atual = date('Y-m-d H:i:s');
         $sql = "INSERT INTO ciptea.documentos(cod_pessoa, cod_tipo_documento, vch_documento, sdt_insercao, status)
@@ -94,16 +114,20 @@ class Documentos {
         $consulta->execute();
         header('Location: ../pagina_usuario.php');
     }
+
+    public function inserirDocumento() {
+        $pdo = Database::conexao();
+        $data_atual = date('Y-m-d H:i:s');
+        $sql = "INSERT INTO ciptea.documentos (cod_pessoa, cod_tipo_documento, vch_documento, sdt_insercao, status)
+                VALUES (:cod_pessoa, :cod_tipo_documento, :vch_documento, :sdt_insercao, :status)";
+        $consulta = $pdo->prepare($sql);
+        $consulta->bindParam(':cod_pessoa', $this->cod_pessoa);
+        $consulta->bindParam(':cod_tipo_documento', $this->cod_tipo_documento);
+        $consulta->bindParam(':vch_documento', $this->vch_documento);
+        $consulta->bindParam(':sdt_insercao', $data_atual);
+        $consulta->bindParam(':status', $this->status);
+        return $consulta->execute();
+    }
 }
-
-// Exemplo de uso:
-// $documento = new Documentos();
-// $documento->setCodPessoa(1);
-// $documento->setCodTipoDocumento(2);
-// $documento->setVchDocumento("DocumentoXYZ");
-
-// echo $documento->getCodPessoa(); // Saída: 1
-// echo $documento->getCodTipoDocumento(); // Saída: 2
-// echo $documento->getVchDocumento(); // Saída: DocumentoXYZ
 
 ?>

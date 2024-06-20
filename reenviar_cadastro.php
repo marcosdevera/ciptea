@@ -121,7 +121,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
         </div>
         <form name="form" action="processamento/processar_usuario.php" method="POST" enctype="multipart/form-data">
         
-        <input type="hidden" name="cod_pessoa" id="cod_pessoa" value="<?php echo $row_p['cod_pessoa']; ?>" >
+        <input type="hidden" name="cod_usuario" id="cod_usuario" value="<?php echo $cod_usuario; ?>" required>
 
             <div class="step active" id="step1">
                 <h2>Informações Pessoais</h2>

@@ -1,26 +1,17 @@
-<?php 
-    include_once('classes/pessoa.class.php');
-    include_once('classes/obs.class.php');
-    include_once('classes/documentos.class.php');
-    include_once("sessao.php");
-  
-    //Cria o Objeto
-    $p = new Pessoa();
-    // die(var_dump($_SESSION["cod_pessoa"]));
-    $cod_pessoa = $_SESSION['cod_pessoa'];
-    $cod_usuario = $_SESSION["user_session"];
-    $result_pessoa = $p->exibirPessoaUsuario($cod_usuario);
-    $row_pessoa = $result_pessoa->fetch(PDO::FETCH_ASSOC);
+<?php
 
-    $d = new Documentos();
-    $result_requerimento = $d->buscarRequerimento($cod_pessoa);
-    $row_requerimento = $result_requerimento->rowCount();
-    // die(var_dump($row_requerimento));
-    $obs = new Obs();
-    $result_obs = $obs->exibirobs($row_pessoa['cod_pessoa']);
-    $num_linha = $result_obs->rowCount(); 
+include_once('../classes/documentos.class.php');
+include_once('../sessao.php');
+include_once('../classes/pessoa.class.php');
+
+$cod_pessoa = $_POST['cod_pessoa'];
+
+//Objeto que busca o requerimen to do usuario
+$d5 = new Documentos();
+$result_d1 = $d1->buscarDocumentoPessoa($cod_pessoa, 5);
+
+
 ?>
-
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -113,7 +104,6 @@
             margin: 0;
             color: #007bff;
         }
-      
         .verification-section {
             background-color: #fff3cd;
             border: 1px solid #ffeeba;
@@ -196,10 +186,19 @@
         <div class="step-icon unlocked"><i class="fas fa-id-card"></i></div>
         <div>
             <h4>2. Requerimento</h4>
-            <p>Para obter a carteira, primeiro faça o download do requerimento, imprima, assine. Em seguida tire uma foto e envie assinado.</p>
+            <p>Para obter a carteira, primeiro faça o download do requerimento, imprima e assine. Em seguida tire uma foto e envie o documento que você assinou.</p>
             <a href="requerimento.pdf" class="download-button">Baixar Requerimento</a>
+            <?php if ($result_d1->rowCount() > 0) {
+                    $row_requetimento = $result_d1->fetch(PDO::FETCH_ASSOC);
+                    echo 'Documento: ' . $row_requetimento['vch_documento'];
+                }else{
+                    echo 'não existe requerimento ';    
+                
+                }
+
+            ?>
             <div class="upload-section" onclick="document.getElementById('requerimento-upload').click()">
-                <input type="file" id="requerimento-upload" onchange="handleFileUpload(this, 2)">
+                <input type="file" id="requerimento-upload" data-cod_tipo_documento="5" onchange="handleFileUpload(this)">
                 <p>Clique ou arraste o requerimento assinado aqui para enviar.</p>
                 <div class="uploaded-file" id="requerimento-uploaded"></div>
             </div>
@@ -211,7 +210,7 @@
             <h4>3. Foto 3x4</h4>
             <p>Agora você vai enviar a foto que vai aparecer na carteira, como o exemplo abaixo</p>
             <div class="upload-section" onclick="document.getElementById('foto-34').click()">
-                <input type="file" id="foto-34" onchange="handleFileUpload(this, 3)">
+                <input type="file" id="foto-34" data-cod_tipo_documento="1" onchange="handleFileUpload(this)">
                 <p>Clique ou arraste a foto 3x4 aqui.</p>
                 <img src="images/exemplo3.4.png" alt="Exemplo de Foto 3/4">
                 <div class="uploaded-file" id="foto-34-uploaded"></div>
@@ -224,7 +223,7 @@
             <h4>4. Documento de Identidade</h4>
             <p>Envie a imagem de um documento de identificação com foto (RG, CNH e etc) conforme o exemplo abaixo</p>
             <div class="upload-section" onclick="document.getElementById('documento-identidade').click()">
-                <input type="file" id="documento-identidade" onchange="handleFileUpload(this, 4)">
+                <input type="file" id="documento-identidade" data-cod_tipo_documento="4" onchange="handleFileUpload(this)">
                 <p>Clique ou arraste o documento de identidade aqui.</p>
                 <img src="images/novacarteira.jpeg" alt="Exemplo de Documento de Identidade">
                 <div class="uploaded-file" id="documento-identidade-uploaded"></div>
@@ -237,7 +236,7 @@
             <h4>5. Comprovante de Residência</h4>
             <p>Envie uma foto visível de um comprovante de residência, como exemplo abaixo</p>
             <div class="upload-section" onclick="document.getElementById('comprovante-residencia').click()">
-                <input type="file" id="comprovante-residencia" onchange="handleFileUpload(this, 5)">
+                <input type="file" id="comprovante-residencia" data-cod_tipo_documento="3" onchange="handleFileUpload(this)">
                 <p>Clique ou arraste o comprovante aqui.</p>
                 <img src="images/comprovante-residencia.webp" alt="Exemplo de Comprovante de Residência">
                 <div class="uploaded-file" id="comprovante-residencia-uploaded"></div>
@@ -250,7 +249,7 @@
             <h4>6. Laudo Médico</h4>
             <p>Envie o laudo médico da pessoa que vai usar a carteira.</p>
             <div class="upload-section" onclick="document.getElementById('laudo-medico').click()">
-                <input type="file" id="laudo-medico" onchange="handleFileUpload(this, 6)">
+                <input type="file" id="laudo-medico" data-cod_tipo_documento="2" onchange="handleFileUpload(this)">
                 <p>Clique ou arraste o laudo médico aqui.</p>
                 <div class="uploaded-file" id="laudo-medico-uploaded"></div>
             </div>
@@ -290,18 +289,19 @@
         });
     });
 
-    function handleFileUpload(input, step) {
+    function handleFileUpload(input) {
         var formData = new FormData();
+        var codTipoDocumento = input.getAttribute('data-cod_tipo_documento');
         formData.append(input.name, input.files[0]);
+        formData.append('cod_tipo_documento', codTipoDocumento);
 
         var xhr = new XMLHttpRequest();
         xhr.open('POST', 'processamento/processar_upload.php', true);
         xhr.onload = function() {
-            
             if (xhr.status === 200) { 
                 var response = JSON.parse(xhr.responseText);
                 if (response.success) {
-                    var section = document.getElementById('step-' + step);
+                    var section = document.getElementById('step-' + codTipoDocumento);
                     var icon = section.querySelector('.step-icon');
                     icon.classList.add('completed');
                     icon.classList.remove('unlocked');

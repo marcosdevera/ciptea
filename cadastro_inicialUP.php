@@ -3,7 +3,7 @@ include_once('sessao.php');
 include_once('classes/documentos.class.php');
 include_once('classes/pessoa.class.php');
 
-$cod_pessoa = $_POST['cod_pessoa'];
+$cod_pessoa = $_SESSION['cod_pessoa'];
 
 //Objeto que busca o requerimen to do usuario
 $d5 = new Documentos();
@@ -187,8 +187,8 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5);
             <h4>2. Requerimento</h4>
             <p>Para obter a carteira, primeiro faça o download do requerimento, imprima e assine. Em seguida tire uma foto e envie o documento que você assinou.</p>
             <a href="requerimento.pdf" class="download-button">Baixar Requerimento</a>
-            <?php if ($result_d1->rowCount() > 0) {
-                    $row_requetimento = $result_d1->fetch(PDO::FETCH_ASSOC);
+            <?php if ($result_d5->rowCount() > 0) {
+                    $row_requetimento = $result_d5->fetch(PDO::FETCH_ASSOC);
                     echo 'Documento: ' . $row_requetimento['vch_documento'];
                 }else{
                     echo 'não existe requerimento ';    

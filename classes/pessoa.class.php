@@ -811,7 +811,8 @@ class Pessoa
                 vch_rg = :vch_rg,
                 vch_cpf = :vch_cpf,
                 vch_num_cartao_sus = :vch_num_cartao_sus,
-                bool_representante_legal = :bool_representante_legal 
+                bool_representante_legal = :bool_representante_legal, 
+                int_sexo = :int_sexo
             WHERE cod_pessoa = :cod_pessoa");
             $update_pessoa->bindParam(':cod_pessoa', $cod_pessoa);
             $update_pessoa->bindParam(':vch_nome', $this->vch_nome);
@@ -829,6 +830,7 @@ class Pessoa
             $update_pessoa->bindParam(':vch_cpf', $this->vch_cpf);
             $update_pessoa->bindParam(':vch_num_cartao_sus', $this->vch_num_cartao_sus);
             $update_pessoa->bindParam(':bool_representante_legal', $this->bool_representante_legal);
+            $update_pessoa->bindParam(':int_sexo', $this->int_sexo);
             $update_pessoa->execute();
             // Obtendo o ID gerado pela inserção na tabela pessoa
             // $codPessoa = $pdo->lastInsertId();
@@ -843,7 +845,7 @@ class Pessoa
             $vch_bairro_resp = $this->responsavel->getVchBairroResponsavel();
             $vch_cep = $this->responsavel->getVchCepResponsavel();
             $vch_cidade_resp = $this->responsavel->getVchCidadeResponsavel();
-
+            $int_sexo_responsavel = $this->responsavel->getIntSexoResponsavel();
             // Inserindo os dados na tabela responsavel usando o ID da pessoa
             $stmtResponsavel = $pdo->prepare("UPDATE ciptea.dados_responsavel_legal 
                                                 SET vch_nome_responsavel = :vch_nome_responsavel,
@@ -852,7 +854,8 @@ class Pessoa
                                                     vch_endereco_responsavel = :vch_endereco_responsavel,
                                                     vch_bairro_responsavel = :vch_bairro_responsavel,
                                                     vch_cep_responsavel = :vch_cep_responsavel,
-                                                    vch_cidade_responsavel = :vch_cidade_responsavel 
+                                                    vch_cidade_responsavel = :vch_cidade_responsavel,
+                                                    int_sexo_responsavel = :int_sexo_responsavel
                                                 WHERE cod_pessoa = :cod_pessoa");
             $stmtResponsavel->bindParam(':cod_pessoa', $cod_pessoa);
             $stmtResponsavel->bindParam(':vch_nome_responsavel', $vch_nome_resp);
@@ -862,6 +865,7 @@ class Pessoa
             $stmtResponsavel->bindParam(':vch_bairro_responsavel', $vch_bairro_resp);
             $stmtResponsavel->bindParam(':vch_cep_responsavel', $vch_cep);
             $stmtResponsavel->bindParam(':vch_cidade_responsavel', $vch_cidade_resp);
+            $stmtResponsavel->bindParam(':int_sexo_responsavel', $int_sexo_responsavel);
             $stmtResponsavel->execute();
 
             // Comitando a transação

@@ -520,16 +520,18 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
 
         document.addEventListener('DOMContentLoaded', (event) => {
             const boolRepresentanteLegal = "<?php echo isset($row_p['bool_representante_legal']) ? $row_p['bool_representante_legal'] : ''; ?>";
-            const sexo = "<?php echo isset($row_p['sexo']) ? $row_p['sexo'] : ''; ?>";
+            const sexoResponsavel = "<?php echo isset($row_p['int_sexo_responsavel']) ? $row_p['int_sexo_responsavel'] : ''; ?>";
 
             const selectElement = document.getElementById('tem_representante');
-            selectElement.value = boolRepresentanteLegal;
+            if(boolRepresentanteLegal !== ''){
+                selectElement.value = boolRepresentanteLegal
+            }
             toggleRepresentanteLegal();
 
-            if (sexo === "1") {
-                document.getElementById('sexo_m').checked = true;
-            } else if (sexo === "2") {
-                document.getElementById('sexo_f').checked = true;
+            if (sexoResponsavel === "1") {
+                document.getElementById('sexo_responsavel_m').checked = true;
+            } else if (sexoResponsavel === "2") {
+                document.getElementById('sexo_responsavel_f').checked = true;
             }
         });
     </script>

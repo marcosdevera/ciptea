@@ -1,12 +1,13 @@
 <?php
 include_once("../classes/login.class.php");
 
-if(!isset($_SESSION)){
+if (!isset($_SESSION)) {
     session_start();
 }
+
 $email = $_POST['login'];
 $senha = $_POST['senha'];
-
+ 
 $login = new Login();
 
 if ($login->login($email, $senha)) {
@@ -17,8 +18,9 @@ if ($login->login($email, $senha)) {
             header('Location: ../cadastro_inicialUP.php');
         }
     } else {
-        header('Location: ../index.php?teste');
+        header('Location: ../index.php?error=1');
     }
 } else {
-    header('Location: ../index.php?msg=2');
+    header('Location: ../index.php?error=1');
 }
+?>

@@ -97,6 +97,11 @@
             color: #000000;
         }
 
+        .alert {
+            margin-top: 20px;
+            color: red;
+        }
+
         @media (max-width: 767px) {
             .container {
                 padding: 15px;
@@ -121,7 +126,6 @@
     </style>
 </head>
 <body>
-   
     <div class="container">
         <h2>CIPTEA</h2>
         <form action="processamento/processar_login.php" method="POST">
@@ -134,6 +138,12 @@
         <div class="footer">
             © 2024 Prefeitura de Camaçari
         </div>
+        <!-- Se houver um erro, exibe a mensagem -->
+        <?php
+        if (isset($_GET['error']) && $_GET['error'] == 1) {
+            echo '<div class="alert">Email ou senha incorretos.</div>';
+        }
+        ?>
     </div>
 </body>
 </html>

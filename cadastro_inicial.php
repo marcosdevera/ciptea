@@ -90,6 +90,10 @@
             transition: width 0.3s;
         }
 
+        .progress.complete {
+            background-color: #28a745;
+        }
+
         /* Estilo dos botões */
         .buttons {
             display: flex;
@@ -158,6 +162,25 @@
                 </div>
             </div>
             <div class="step" id="step2">
+                <h2>Endereço</h2>
+                <div class="form-group">
+                    <label for="endereco">Endereço:</label>
+                    <input type="text" class="form-control" name="endereco" id="endereco" required>
+                </div>
+                <div class="form-group">
+                    <label for="bairro">Bairro:</label>
+                    <input type="text" class="form-control" name="bairro" id="bairro" required>
+                </div>
+                <div class="form-group">
+                    <label for="cidade">Cidade:</label>
+                    <input type="text" class="form-control" name="cidade" id="cidade" required>
+                </div>
+                <div class="form-group">
+                    <label for="cep">CEP:</label>
+                    <input type="text" class="form-control" name="cep" id="cep" oninput="formatarCEP('cep')" maxlength="9" required>
+                </div>
+            </div>
+            <div class="step" id="step3">
                 <h2>Contato e Documento</h2>
                 <div class="form-group">
                     <label for="vch_telefone">Telefone:</label>
@@ -189,10 +212,20 @@
                 </div>
                 <div class="form-group">
                     <label for="vch_tipo_sanguineo">Tipo Sanguíneo:</label>
-                    <input type="text" class="form-control" name="vch_tipo_sanguineo" id="vch_tipo_sanguineo" maxlength="2" required>
+                    <select class="form-control" name="vch_tipo_sanguineo" id="vch_tipo_sanguineo" required>
+                        <option value="">Selecione o tipo sanguíneo</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
                 </div>
             </div>
-            <div class="step" id="step3">
+            <div class="step" id="step4">
                 <h2>Representante Legal</h2>
                 <div class="form-group">
                     <label for="tem_representante">Possui Representante Legal?</label>
@@ -229,7 +262,6 @@
                         <label for="vch_endereco_responsavel">Endereço do Responsável:</label>
                         <input type="text" class="form-control" name="vch_endereco_responsavel" id="vch_endereco_responsavel">
                     </div>
-
                     <div class="form-group">
                         <label for="vch_bairro_responsavel">Bairro do Responsável:</label>
                         <input type="text" class="form-control" name="vch_bairro_responsavel" id="vch_bairro_responsavel">
@@ -238,25 +270,6 @@
                         <label for="vch_cidade_responsavel">Cidade do Responsável:</label>
                         <input type="text" class="form-control" name="vch_cidade_responsavel" id="vch_cidade_responsavel">
                     </div>
-                </div>
-            </div>
-            <div class="step" id="step4">
-                <h2>Endereço</h2>
-                <div class="form-group">
-                    <label for="endereco">Endereço:</label>
-                    <input type="text" class="form-control" name="endereco" id="endereco" required>
-                </div>
-                <div class="form-group">
-                    <label for="bairro">Bairro:</label>
-                    <input type="text" class="form-control" name="bairro" id="bairro" required>
-                </div>
-                <div class="form-group">
-                    <label for="cidade">Cidade:</label>
-                    <input type="text" class="form-control" name="cidade" id="cidade" required>
-                </div>
-                <div class="form-group">
-                    <label for="cep">CEP:</label>
-                    <input type="text" class="form-control" name="cep" id="cep" oninput="formatarCEP('cep')" maxlength="9" required>
                 </div>
             </div>
             <div class="step" id="step5">
@@ -281,7 +294,7 @@
             <div class="buttons">
                 <button type="button" class="prev btn btn-secondary" onclick="nextPrev(-1)">Anterior</button>
                 <button type="button" class="next btn btn-primary" onclick="nextPrev(1)">Próximo</button>
-                <button type="submit" class="submit btn btn-primary" style="display: none;">Enviar</button>
+                <button type="submit" class="submit btn btn-primary" style="display: none;" onclick="completeProgress()">Enviar</button>
             </div>
         </form>
     </div>
@@ -362,6 +375,18 @@
                     $('#representante_legal').hide();
                 }
             });
+
+            const dataNascimentoInput = document.getElementById('sdt_nascimento');
+            const dataAtual = new Date();
+            const anoAtual = dataAtual.getFullYear();
+            const mesAtual = String(dataAtual.getMonth() + 1).padStart(2, '0');
+            const diaAtual = String(dataAtual.getDate()).padStart(2, '0');
+            const dataMaxima = `${anoAtual}-${mesAtual}-${diaAtual}`;
+            const anoMinimo = 1900;
+            const dataMinima = `${anoMinimo}-01-01`;
+
+            dataNascimentoInput.setAttribute('max', dataMaxima);
+            dataNascimentoInput.setAttribute('min', dataMinima);
         });
 
         // Função para exibir um alerta
@@ -551,6 +576,13 @@
             var telefone = inputTelefone.value;
             inputTelefone.value = formatarTelefone(telefone);
         }
+
+        // Função para completar a barra de progresso e mudar a cor para verde
+        function completeProgress() {
+            var progress = document.querySelector(".progress");
+            progress.classList.add("complete");
+        }
+
     </script>
 </body>
 

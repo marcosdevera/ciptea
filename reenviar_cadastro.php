@@ -4,9 +4,9 @@ include_once("sessao.php");
 
 $p = new Pessoa();
 
-$cod_usuario = $_SESSION["user_session"];
+$cod_pessoa = $_SESSION["cod_pessoa"];
 
-$result_p = $p->exibirPessoaUsuario($cod_usuario);
+$result_p = $p->exibirPessoaUsuario($cod_pessoa);
 
 $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
 
@@ -121,7 +121,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
         </div>
         <form name="form" action="processamento/processar_usuario.php" method="POST" enctype="multipart/form-data">
         
-        <input type="hidden" name="cod_usuario" id="cod_usuario" value="<?php echo $cod_usuario; ?>" required>
+        <input type="hidden" name="cod_pessoa" id="cod_pessoa" value="<?php echo $cod_pessoa; ?>" required>
 
             <div class="step active" id="step1">
                 <h2>Informações Pessoais</h2>

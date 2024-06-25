@@ -930,16 +930,16 @@ class Pessoa
 */
 
     
-    public function exibirPessoaUsuario($cod_usuario){
+    public function exibirPessoaUsuario($cod_pessoa){
         $pdo = Database::conexao();
         $sql = "SELECT dp.*, dr.cod_responsavel_legal, dr.vch_nome_responsavel, dr.vch_telefone_responsavel, dr.vch_cpf_responsavel, dr.vch_endereco_responsavel, 
                 dr.vch_bairro_responsavel, dr.vch_cep_responsavel, dr.vch_cidade_responsavel, dr.int_sexo_responsavel, dr.int_num_responsavel, dr.vch_comp_responsavel 
         FROM ciptea.dados_pessoa AS dp
         LEFT JOIN ciptea.dados_responsavel_legal as dr
         ON dp.cod_pessoa = dr.cod_pessoa
-        WHERE dp.cod_usuario = :cod_usuario";
+        WHERE dp.cod_pessoa = :cod_pessoa";
         $consulta = $pdo->prepare($sql);
-        $consulta->bindParam(':cod_usuario', $cod_usuario);
+        $consulta->bindParam(':cod_pessoa', $cod_pessoa);
         $consulta->execute();
         return $consulta;
     }

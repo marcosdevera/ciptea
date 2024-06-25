@@ -635,7 +635,9 @@ class Pessoa
             // Se ocorrer algum erro, reverta a transação
             $pdo->rollBack();
             echo "Erro: " . $e->getMessage();
-        }        
+        }     
+        
+       
     }
 
     // public function atualizarPessoaResponsavel($sl, $sf, $sc, $sd, $sr, $laudo, $foto, $comprovante, $documento, $requerimento, $cod_usuario, $cod_pessoa){
@@ -960,4 +962,5 @@ class Pessoa
             echo "Erro: ". $e ;
         }    
     }
+
 }

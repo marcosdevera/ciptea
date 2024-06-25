@@ -186,7 +186,7 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5);
         <div>
             <h4>2. Requerimento</h4>
             <p>Para obter a carteira, primeiro faça o download do requerimento, imprima e assine. Em seguida tire uma foto e envie o documento que você assinou.</p>
-            <a href="requerimento.pdf" class="download-button">Baixar Requerimento</a>
+            <a href="formulario_requerimento.php?cod_pessoa=<?php echo $cod_pessoa; ?>"  class="download-button">Baixar Requerimento</a>
             <?php if ($result_d5->rowCount() > 0) {
                     $row_requetimento = $result_d5->fetch(PDO::FETCH_ASSOC);
                     echo 'Documento: ' . $row_requetimento['vch_documento'];

@@ -1,25 +1,37 @@
 <?php
 // Incluir a biblioteca TCPDF
-require_once('classes/TCPDF/tcpdf.php');
+include_once('classes/TCPDF/tcpdf.php');
+include_once('classes/pessoa.class.php');
 
-$requerente = $_POST['vch_nome'];
-$vch_nome_social = $_POST['vch_nome_social'];
-$sexo_requerente = $_POST['int_sexo'];
-$cpf_requerente = $_POST['vch_cpf'];
-$endereco_requerente = $_POST['endereco'];
-$cep_requerente = $_POST['cep'];
-$bairro_requerente = $_POST['bairro'];
-$telefone_requerente = $_POST['vch_telefone'];
-$cod_responsavel = $_POST['cod_responsavel_legal'];
-$vch_responsavel = $_POST['vch_nome_responsavel'];
-$cpf_responsavel = $_POST['vch_cpf_responsavel'];
-$sexo_responsavel = $_POST['int_sexo_responsavel'];
-$endereco_responsavel = $_POST['vch_endereco_responsavel'];
-$int_num_responsavel = $_POST['int_num_responsavel'];
-$vch_comp_responsavel = $_POST['vch_comp_responsavel'];
-$telefone_responsavel = $_POST['vch_telefone_responsavel'];
-$bairro_responsavel = $_POST['vch_bairro_responsavel'];
-$cep_responsavel = $_POST['vch_cep_responsavel'];
+
+
+$cod_pessoa = $_GET["cod_pessoa"];
+
+$pessoa = new Pessoa();
+
+$record = $pessoa->exibirPessoaUsuario($cod_pessoa);
+
+$row_pessoa = $record->fetch();
+
+$requerente = $row_pessoa['vch_nome'];
+$vch_nome_social = $row_pessoa['vch_nome_social'];
+$sexo_requerente = $row_pessoa['int_sexo'];
+$cpf_requerente = $row_pessoa['vch_cpf'];
+$endereco_requerente = $row_pessoa['endereco'];
+$cep_requerente = $row_pessoa['cep'];
+$bairro_requerente = $row_pessoa['bairro'];
+$telefone_requerente = $row_pessoa['vch_telefone'];
+$cod_responsavel = $row_pessoa['cod_responsavel_legal'];
+$vch_responsavel = $row_pessoa['vch_nome_responsavel'];
+$cpf_responsavel = $row_pessoa['vch_cpf_responsavel'];
+$sexo_responsavel = $row_pessoa['int_sexo_responsavel'];
+$endereco_responsavel = $row_pessoa['vch_endereco_responsavel'];
+$int_num_responsavel = $row_pessoa['int_num_responsavel'];
+$vch_comp_responsavel = $row_pessoa['vch_comp_responsavel'];
+$telefone_responsavel = $row_pessoa['vch_telefone_responsavel'];
+$bairro_responsavel = $row_pessoa['vch_bairro_responsavel'];
+$cep_responsavel = $row_pessoa['vch_cep_responsavel'];
+
 $x = "X";
 
 // die(var_dump($vch_responsavel));

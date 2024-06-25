@@ -1,6 +1,6 @@
 <?php
 // Incluir a biblioteca TCPDF
-include_once('classes/TCPDF/tcpdf.php');
+require_once('classes/TCPDF/tcpdf.php');
 include_once('classes/pessoa.class.php');
 
 
@@ -36,15 +36,39 @@ $x = "X";
 
 // die(var_dump($vch_responsavel));
 
-// Criar uma nova instância TCPDF
+// Inicie o buffer de saída para evitar qualquer saída antes da geração do PDF
+ob_start();
+
+// Verifique se a extensão GD está habilitada
+if (!function_exists('imagecreatefromjpeg')) {
+    die('A extensão GD não está habilitada.');
+}
+
+// Caminho para a imagem original
+$imagemOriginal = 'images/FRANS.jpg';
+
+// Verifique se o arquivo de imagem existe antes de tentar carregá-lo
+if (!file_exists($imagemOriginal)) {
+    die('O arquivo de imagem não foi encontrado.');
+}
+
+// Carregue a imagem
+$imagem = imagecreatefromjpeg($imagemOriginal);
+
+if ($imagem === false) {
+    die('Falha ao carregar a imagem JPEG.');
+}
+
+
 $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+
 
 // Adicionar uma página ao PDF
 $pdf->AddPage();
 
 // Carregar a imagem original
 $imagemOriginal = 'images/FRANS.jpg';
-$imagem = imagecreatefromjpeg($imagemOriginal);
+$pdf->Image($imagemOriginal);
 
 // Configurações de cor e fonte
 $corTexto = imagecolorallocate($imagem, 0, 0, 0); // Cor do texto (branco)

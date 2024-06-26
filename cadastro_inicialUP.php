@@ -3,21 +3,15 @@ include_once('sessao.php');
 include_once('classes/documentos.class.php');
 include_once('classes/pessoa.class.php');
 
+if (!isset($_SESSION)) {
+    session_start();
+}
+
 $cod_pessoa = $_SESSION['cod_pessoa'];
 
-// Objetos que buscam os documentos do usuário
-$d1 = new Documentos();
-$d2 = new Documentos();
-$d3 = new Documentos();
-$d4 = new Documentos();
+// Objeto que busca o requerimento do usuário
 $d5 = new Documentos();
-
-$result_d1 = $d1->buscarDocumentoPessoa($cod_pessoa, 1); // Foto 3x4
-$result_d2 = $d2->buscarDocumentoPessoa($cod_pessoa, 2); // Laudo Médico
-$result_d3 = $d3->buscarDocumentoPessoa($cod_pessoa, 3); // Comprovante de Residência
-$result_d4 = $d4->buscarDocumentoPessoa($cod_pessoa, 4); // Documento de Identidade
-$result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5); // Requerimento
-
+$result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5);
 ?>
 
 <!DOCTYPE html>
@@ -37,6 +31,10 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5); // Requerimento
             font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .container {
             background-color: rgba(255, 255, 255, 0.95);
@@ -46,7 +44,7 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5); // Requerimento
             margin-top: 30px;
             max-width: 800px;
             width: 90%;
-            margin: auto;
+            overflow: hidden;
         }
         .step {
             margin-bottom: 20px;
@@ -94,7 +92,7 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5); // Requerimento
             display: none;
         }
         .upload-section img {
-            max-width: 200px;
+            max-width: 100px;
             display: block;
             margin: 10px auto;
         }
@@ -103,20 +101,13 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5); // Requerimento
             margin-bottom: 30px;
         }
         .header img {
-            width: 300px;
+            width: 150px;
             margin-bottom: 10px;
         }
         .header h1 {
             font-size: 2rem;
             margin: 0;
             color: #007bff;
-        }
-        .verification-section {
-            background-color: #fff3cd;
-            border: 1px solid #ffeeba;
-            padding: 20px;
-            text-align: center;
-            border-radius: 10px;
         }
         .uploaded-file {
             text-align: left;
@@ -161,7 +152,7 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5); // Requerimento
             }
             .header img {
                 width: 100%;
-                max-width: 200px;
+                max-width: 100px;
             }
             .header h1 {
                 font-size: 1.5rem;
@@ -195,15 +186,8 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5); // Requerimento
             <h4>2. Requerimento</h4>
             <p>Para obter a carteira, primeiro faça o download do requerimento, imprima e assine. Em seguida tire uma foto e envie o documento que você assinou.</p>
             <a href="formulario_requerimento.php?cod_pessoa=<?php echo $cod_pessoa; ?>" target="_blank" class="download-button">Baixar Requerimento</a>
-            <?php if ($result_d5->rowCount() > 0) {
-                    $row_requerimento = $result_d5->fetch(PDO::FETCH_ASSOC);
-                    echo 'Documento: ' . $row_requerimento['vch_documento'];
-                } else {
-                    echo 'Não existe requerimento.';
-                }
-            ?>
             <div class="upload-section" onclick="document.getElementById('requerimento-upload').click()">
-                <input type="file" id="requerimento-upload" data-cod_tipo_documento="5" onchange="handleFileUpload(this)">
+                <input type="file" id="requerimento_upload" name="requerimento_upload" data-cod_tipo_documento="5">
                 <p>Clique ou arraste o requerimento assinado aqui para enviar.</p>
                 <div class="uploaded-file" id="requerimento-uploaded"></div>
             </div>
@@ -215,18 +199,11 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5); // Requerimento
             <h4>3. Foto 3x4</h4>
             <p>Agora você vai enviar a foto que vai aparecer na carteira, como o exemplo abaixo</p>
             <div class="upload-section" onclick="document.getElementById('foto-34').click()">
-                <input type="file" id="foto-34" data-cod_tipo_documento="1" onchange="handleFileUpload(this)">
+                <input type="file" id="foto-34" data-cod_tipo_documento="1">
                 <p>Clique ou arraste a foto 3x4 aqui.</p>
                 <img src="images/exemplo3.4.png" alt="Exemplo de Foto 3/4">
                 <div class="uploaded-file" id="foto-34-uploaded"></div>
             </div>
-            <?php if ($result_d1->rowCount() > 0) {
-                    $row_foto = $result_d1->fetch(PDO::FETCH_ASSOC);
-                    echo 'Documento: ' . $row_foto['vch_documento'];
-                } else {
-                    echo 'Não existe foto 3x4.';
-                }
-            ?>
         </div>
     </div>
     <div class="step" id="step-4">
@@ -235,18 +212,11 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5); // Requerimento
             <h4>4. Documento de Identidade</h4>
             <p>Envie a imagem de um documento de identificação com foto (RG, CNH e etc) conforme o exemplo abaixo</p>
             <div class="upload-section" onclick="document.getElementById('documento-identidade').click()">
-                <input type="file" id="documento-identidade" data-cod_tipo_documento="4" onchange="handleFileUpload(this)">
+                <input type="file" id="documento-identidade" data-cod_tipo_documento="4">
                 <p>Clique ou arraste o documento de identidade aqui.</p>
                 <img src="images/novacarteira.jpeg" alt="Exemplo de Documento de Identidade">
                 <div class="uploaded-file" id="documento-identidade-uploaded"></div>
             </div>
-            <?php if ($result_d4->rowCount() > 0) {
-                    $row_identidade = $result_d4->fetch(PDO::FETCH_ASSOC);
-                    echo 'Documento: ' . $row_identidade['vch_documento'];
-                } else {
-                    echo 'Não existe documento de identidade.';
-                }
-            ?>
         </div>
     </div>
     <div class="step" id="step-5">
@@ -255,18 +225,11 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5); // Requerimento
             <h4>5. Comprovante de Residência</h4>
             <p>Envie uma foto visível de um comprovante de residência, como exemplo abaixo</p>
             <div class="upload-section" onclick="document.getElementById('comprovante-residencia').click()">
-                <input type="file" id="comprovante-residencia" data-cod_tipo_documento="3" onchange="handleFileUpload(this)">
+                <input type="file" id="comprovante-residencia" data-cod_tipo_documento="3">
                 <p>Clique ou arraste o comprovante aqui.</p>
                 <img src="images/comprovante-residencia.webp" alt="Exemplo de Comprovante de Residência">
                 <div class="uploaded-file" id="comprovante-residencia-uploaded"></div>
             </div>
-            <?php if ($result_d3->rowCount() > 0) {
-                    $row_residencia = $result_d3->fetch(PDO::FETCH_ASSOC);
-                    echo 'Documento: ' . $row_residencia['vch_documento'];
-                } else {
-                    echo 'Não existe comprovante de residência.';
-                }
-            ?>
         </div>
     </div>
     <div class="step" id="step-6">
@@ -275,17 +238,10 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5); // Requerimento
             <h4>6. Laudo Médico</h4>
             <p>Envie o laudo médico da pessoa que vai usar a carteira.</p>
             <div class="upload-section" onclick="document.getElementById('laudo-medico').click()">
-                <input type="file" id="laudo-medico" data-cod_tipo_documento="2" onchange="handleFileUpload(this)">
+                <input type="file" id="laudo-medico" data-cod_tipo_documento="2">
                 <p>Clique ou arraste o laudo médico aqui.</p>
                 <div class="uploaded-file" id="laudo-medico-uploaded"></div>
             </div>
-            <?php if ($result_d2->rowCount() > 0) {
-                    $row_laudo = $result_d2->fetch(PDO::FETCH_ASSOC);
-                    echo 'Documento: ' . $row_laudo['vch_documento'];
-                } else {
-                    echo 'Não existe laudo médico.';
-                }
-            ?>
         </div>
     </div>
 
@@ -299,6 +255,7 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5); // Requerimento
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var uploadSections = document.querySelectorAll('.upload-section');
@@ -325,54 +282,50 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5); // Requerimento
     function handleFileUpload(input) {
         var formData = new FormData();
         var codTipoDocumento = input.getAttribute('data-cod_tipo_documento');
-        formData.append(input.name, input.files[0]);
+        formData.append('file', input.files[0]);
         formData.append('cod_tipo_documento', codTipoDocumento);
-
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'processamento/processar_upload.php', true);
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                var response = JSON.parse(xhr.responseText);
+alert('teste');
+        $.ajax({
+            url: 'processamento/processar_upload.php',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                response = JSON.parse(response);
                 if (response.success) {
-                    var section = document.getElementById('step-' + codTipoDocumento);
-                    var icon = section.querySelector('.step-icon');
-                    icon.classList.add('pending');
-                    icon.classList.remove('unlocked');
+                    var section = $('#step-' + codTipoDocumento);
+                    var icon = section.find('.step-icon');
+                    icon.addClass('completed').removeClass('unlocked');
 
-                    var uploadedFileDiv = section.querySelector('.uploaded-file');
-                    uploadedFileDiv.innerHTML = `<a href="${response.filepath}" target="_blank">Ver Arquivo</a>`;
+                    var uploadedFileDiv = section.find('.uploaded-file');
+                    uploadedFileDiv.html(`<a href="${response.filepath}" target="_blank">Ver Arquivo</a>`);
 
-                    var nextStep = section.nextElementSibling;
-                    if (nextStep && nextStep.querySelector('.step-icon')) {
-                        var nextIcon = nextStep.querySelector('.step-icon');
-                        nextIcon.classList.remove('locked');
-                        nextIcon.classList.add('unlocked');
+                    var nextStep = section.next('.step');
+                    if (nextStep.length > 0) {
+                        var nextIcon = nextStep.find('.step-icon');
+                        nextIcon.removeClass('locked').addClass('unlocked');
                     }
 
                     var allCompleted = true;
-                    document.querySelectorAll('.step-icon').forEach(function(icon) {
-                        if (!icon.classList.contains('completed') && !icon.classList.contains('pending')) {
+                    $('.step-icon').each(function() {
+                        if (!$(this).hasClass('completed') && !$(this).hasClass('unlocked')) {
                             allCompleted = false;
                         }
                     });
 
                     if (allCompleted) {
-                        var validatorStep = document.getElementById('validator-step');
-                        if (validatorStep) {
-                            validatorStep.classList.add('pending');
-                            validatorStep.classList.remove('locked');
-                        }
+                        $('#validator-step').addClass('pending').removeClass('locked');
                     }
                 } else {
                     alert('O upload falhou, tente novamente.');
                 }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert('Erro ao enviar o arquivo: ' + textStatus);
             }
-        };
-        xhr.send(formData);
+        });
     }
 </script>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

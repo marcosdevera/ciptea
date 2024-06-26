@@ -5,10 +5,18 @@ include_once('classes/pessoa.class.php');
 
 $cod_pessoa = $_SESSION['cod_pessoa'];
 
-//Objeto que busca o requerimen to do usuario
+// Objetos que buscam os documentos do usuário
+$d1 = new Documentos();
+$d2 = new Documentos();
+$d3 = new Documentos();
+$d4 = new Documentos();
 $d5 = new Documentos();
-$result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5);
 
+$result_d1 = $d1->buscarDocumentoPessoa($cod_pessoa, 1); // Foto 3x4
+$result_d2 = $d2->buscarDocumentoPessoa($cod_pessoa, 2); // Laudo Médico
+$result_d3 = $d3->buscarDocumentoPessoa($cod_pessoa, 3); // Comprovante de Residência
+$result_d4 = $d4->buscarDocumentoPessoa($cod_pessoa, 4); // Documento de Identidade
+$result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5); // Requerimento
 
 ?>
 
@@ -186,15 +194,13 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5);
         <div>
             <h4>2. Requerimento</h4>
             <p>Para obter a carteira, primeiro faça o download do requerimento, imprima e assine. Em seguida tire uma foto e envie o documento que você assinou.</p>
-            <a href="formulario_requerimento.php?cod_pessoa=<?php echo $cod_pessoa; ?>" target="_blank"  class="download-button">Baixar Requerimento</a>
+            <a href="formulario_requerimento.php?cod_pessoa=<?php echo $cod_pessoa; ?>" target="_blank" class="download-button">Baixar Requerimento</a>
             <?php if ($result_d5->rowCount() > 0) {
-                    $row_requetimento = $result_d5->fetch(PDO::FETCH_ASSOC);
-                    echo 'Documento: ' . $row_requetimento['vch_documento'];
-                }else{
-                    echo 'não existe requerimento ';    
-                
+                    $row_requerimento = $result_d5->fetch(PDO::FETCH_ASSOC);
+                    echo 'Documento: ' . $row_requerimento['vch_documento'];
+                } else {
+                    echo 'Não existe requerimento.';
                 }
-
             ?>
             <div class="upload-section" onclick="document.getElementById('requerimento-upload').click()">
                 <input type="file" id="requerimento-upload" data-cod_tipo_documento="5" onchange="handleFileUpload(this)">
@@ -214,6 +220,13 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5);
                 <img src="images/exemplo3.4.png" alt="Exemplo de Foto 3/4">
                 <div class="uploaded-file" id="foto-34-uploaded"></div>
             </div>
+            <?php if ($result_d1->rowCount() > 0) {
+                    $row_foto = $result_d1->fetch(PDO::FETCH_ASSOC);
+                    echo 'Documento: ' . $row_foto['vch_documento'];
+                } else {
+                    echo 'Não existe foto 3x4.';
+                }
+            ?>
         </div>
     </div>
     <div class="step" id="step-4">
@@ -227,6 +240,13 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5);
                 <img src="images/novacarteira.jpeg" alt="Exemplo de Documento de Identidade">
                 <div class="uploaded-file" id="documento-identidade-uploaded"></div>
             </div>
+            <?php if ($result_d4->rowCount() > 0) {
+                    $row_identidade = $result_d4->fetch(PDO::FETCH_ASSOC);
+                    echo 'Documento: ' . $row_identidade['vch_documento'];
+                } else {
+                    echo 'Não existe documento de identidade.';
+                }
+            ?>
         </div>
     </div>
     <div class="step" id="step-5">
@@ -240,6 +260,13 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5);
                 <img src="images/comprovante-residencia.webp" alt="Exemplo de Comprovante de Residência">
                 <div class="uploaded-file" id="comprovante-residencia-uploaded"></div>
             </div>
+            <?php if ($result_d3->rowCount() > 0) {
+                    $row_residencia = $result_d3->fetch(PDO::FETCH_ASSOC);
+                    echo 'Documento: ' . $row_residencia['vch_documento'];
+                } else {
+                    echo 'Não existe comprovante de residência.';
+                }
+            ?>
         </div>
     </div>
     <div class="step" id="step-6">
@@ -252,6 +279,13 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5);
                 <p>Clique ou arraste o laudo médico aqui.</p>
                 <div class="uploaded-file" id="laudo-medico-uploaded"></div>
             </div>
+            <?php if ($result_d2->rowCount() > 0) {
+                    $row_laudo = $result_d2->fetch(PDO::FETCH_ASSOC);
+                    echo 'Documento: ' . $row_laudo['vch_documento'];
+                } else {
+                    echo 'Não existe laudo médico.';
+                }
+            ?>
         </div>
     </div>
 

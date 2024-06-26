@@ -331,12 +331,12 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5); // Requerimento
         var xhr = new XMLHttpRequest();
         xhr.open('POST', 'processamento/processar_upload.php', true);
         xhr.onload = function() {
-            if (xhr.status === 200) { 
+            if (xhr.status === 200) {
                 var response = JSON.parse(xhr.responseText);
                 if (response.success) {
                     var section = document.getElementById('step-' + codTipoDocumento);
                     var icon = section.querySelector('.step-icon');
-                    icon.classList.add('completed');
+                    icon.classList.add('pending');
                     icon.classList.remove('unlocked');
 
                     var uploadedFileDiv = section.querySelector('.uploaded-file');
@@ -351,7 +351,7 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5); // Requerimento
 
                     var allCompleted = true;
                     document.querySelectorAll('.step-icon').forEach(function(icon) {
-                        if (!icon.classList.contains('completed') && !icon.classList.contains('unlocked')) {
+                        if (!icon.classList.contains('completed') && !icon.classList.contains('pending')) {
                             allCompleted = false;
                         }
                     });

@@ -1,6 +1,4 @@
 <?php
-// processamento/processar_upload.php
-
 include_once('../classes/documentos.class.php');
 include_once('../sessao.php');
 
@@ -35,16 +33,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($documento->inserirDocumento()) {
                     echo json_encode(['success' => true, 'filepath' => $upload_file]);
                 } else {
-                    echo json_encode(['success' => false]);
+                    echo json_encode(['success' => false, 'message' => 'Erro ao inserir documento no banco de dados']);
                 }
             } else {
-                echo json_encode(['success' => false]);
+                echo json_encode(['success' => false, 'message' => 'Erro ao mover o arquivo']);
             }
         } else {
-            echo json_encode(['success' => false]);
+            echo json_encode(['success' => false, 'message' => 'Tipo de arquivo não permitido']);
         }
     } else {
-        echo json_encode(['success' => false]);
+        echo json_encode(['success' => false, 'message' => 'Erro no upload do arquivo']);
     }
 }
 ?>

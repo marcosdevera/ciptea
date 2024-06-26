@@ -9,9 +9,23 @@ if (!isset($_SESSION)) {
 
 $cod_pessoa = $_SESSION['cod_pessoa'];
 
-// Objeto que busca o requerimento do usuário
-$d5 = new Documentos();
-$result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5);
+// Função para buscar documentos e verificar resultados
+function buscarDocumento($cod_pessoa, $cod_tipo_documento) {
+    $documento = new Documentos();
+    $resultado = $documento->buscarDocumentoPessoa($cod_pessoa, $cod_tipo_documento);
+
+    if (!$resultado) {
+        return null;
+    }
+
+    return $resultado;
+}
+
+$result_d1 = buscarDocumento($cod_pessoa, 1); // Foto 3x4
+$result_d2 = buscarDocumento($cod_pessoa, 2); // Laudo Médico
+$result_d3 = buscarDocumento($cod_pessoa, 3); // Comprovante de Residência
+$result_d4 = buscarDocumento($cod_pessoa, 4); // Documento de Identidade
+$result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
 ?>
 
 <!DOCTYPE html>
@@ -181,22 +195,6 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5);
         </div>
     </div>
 
-    <!-- <form name="requerimento" > 
-    <div class="step" id="step-2">
-        <div class="step-icon unlocked"><i class="fas fa-id-card"></i></div>
-        <div>
-            <h4>2. Requerimento</h4>
-            <p>Para obter a carteira, primeiro faça o download do requerimento, imprima e assine. Em seguida tire uma foto e envie o documento que você assinou.</p>
-            <a href="formulario_requerimento.php?cod_pessoa=<?php echo $cod_pessoa; ?>" target="_blank" class="download-button">Baixar Requerimento</a>
-            <div class="upload-section" onclick="document.getElementById('requerimento-upload').click()">
-                <input type="file" id="requerimento_upload" name="requerimento_upload" data-cod_tipo_documento="5">
-                <p>Clique ou arraste o requerimento assinado aqui para enviar.</p>
-                <div class="uploaded-file" id="requerimento-uploaded"></div>
-            </div>
-        </div>
-    </div>
-    </form> -->
-
     <form name="requerimento"> 
         <div class="step" id="step-2">
             <div class="step-icon unlocked"><i class="fas fa-id-card"></i></div>
@@ -209,63 +207,77 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5);
                     <p>Clique ou arraste o requerimento assinado aqui para enviar.</p>
                     <div class="uploaded-file" id="requerimento-uploaded"></div>
                 </div>
-                <button type="button" id="uploadButton">Enviar Requerimento</button>
+                <button type="button" id="uploadButtonRequerimento">Enviar Requerimento</button>
             </div>
         </div>
     </form>
 
+    <form id="uploadFormFoto"> 
+        <div class="step" id="step-3">
+            <div class="step-icon unlocked"><i class="fas fa-camera"></i></div>
+            <div>
+                <h4>3. Foto 3x4</h4>
+                <p>Agora você vai enviar a foto que vai aparecer na carteira, como o exemplo abaixo</p>
+                <div class="upload-section" onclick="document.getElementById('foto-34').click()">
+                    <input type="file" id="foto-34" name="foto-34" data-cod_tipo_documento="1" style="display:none;">
+                    <p>Clique ou arraste a foto 3x4 aqui.</p>
+                    <img src="images/exemplo3.4.png" alt="Exemplo de Foto 3/4">
+                    <div class="uploaded-file" id="foto-34-uploaded"></div>
+                </div>
+                <button type="button" id="uploadButtonFoto">Enviar Foto 3x4</button>
+            </div>
+        </div>
+    </form>
 
-    <div class="step" id="step-3">
-        <div class="step-icon unlocked"><i class="fas fa-camera"></i></div>
-        <div>
-            <h4>3. Foto 3x4</h4>
-            <p>Agora você vai enviar a foto que vai aparecer na carteira, como o exemplo abaixo</p>
-            <div class="upload-section" onclick="document.getElementById('foto-34').click()">
-                <input type="file" id="foto-34" data-cod_tipo_documento="1">
-                <p>Clique ou arraste a foto 3x4 aqui.</p>
-                <img src="images/exemplo3.4.png" alt="Exemplo de Foto 3/4">
-                <div class="uploaded-file" id="foto-34-uploaded"></div>
+    <form id="uploadFormIdentidade"> 
+        <div class="step" id="step-4">
+            <div class="step-icon unlocked"><i class="fas fa-id-card-alt"></i></div>
+            <div>
+                <h4>4. Documento de Identidade</h4>
+                <p>Envie a imagem de um documento de identificação com foto (RG, CNH e etc) conforme o exemplo abaixo</p>
+                <div class="upload-section" onclick="document.getElementById('documento-identidade').click()">
+                    <input type="file" id="documento-identidade" name="documento-identidade" data-cod_tipo_documento="4" style="display:none;">
+                    <p>Clique ou arraste o documento de identidade aqui.</p>
+                    <img src="images/novacarteira.jpeg" alt="Exemplo de Documento de Identidade">
+                    <div class="uploaded-file" id="documento-identidade-uploaded"></div>
+                </div>
+                <button type="button" id="uploadButtonIdentidade">Enviar Documento de Identidade</button>
             </div>
         </div>
-    </div>
-    <div class="step" id="step-4">
-        <div class="step-icon unlocked"><i class="fas fa-id-card-alt"></i></div>
-        <div>
-            <h4>4. Documento de Identidade</h4>
-            <p>Envie a imagem de um documento de identificação com foto (RG, CNH e etc) conforme o exemplo abaixo</p>
-            <div class="upload-section" onclick="document.getElementById('documento-identidade').click()">
-                <input type="file" id="documento-identidade" data-cod_tipo_documento="4">
-                <p>Clique ou arraste o documento de identidade aqui.</p>
-                <img src="images/novacarteira.jpeg" alt="Exemplo de Documento de Identidade">
-                <div class="uploaded-file" id="documento-identidade-uploaded"></div>
+    </form>
+
+    <form id="uploadFormResidencia"> 
+        <div class="step" id="step-5">
+            <div class="step-icon unlocked"><i class="fas fa-home"></i></div>
+            <div>
+                <h4>5. Comprovante de Residência</h4>
+                <p>Envie uma foto visível de um comprovante de residência, como exemplo abaixo</p>
+                <div class="upload-section" onclick="document.getElementById('comprovante-residencia').click()">
+                    <input type="file" id="comprovante-residencia" name="comprovante-residencia" data-cod_tipo_documento="3" style="display:none;">
+                    <p>Clique ou arraste o comprovante aqui.</p>
+                    <img src="images/comprovante-residencia.webp" alt="Exemplo de Comprovante de Residência">
+                    <div class="uploaded-file" id="comprovante-residencia-uploaded"></div>
+                </div>
+                <button type="button" id="uploadButtonResidencia">Enviar Comprovante de Residência</button>
             </div>
         </div>
-    </div>
-    <div class="step" id="step-5">
-        <div class="step-icon unlocked"><i class="fas fa-home"></i></div>
-        <div>
-            <h4>5. Comprovante de Residência</h4>
-            <p>Envie uma foto visível de um comprovante de residência, como exemplo abaixo</p>
-            <div class="upload-section" onclick="document.getElementById('comprovante-residencia').click()">
-                <input type="file" id="comprovante-residencia" data-cod_tipo_documento="3">
-                <p>Clique ou arraste o comprovante aqui.</p>
-                <img src="images/comprovante-residencia.webp" alt="Exemplo de Comprovante de Residência">
-                <div class="uploaded-file" id="comprovante-residencia-uploaded"></div>
+    </form>
+
+    <form id="uploadFormLaudo"> 
+        <div class="step" id="step-6">
+            <div class="step-icon unlocked"><i class="fas fa-file-medical"></i></div>
+            <div>
+                <h4>6. Laudo Médico</h4>
+                <p>Envie o laudo médico da pessoa que vai usar a carteira.</p>
+                <div class="upload-section" onclick="document.getElementById('laudo-medico').click()">
+                    <input type="file" id="laudo-medico" name="laudo-medico" data-cod_tipo_documento="2" style="display:none;">
+                    <p>Clique ou arraste o laudo médico aqui.</p>
+                    <div class="uploaded-file" id="laudo-medico-uploaded"></div>
+                </div>
+                <button type="button" id="uploadButtonLaudo">Enviar Laudo Médico</button>
             </div>
         </div>
-    </div>
-    <div class="step" id="step-6">
-        <div class="step-icon unlocked"><i class="fas fa-file-medical"></i></div>
-        <div>
-            <h4>6. Laudo Médico</h4>
-            <p>Envie o laudo médico da pessoa que vai usar a carteira.</p>
-            <div class="upload-section" onclick="document.getElementById('laudo-medico').click()">
-                <input type="file" id="laudo-medico" data-cod_tipo_documento="2">
-                <p>Clique ou arraste o laudo médico aqui.</p>
-                <div class="uploaded-file" id="laudo-medico-uploaded"></div>
-            </div>
-        </div>
-    </div>
+    </form>
 
     <h2>Validação da Carteira</h2>
     <div class="step">
@@ -302,96 +314,183 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5);
     });
 
     $(document).ready(function() {
-            $('#uploadButton').click(function() {
-
-                var fileInput = $('#requerimento_upload')[0];
-                if (fileInput.files.length === 0) {
-                    alert("Por favor, selecione um arquivo para enviar.");
-                    return;
+        // Requerimento
+        $('#uploadButtonRequerimento').click(function() {
+            var fileInput = $('#requerimento_upload')[0];
+            if (fileInput.files.length === 0) {
+                alert("Por favor, selecione um arquivo para enviar.");
+                return;
+            }
+            var file = fileInput.files[0];
+            var validFileTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+            if (!validFileTypes.includes(file.type)) {
+                alert("Por favor, selecione um arquivo JPG, PNG ou PDF.");
+                return;
+            }
+            var formData = new FormData();
+            formData.append('file', file);
+            formData.append('cod_tipo_documento', fileInput.getAttribute('data-cod_tipo_documento'));
+            $.ajax({
+                url: 'processamento/processar_upload.php',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    $('#requerimento-uploaded').html('<p>Arquivo enviado com sucesso!</p>');
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert("Erro ao enviar o arquivo: " + textStatus);
                 }
-
-                var file = fileInput.files[0];
-                var fileType = file.type;
-                var validFileTypes = ['image/jpeg', 'image/png', 'application/pdf'];
-
-                if (!validFileTypes.includes(fileType)) {
-                    alert("Por favor, selecione um arquivo JPG, PNG ou PDF.");
-                    return;
-                }
-
-                var formData = new FormData();
-                formData.append('requerimento_upload', fileInput.files[0]);
-
-                $.ajax({
-                    url: 'processamento/processar_upload.php', // Substitua pela URL do seu script de upload no servidor
-                    type: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function(response) {
-                        $('#requerimento-uploaded').html('<p>Arquivo enviado com sucesso!</p>');
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        alert("Erro ao enviar o arquivo: " + textStatus);
-                    }
-                });
-            });
-
-            $('#requerimento_upload').on('change', function() {
-                var fileName = $(this).val().split('\\').pop();
-                $('#requerimento-uploaded').html('<p>Arquivo selecionado: ' + fileName + '</p>');
             });
         });
 
+        // Foto 3x4
+        $('#uploadButtonFoto').click(function() {
+            var fileInput = $('#foto-34')[0];
+            if (fileInput.files.length === 0) {
+                alert("Por favor, selecione um arquivo para enviar.");
+                return;
+            }
+            var file = fileInput.files[0];
+            var validFileTypes = ['image/jpeg', 'image/png'];
+            if (!validFileTypes.includes(file.type)) {
+                alert("Por favor, selecione um arquivo JPG ou PNG.");
+                return;
+            }
+            var formData = new FormData();
+            formData.append('file', file);
+            formData.append('cod_tipo_documento', fileInput.getAttribute('data-cod_tipo_documento'));
+            $.ajax({
+                url: 'processamento/processar_upload.php',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    $('#foto-34-uploaded').html('<p>Arquivo enviado com sucesso!</p>');
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert("Erro ao enviar o arquivo: " + textStatus);
+                }
+            });
+        });
 
-    // function handleFileUpload(input) {
+        // Documento de Identidade
+        $('#uploadButtonIdentidade').click(function() {
+            var fileInput = $('#documento-identidade')[0];
+            if (fileInput.files.length === 0) {
+                alert("Por favor, selecione um arquivo para enviar.");
+                return;
+            }
+            var file = fileInput.files[0];
+            var validFileTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+            if (!validFileTypes.includes(file.type)) {
+                alert("Por favor, selecione um arquivo JPG, PNG ou PDF.");
+                return;
+            }
+            var formData = new FormData();
+            formData.append('file', file);
+            formData.append('cod_tipo_documento', fileInput.getAttribute('data-cod_tipo_documento'));
+            $.ajax({
+                url: 'processamento/processar_upload.php',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    $('#documento-identidade-uploaded').html('<p>Arquivo enviado com sucesso!</p>');
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert("Erro ao enviar o arquivo: " + textStatus);
+                }
+            });
+        });
 
-    //     var formData = new FormData();
-    //     var codTipoDocumento = input.getAttribute('data-cod_tipo_documento');
-    //     formData.append('requerimento_upload', input.files[0]);
-    //     formData.append('cod_tipo_documento', codTipoDocumento);
+        // Comprovante de Residência
+        $('#uploadButtonResidencia').click(function() {
+            var fileInput = $('#comprovante-residencia')[0];
+            if (fileInput.files.length === 0) {
+                alert("Por favor, selecione um arquivo para enviar.");
+                return;
+            }
+            var file = fileInput.files[0];
+            var validFileTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+            if (!validFileTypes.includes(file.type)) {
+                alert("Por favor, selecione um arquivo JPG, PNG ou PDF.");
+                return;
+            }
+            var formData = new FormData();
+            formData.append('file', file);
+            formData.append('cod_tipo_documento', fileInput.getAttribute('data-cod_tipo_documento'));
+            $.ajax({
+                url: 'processamento/processar_upload.php',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    $('#comprovante-residencia-uploaded').html('<p>Arquivo enviado com sucesso!</p>');
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert("Erro ao enviar o arquivo: " + textStatus);
+                }
+            });
+        });
 
-    //     $.ajax({
-    //         url: 'processamento/processar_upload.php',
-    //         type: 'POST',
-    //         data: formData,
-    //         contentType: false,
-    //         processData: false,
-    //         success: function(response) {
-    //             response = JSON.parse(response);
-    //             if (response.success) {
-    //                 var section = $('#step-' + codTipoDocumento);
-    //                 var icon = section.find('.step-icon');
-    //                 icon.addClass('completed').removeClass('unlocked');
+        // Laudo Médico
+        $('#uploadButtonLaudo').click(function() {
+            var fileInput = $('#laudo-medico')[0];
+            if (fileInput.files.length === 0) {
+                alert("Por favor, selecione um arquivo para enviar.");
+                return;
+            }
+            var file = fileInput.files[0];
+            var validFileTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+            if (!validFileTypes.includes(file.type)) {
+                alert("Por favor, selecione um arquivo JPG, PNG ou PDF.");
+                return;
+            }
+            var formData = new FormData();
+            formData.append('file', file);
+            formData.append('cod_tipo_documento', fileInput.getAttribute('data-cod_tipo_documento'));
+            $.ajax({
+                url: 'processamento/processar_upload.php',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    $('#laudo-medico-uploaded').html('<p>Arquivo enviado com sucesso!</p>');
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert("Erro ao enviar o arquivo: " + textStatus);
+                }
+            });
+        });
 
-    //                 var uploadedFileDiv = section.find('.uploaded-file');
-    //                 uploadedFileDiv.html(`<a href="${response.filepath}" target="_blank">Ver Arquivo</a>`);
-
-    //                 var nextStep = section.next('.step');
-    //                 if (nextStep.length > 0) {
-    //                     var nextIcon = nextStep.find('.step-icon');
-    //                     nextIcon.removeClass('locked').addClass('unlocked');
-    //                 }
-
-    //                 var allCompleted = true;
-    //                 $('.step-icon').each(function() {
-    //                     if (!$(this).hasClass('completed') && !$(this).hasClass('unlocked')) {
-    //                         allCompleted = false;
-    //                     }
-    //                 });
-
-    //                 if (allCompleted) {
-    //                     $('#validator-step').addClass('pending').removeClass('locked');
-    //                 }
-    //             } else {
-    //                 alert('O upload falhou, tente novamente.');
-    //             }
-    //         },
-    //         error: function(jqXHR, textStatus, errorThrown) {
-    //             alert('Erro ao enviar o arquivo: ' + textStatus);
-    //         }
-    //     });
-    // }
+        // Adiciona o evento change aos inputs de arquivo
+        $('#requerimento_upload').on('change', function() {
+            var fileName = $(this).val().split('\\').pop();
+            $('#requerimento-uploaded').html('<p>Arquivo selecionado: ' + fileName + '</p>');
+        });
+        $('#foto-34').on('change', function() {
+            var fileName = $(this).val().split('\\').pop();
+            $('#foto-34-uploaded').html('<p>Arquivo selecionado: ' + fileName + '</p>');
+        });
+        $('#documento-identidade').on('change', function() {
+            var fileName = $(this).val().split('\\').pop();
+            $('#documento-identidade-uploaded').html('<p>Arquivo selecionado: ' + fileName + '</p>');
+        });
+        $('#comprovante-residencia').on('change', function() {
+            var fileName = $(this).val().split('\\').pop();
+            $('#comprovante-residencia-uploaded').html('<p>Arquivo selecionado: ' + fileName + '</p>');
+        });
+        $('#laudo-medico').on('change', function() {
+            var fileName = $(this).val().split('\\').pop();
+            $('#laudo-medico-uploaded').html('<p>Arquivo selecionado: ' + fileName + '</p>');
+        });
+    });
 </script>
 </body>
 </html>

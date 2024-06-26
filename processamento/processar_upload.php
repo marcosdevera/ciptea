@@ -1,46 +1,36 @@
 <?php
-// processamento/processar_upload.php
 
 include_once('../classes/documentos.class.php');
 include_once('../sessao.php');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
-    $cod_pessoa = $_SESSION['cod_pessoa'];
-    $cod_tipo_documento = $_POST['cod_tipo_documento'];
-
-    $allowed_types = array(
-        'image/jpeg' => 'jpg',
-        'image/png' => 'png',
-        'application/pdf' => 'pdf'
-    );
-
-    $file_type = $_FILES['file']['type'];
-
-    if (array_key_exists($file_type, $allowed_types)) {
-        $file_extension = $allowed_types[$file_type];
-        $new_file_name = uniqid() . '.' . $file_extension;
+try {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['requerimento_upload'])) {
+        // Verifica se o diretório de destino existe e cria se não existir
         $targetDirectory = "../uploads/";
-        $targetFile = $targetDirectory . $new_file_name;
+        // if (!is_dir($targetDirectory)) {
+        //     if (!mkdir($targetDirectory, 0777, true)) {
+        //         throw new Exception("Falha ao criar diretório: $targetDirectory");
+        //     }
+        // }
 
-        if (move_uploaded_file($_FILES['file']['tmp_name'], $targetFile)) {
-            $documento = new Documentos();
-            $documento->setCodPessoa($cod_pessoa);
-            $documento->setCodTipoDocumento($cod_tipo_documento);
-            $documento->setVchDocumento($new_file_name);
-            $documento->setStatus('pendente');
+        // Gera um nome de arquivo aleatório de 30 caracteres
+        $randomFileName = bin2hex(random_bytes(15));
+        $fileExtension = pathinfo($_FILES['requerimento_upload']['name'], PATHINFO_EXTENSION);
+        $newFileName = $randomFileName . '.' . $fileExtension;
 
-            if ($documento->inserirDocumento()) {
-                echo json_encode(['success' => true, 'filepath' => $targetFile]);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Erro ao salvar no banco de dados.']);
-            }
+        $targetFile = $targetDirectory . $newFileName;
+
+        if (move_uploaded_file($_FILES['requerimento_upload']['tmp_name'], $targetFile)) {
+            echo "Arquivo " . $newFileName . " foi enviado com sucesso.";
         } else {
-            echo json_encode(['success' => false, 'message' => 'Erro ao mover o arquivo.']);
+            throw new Exception("Erro ao mover o arquivo para o diretório de destino.");
         }
     } else {
-        echo json_encode(['success' => false, 'message' => 'Tipo de arquivo não permitido.']);
+        throw new Exception("Nenhum arquivo foi enviado.");
     }
-} else {
-    echo json_encode(['success' => false, 'message' => 'Nenhum arquivo foi enviado.']);
+} catch (Exception $e) {
+    echo "Erro: " . $e->getMessage();
 }
 ?>
+
+

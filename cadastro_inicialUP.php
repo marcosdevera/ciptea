@@ -180,6 +180,8 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5);
             <p>Preencheu seus dados pessoais, caso queira editar clique <a href="reenviar_cadastro.php" class="edit-link">aqui</a>.</p>
         </div>
     </div>
+
+    <!-- <form name="requerimento" > 
     <div class="step" id="step-2">
         <div class="step-icon unlocked"><i class="fas fa-id-card"></i></div>
         <div>
@@ -193,6 +195,26 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5);
             </div>
         </div>
     </div>
+    </form> -->
+
+    <form name="requerimento"> 
+        <div class="step" id="step-2">
+            <div class="step-icon unlocked"><i class="fas fa-id-card"></i></div>
+            <div>
+                <h4>2. Requerimento</h4>
+                <p>Para obter a carteira, primeiro faça o download do requerimento, imprima e assine. Em seguida tire uma foto e envie o documento que você assinou.</p>
+                <a href="formulario_requerimento.php?cod_pessoa=<?php echo $cod_pessoa; ?>" target="_blank" class="download-button">Baixar Requerimento</a>
+                <div class="upload-section" onclick="document.getElementById('requerimento_upload').click()">
+                    <input type="file" id="requerimento_upload" name="requerimento_upload" data-cod_tipo_documento="5" style="display:none;">
+                    <p>Clique ou arraste o requerimento assinado aqui para enviar.</p>
+                    <div class="uploaded-file" id="requerimento-uploaded"></div>
+                </div>
+                <button type="button" id="uploadButton">Enviar Requerimento</button>
+            </div>
+        </div>
+    </form>
+
+
     <div class="step" id="step-3">
         <div class="step-icon unlocked"><i class="fas fa-camera"></i></div>
         <div>
@@ -279,53 +301,97 @@ $result_d5 = $d5->buscarDocumentoPessoa($cod_pessoa, 5);
         });
     });
 
-    function handleFileUpload(input) {
-        var formData = new FormData();
-        var codTipoDocumento = input.getAttribute('data-cod_tipo_documento');
-        formData.append('file', input.files[0]);
-        formData.append('cod_tipo_documento', codTipoDocumento);
-alert('teste');
-        $.ajax({
-            url: 'processamento/processar_upload.php',
-            type: 'POST',
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                response = JSON.parse(response);
-                if (response.success) {
-                    var section = $('#step-' + codTipoDocumento);
-                    var icon = section.find('.step-icon');
-                    icon.addClass('completed').removeClass('unlocked');
+    $(document).ready(function() {
+            $('#uploadButton').click(function() {
 
-                    var uploadedFileDiv = section.find('.uploaded-file');
-                    uploadedFileDiv.html(`<a href="${response.filepath}" target="_blank">Ver Arquivo</a>`);
-
-                    var nextStep = section.next('.step');
-                    if (nextStep.length > 0) {
-                        var nextIcon = nextStep.find('.step-icon');
-                        nextIcon.removeClass('locked').addClass('unlocked');
-                    }
-
-                    var allCompleted = true;
-                    $('.step-icon').each(function() {
-                        if (!$(this).hasClass('completed') && !$(this).hasClass('unlocked')) {
-                            allCompleted = false;
-                        }
-                    });
-
-                    if (allCompleted) {
-                        $('#validator-step').addClass('pending').removeClass('locked');
-                    }
-                } else {
-                    alert('O upload falhou, tente novamente.');
+                var fileInput = $('#requerimento_upload')[0];
+                if (fileInput.files.length === 0) {
+                    alert("Por favor, selecione um arquivo para enviar.");
+                    return;
                 }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                alert('Erro ao enviar o arquivo: ' + textStatus);
-            }
+
+                var file = fileInput.files[0];
+                var fileType = file.type;
+                var validFileTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+
+                if (!validFileTypes.includes(fileType)) {
+                    alert("Por favor, selecione um arquivo JPG, PNG ou PDF.");
+                    return;
+                }
+
+                var formData = new FormData();
+                formData.append('requerimento_upload', fileInput.files[0]);
+
+                $.ajax({
+                    url: 'processamento/processar_upload.php', // Substitua pela URL do seu script de upload no servidor
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        $('#requerimento-uploaded').html('<p>Arquivo enviado com sucesso!</p>');
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert("Erro ao enviar o arquivo: " + textStatus);
+                    }
+                });
+            });
+
+            $('#requerimento_upload').on('change', function() {
+                var fileName = $(this).val().split('\\').pop();
+                $('#requerimento-uploaded').html('<p>Arquivo selecionado: ' + fileName + '</p>');
+            });
         });
-    }
+
+
+    // function handleFileUpload(input) {
+
+    //     var formData = new FormData();
+    //     var codTipoDocumento = input.getAttribute('data-cod_tipo_documento');
+    //     formData.append('requerimento_upload', input.files[0]);
+    //     formData.append('cod_tipo_documento', codTipoDocumento);
+
+    //     $.ajax({
+    //         url: 'processamento/processar_upload.php',
+    //         type: 'POST',
+    //         data: formData,
+    //         contentType: false,
+    //         processData: false,
+    //         success: function(response) {
+    //             response = JSON.parse(response);
+    //             if (response.success) {
+    //                 var section = $('#step-' + codTipoDocumento);
+    //                 var icon = section.find('.step-icon');
+    //                 icon.addClass('completed').removeClass('unlocked');
+
+    //                 var uploadedFileDiv = section.find('.uploaded-file');
+    //                 uploadedFileDiv.html(`<a href="${response.filepath}" target="_blank">Ver Arquivo</a>`);
+
+    //                 var nextStep = section.next('.step');
+    //                 if (nextStep.length > 0) {
+    //                     var nextIcon = nextStep.find('.step-icon');
+    //                     nextIcon.removeClass('locked').addClass('unlocked');
+    //                 }
+
+    //                 var allCompleted = true;
+    //                 $('.step-icon').each(function() {
+    //                     if (!$(this).hasClass('completed') && !$(this).hasClass('unlocked')) {
+    //                         allCompleted = false;
+    //                     }
+    //                 });
+
+    //                 if (allCompleted) {
+    //                     $('#validator-step').addClass('pending').removeClass('locked');
+    //                 }
+    //             } else {
+    //                 alert('O upload falhou, tente novamente.');
+    //             }
+    //         },
+    //         error: function(jqXHR, textStatus, errorThrown) {
+    //             alert('Erro ao enviar o arquivo: ' + textStatus);
+    //         }
+    //     });
+    // }
 </script>
 </body>
 </html>

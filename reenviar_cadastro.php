@@ -9,7 +9,6 @@ $cod_pessoa = $_SESSION["cod_pessoa"];
 $result_p = $p->exibirPessoaUsuario($cod_pessoa);
 
 $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
-
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -179,7 +178,17 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 </div>
                 <div class="form-group">
                     <label for="vch_tipo_sanguineo">Tipo Sanguíneo:</label>
-                    <input type="text" class="form-control" name="vch_tipo_sanguineo" id="vch_tipo_sanguineo" maxlength="2" value="<?php echo isset($row_p['vch_tipo_sanguineo']) ? $row_p['vch_tipo_sanguineo'] : ''; ?>" required>
+                    <select class="form-control" name="vch_tipo_sanguineo" id="vch_tipo_sanguineo" required>
+                        <option value="">Selecione o tipo sanguíneo</option>
+                        <option value="A+" <?php echo isset($row_p['vch_tipo_sanguineo']) && $row_p['vch_tipo_sanguineo'] == 'A+' ? 'selected' : ''; ?>>A+</option>
+                        <option value="A-" <?php echo isset($row_p['vch_tipo_sanguineo']) && $row_p['vch_tipo_sanguineo'] == 'A-' ? 'selected' : ''; ?>>A-</option>
+                        <option value="B+" <?php echo isset($row_p['vch_tipo_sanguineo']) && $row_p['vch_tipo_sanguineo'] == 'B+' ? 'selected' : ''; ?>>B+</option>
+                        <option value="B-" <?php echo isset($row_p['vch_tipo_sanguineo']) && $row_p['vch_tipo_sanguineo'] == 'B-' ? 'selected' : ''; ?>>B-</option>
+                        <option value="AB+" <?php echo isset($row_p['vch_tipo_sanguineo']) && $row_p['vch_tipo_sanguineo'] == 'AB+' ? 'selected' : ''; ?>>AB+</option>
+                        <option value="AB-" <?php echo isset($row_p['vch_tipo_sanguineo']) && $row_p['vch_tipo_sanguineo'] == 'AB-' ? 'selected' : ''; ?>>AB-</option>
+                        <option value="O+" <?php echo isset($row_p['vch_tipo_sanguineo']) && $row_p['vch_tipo_sanguineo'] == 'O+' ? 'selected' : ''; ?>>O+</option>
+                        <option value="O-" <?php echo isset($row_p['vch_tipo_sanguineo']) && $row_p['vch_tipo_sanguineo'] == 'O-' ? 'selected' : ''; ?>>O-</option>
+                    </select>
                 </div>
             </div>
             <div class="step" id="step3">
@@ -191,7 +200,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                         <option value="1" <?php echo isset($row_p['bool_representante_legal']) && $row_p['bool_representante_legal'] == 1 ? 'selected' : ''; ?>>Sim</option>
                     </select>
                 </div>
-                <div id="representante_legal" style="display: none;">
+                <div id="representante_legal" style="display: <?php echo isset($row_p['bool_representante_legal']) && $row_p['bool_representante_legal'] == 1 ? 'block' : 'none'; ?>;">
                     <div class="form-group">
                         <label for="vch_nome_responsavel">Nome do Representante:</label>
                         <input type="text" class="form-control" name="vch_nome_responsavel" id="vch_nome_responsavel" value="<?php echo isset($row_p['vch_nome_responsavel']) ? $row_p['vch_nome_responsavel'] : ''; ?>">
@@ -264,9 +273,11 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        // Variável para rastrear o passo atual do formulário
         var currentStep = 0;
         showStep(currentStep);
 
+        // Função para exibir o passo atual
         function showStep(n) {
             var steps = document.getElementsByClassName("step");
             steps[n].style.display = "block";
@@ -285,6 +296,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             }
         }
 
+        // Função para avançar ou retroceder entre os passos
         function nextPrev(n) {
             var steps = document.getElementsByClassName("step");
             steps[currentStep].classList.remove('active');
@@ -302,6 +314,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             }, 500);
         }
 
+        // Função para atualizar a barra de progresso
         function updateProgressBar(n) {
             var progress = document.querySelector(".progress");
             var steps = document.getElementsByClassName("step");
@@ -309,6 +322,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             progress.style.width = percent + "%";
         }
 
+        // Funções para interações específicas quando o documento estiver pronto
         $(document).ready(function() {
             $('#showPassword').change(function() {
                 var passwordField = $('#vch_senha');
@@ -327,17 +341,33 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             });
 
             $('#tem_representante').change(function() {
-                toggleRepresentanteLegal();
+                if ($(this).val() == '1') {
+                    $('#representante_legal').show();
+                } else {
+                    $('#representante_legal').hide();
+                }
             });
 
-            toggleRepresentanteLegal(); // Chamar para definir o estado inicial
+            const dataNascimentoInput = document.getElementById('sdt_nascimento');
+            const dataAtual = new Date();
+            const anoAtual = dataAtual.getFullYear();
+            const mesAtual = String(dataAtual.getMonth() + 1).padStart(2, '0');
+            const diaAtual = String(dataAtual.getDate()).padStart(2, '0');
+            const dataMaxima = `${anoAtual}-${mesAtual}-${diaAtual}`;
+            const anoMinimo = 1900;
+            const dataMinima = `${anoMinimo}-01-01`;
+
+            dataNascimentoInput.setAttribute('max', dataMaxima);
+            dataNascimentoInput.setAttribute('min', dataMinima);
         });
 
+        // Função para exibir um alerta
         function exibirAlerta() {
             var alertDiv = document.getElementById("alert-message");
             alertDiv.style.display = "block";
         }
 
+        // Função para verificar o login via AJAX
         function verificarLogin() {
             var login = document.getElementById('vch_login').value;
             var xhr = new XMLHttpRequest();
@@ -354,6 +384,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             xhr.send('login=' + login);
         }
 
+        // Função para validar se as senhas são iguais
         function validarSenhas() {
             var senha = document.getElementById("vch_senha").value;
             var confirmacao = document.getElementById("vch_confirm_senha").value;
@@ -364,6 +395,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             return true;
         }
 
+        // Função para formatar o CPF
         function formatCPF(cpf) {
             cpf = cpf.replace(/\D/g, '');
             cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
@@ -372,6 +404,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             return cpf;
         }
 
+        // Função para validar o CPF
         function validarCPF(cpf) {
             cpf = cpf.replace(/\D/g, '');
             if (cpf.length !== 11) return false;
@@ -411,11 +444,13 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             return true;
         }
 
+        // Função para formatar o CPF no campo de input
         function formatarCPF(inputId) {
             var cpfInput = document.getElementById(inputId);
             cpfInput.value = formatCPF(cpfInput.value);
         }
 
+        // Função para validar o CPF quando sair do campo de input
         function validarCPFOnBlur(inputId) {
             var cpfInput = document.getElementById(inputId);
             var cpf = cpfInput.value.replace(/\D/g, '');
@@ -442,6 +477,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             }
         }
 
+        // Função para formatar o RG
         function formatarRG() {
             var rgInput = document.getElementById('vch_rg');
             var rg = rgInput.value.replace(/\D/g, '');
@@ -459,6 +495,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             rgInput.value = rg;
         }
 
+        // Função para formatar o número do CNS
         function formatarCNS() {
             var cnsInput = document.getElementById('vch_num_cartao_sus');
             var cns = cnsInput.value.replace(/\D/g, '');
@@ -476,18 +513,21 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             cnsInput.value = cns;
         }
 
+        // Função para formatar o CEP
         function formatarCEP(cep) {
             cep = cep.replace(/\D/g, '');
             cep = cep.replace(/^(\d{5})(\d{1})/, '$1-$2');
             return cep;
         }
 
+        // Função para aplicar máscara no campo de input do CEP
         function aplicarMascaraCEP(inputId) {
             var inputCEP = document.getElementById(inputId);
             var cep = inputCEP.value;
             inputCEP.value = formatarCEP(cep);
         }
 
+        // Função para formatar o telefone
         function formatarTelefone(telefone) {
             telefone = telefone.replace(/\D/g, '');
             if (telefone.length === 11) {
@@ -502,38 +542,20 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             return telefone;
         }
 
+        // Função para aplicar máscara no campo de input do telefone
         function aplicarMascaraTelefone(id) {
             var inputTelefone = document.getElementById(id);
             var telefone = inputTelefone.value;
             inputTelefone.value = formatarTelefone(telefone);
         }
 
-        function toggleRepresentanteLegal() {
-            const representanteLegal = document.getElementById('tem_representante').value;
-            const representanteDiv = document.getElementById('representante_legal');
-            if (representanteLegal == "1") {
-                representanteDiv.style.display = "block";
-            } else {
-                representanteDiv.style.display = "none";
-            }
+        // Função para completar a barra de progresso e mudar a cor para verde
+        function completeProgress() {
+            var progress = document.querySelector(".progress");
+            progress.classList.add("complete");
         }
 
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const boolRepresentanteLegal = "<?php echo isset($row_p['bool_representante_legal']) ? $row_p['bool_representante_legal'] : ''; ?>";
-            const sexoResponsavel = "<?php echo isset($row_p['int_sexo_responsavel']) ? $row_p['int_sexo_responsavel'] : ''; ?>";
-
-            const selectElement = document.getElementById('tem_representante');
-            if(boolRepresentanteLegal !== ''){
-                selectElement.value = boolRepresentanteLegal
-            }
-            toggleRepresentanteLegal();
-
-            if (sexoResponsavel === "1") {
-                document.getElementById('sexo_responsavel_m').checked = true;
-            } else if (sexoResponsavel === "2") {
-                document.getElementById('sexo_responsavel_f').checked = true;
-            }
-        });
     </script>
 </body>
+
 </html>

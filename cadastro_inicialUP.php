@@ -14,11 +14,11 @@ function buscarDocumento($cod_pessoa, $cod_tipo_documento) {
     $documento = new Documentos();
     $resultado = $documento->buscarDocumentoPessoa($cod_pessoa, $cod_tipo_documento);
 
-    if (!$resultado) {
-        return null;
+    if ($resultado && $resultado->rowCount() > 0) {
+        return $resultado->fetch(PDO::FETCH_ASSOC);
     }
 
-    return $resultado->fetch(PDO::FETCH_ASSOC);
+    return null;
 }
 
 $result_d1 = buscarDocumento($cod_pessoa, 1); // Foto 3x4
@@ -47,8 +47,8 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
             padding: 0;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Alinha ao topo */
-            min-height: 100vh; /* Altura mínima da tela */
+            align-items: flex-start;
+            min-height: 100vh;
         }
         .container {
             background-color: rgba(255, 255, 255, 0.95);
@@ -98,7 +98,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
             margin-top: 10px;
             position: relative;
             width: 100%;
-            box-sizing: border-box; /* Inclui padding e border na largura total */
+            box-sizing: border-box;
         }
         .upload-section.dragover {
             background-color: #e0f7ff;
@@ -107,7 +107,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
             display: none;
         }
         .upload-section img {
-            max-width: 100px;
+            max-width: 200px; /* Aumentado para melhor visualização */
             display: block;
             margin: 10px auto;
         }
@@ -116,8 +116,8 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
             margin-bottom: 30px;
         }
         .header img {
-            width: 250px; /* Aumenta o tamanho do logo */
-            max-width: 100%; /* Garante que o logo não ultrapasse a largura da tela */
+            width: 250px;
+            max-width: 100%;
             margin-bottom: 10px;
         }
         .header h1 {
@@ -207,13 +207,14 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                 <div class="upload-section" onclick="document.getElementById('requerimento_upload').click()">
                     <input type="file" id="requerimento_upload" name="requerimento_upload" data-cod_tipo_documento="5" style="display:none;">
                     <p>Clique ou arraste o requerimento assinado aqui para enviar.</p>
+                    <div class="uploaded-file" id="requerimento-uploaded"></div>
                 </div>
                 <button type="button" id="uploadButtonRequerimento">Enviar Requerimento</button>
-                <div class="uploaded-file" id="requerimento-uploaded">
-                    <?php if ($result_d5) { ?>
-                        <a href="<?php echo 'uploads/' . $result_d5['vch_documento']; ?>" target="_blank">Ver Requerimento Enviado</a>
-                    <?php } ?>
-                </div>
+                <?php
+                if ($result_d5) {
+                    echo '<div class="uploaded-file"><a href="../uploads/' . $result_d5['vch_documento'] . '" target="_blank">Ver Requerimento Enviado</a></div>';
+                }
+                ?>
             </div>
         </div>
     </form>
@@ -231,6 +232,11 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                     <div class="uploaded-file" id="foto-34-uploaded"></div>
                 </div>
                 <button type="button" id="uploadButtonFoto">Enviar Foto 3x4</button>
+                <?php
+                if ($result_d1) {
+                    echo '<div class="uploaded-file"><a href="../uploads/' . $result_d1['vch_documento'] . '" target="_blank">Ver Foto Enviada</a></div>';
+                }
+                ?>
             </div>
         </div>
     </form>
@@ -248,6 +254,11 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                     <div class="uploaded-file" id="documento-identidade-uploaded"></div>
                 </div>
                 <button type="button" id="uploadButtonIdentidade">Enviar Documento de Identidade</button>
+                <?php
+                if ($result_d4) {
+                    echo '<div class="uploaded-file"><a href="../uploads/' . $result_d4['vch_documento'] . '" target="_blank">Ver Documento de Identidade Enviado</a></div>';
+                }
+                ?>
             </div>
         </div>
     </form>
@@ -265,6 +276,11 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                     <div class="uploaded-file" id="comprovante-residencia-uploaded"></div>
                 </div>
                 <button type="button" id="uploadButtonResidencia">Enviar Comprovante de Residência</button>
+                <?php
+                if ($result_d3) {
+                    echo '<div class="uploaded-file"><a href="../uploads/' . $result_d3['vch_documento'] . '" target="_blank">Ver Comprovante de Residência Enviado</a></div>';
+                }
+                ?>
             </div>
         </div>
     </form>
@@ -281,6 +297,11 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                     <div class="uploaded-file" id="laudo-medico-uploaded"></div>
                 </div>
                 <button type="button" id="uploadButtonLaudo">Enviar Laudo Médico</button>
+                <?php
+                if ($result_d2) {
+                    echo '<div class="uploaded-file"><a href="../uploads/' . $result_d2['vch_documento'] . '" target="_blank">Ver Laudo Médico Enviado</a></div>';
+                }
+                ?>
             </div>
         </div>
     </form>
@@ -344,7 +365,9 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                 contentType: false,
                 processData: false,
                 success: function(response) {
-                    $('#requerimento-uploaded').html('<p>Arquivo enviado com sucesso!</p><a href="uploads/' + response.fileName + '" target="_blank">Ver Requerimento Enviado</a>');
+                    var res = JSON.parse(response);
+                    $('#requerimento-uploaded').html('<a href="../uploads/' + res.fileName + '" target="_blank">Ver Requerimento Enviado</a>');
+                    alert(res.message);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     alert("Erro ao enviar o arquivo: " + textStatus);
@@ -376,7 +399,9 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                 contentType: false,
                 processData: false,
                 success: function(response) {
-                    $('#foto-34-uploaded').html('<p>Arquivo enviado com sucesso!</p><a href="uploads/' + response.fileName + '" target="_blank">Ver Foto Enviada</a>');
+                    var res = JSON.parse(response);
+                    $('#foto-34-uploaded').html('<a href="../uploads/' + res.fileName + '" target="_blank">Ver Foto Enviada</a>');
+                    alert(res.message);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     alert("Erro ao enviar o arquivo: " + textStatus);
@@ -408,7 +433,9 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                 contentType: false,
                 processData: false,
                 success: function(response) {
-                    $('#documento-identidade-uploaded').html('<p>Arquivo enviado com sucesso!</p><a href="uploads/' + response.fileName + '" target="_blank">Ver Documento de Identidade Enviado</a>');
+                    var res = JSON.parse(response);
+                    $('#documento-identidade-uploaded').html('<a href="../uploads/' + res.fileName + '" target="_blank">Ver Documento de Identidade Enviado</a>');
+                    alert(res.message);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     alert("Erro ao enviar o arquivo: " + textStatus);
@@ -440,7 +467,9 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                 contentType: false,
                 processData: false,
                 success: function(response) {
-                    $('#comprovante-residencia-uploaded').html('<p>Arquivo enviado com sucesso!</p><a href="uploads/' + response.fileName + '" target="_blank">Ver Comprovante de Residência Enviado</a>');
+                    var res = JSON.parse(response);
+                    $('#comprovante-residencia-uploaded').html('<a href="../uploads/' + res.fileName + '" target="_blank">Ver Comprovante de Residência Enviado</a>');
+                    alert(res.message);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     alert("Erro ao enviar o arquivo: " + textStatus);
@@ -472,7 +501,9 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                 contentType: false,
                 processData: false,
                 success: function(response) {
-                    $('#laudo-medico-uploaded').html('<p>Arquivo enviado com sucesso!</p><a href="uploads/' + response.fileName + '" target="_blank">Ver Laudo Médico Enviado</a>');
+                    var res = JSON.parse(response);
+                    $('#laudo-medico-uploaded').html('<a href="../uploads/' + res.fileName + '" target="_blank">Ver Laudo Médico Enviado</a>');
+                    alert(res.message);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     alert("Erro ao enviar o arquivo: " + textStatus);

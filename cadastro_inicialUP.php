@@ -212,7 +212,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                 <button type="button" id="uploadButtonRequerimento">Enviar Requerimento</button>
                 <?php
                 if ($result_d5) {
-                    echo '<div class="uploaded-file"><a href="../uploads/' . $result_d5['vch_documento'] . '" target="_blank">Ver Requerimento Enviado</a></div>';
+                    echo '<div class="uploaded-file"><a href="uploads/' . $result_d5['vch_documento'] . '" target="_blank">Ver Requerimento Enviado</a></div>';
                 }
                 ?>
             </div>
@@ -234,7 +234,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                 <button type="button" id="uploadButtonFoto">Enviar Foto 3x4</button>
                 <?php
                 if ($result_d1) {
-                    echo '<div class="uploaded-file"><a href="../uploads/' . $result_d1['vch_documento'] . '" target="_blank">Ver Foto Enviada</a></div>';
+                    echo '<div class="uploaded-file"><a href="uploads/' . $result_d1['vch_documento'] . '" target="_blank">Ver Foto Enviada</a></div>';
                 }
                 ?>
             </div>
@@ -256,7 +256,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                 <button type="button" id="uploadButtonIdentidade">Enviar Documento de Identidade</button>
                 <?php
                 if ($result_d4) {
-                    echo '<div class="uploaded-file"><a href="../uploads/' . $result_d4['vch_documento'] . '" target="_blank">Ver Documento de Identidade Enviado</a></div>';
+                    echo '<div class="uploaded-file"><a href="uploads/' . $result_d4['vch_documento'] . '" target="_blank">Ver Documento de Identidade Enviado</a></div>';
                 }
                 ?>
             </div>
@@ -278,7 +278,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                 <button type="button" id="uploadButtonResidencia">Enviar Comprovante de Residência</button>
                 <?php
                 if ($result_d3) {
-                    echo '<div class="uploaded-file"><a href="../uploads/' . $result_d3['vch_documento'] . '" target="_blank">Ver Comprovante de Residência Enviado</a></div>';
+                    echo '<div class="uploaded-file"><a href="uploads/' . $result_d3['vch_documento'] . '" target="_blank">Ver Comprovante de Residência Enviado</a></div>';
                 }
                 ?>
             </div>
@@ -299,7 +299,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                 <button type="button" id="uploadButtonLaudo">Enviar Laudo Médico</button>
                 <?php
                 if ($result_d2) {
-                    echo '<div class="uploaded-file"><a href="../uploads/' . $result_d2['vch_documento'] . '" target="_blank">Ver Laudo Médico Enviado</a></div>';
+                    echo '<div class="uploaded-file"><a href="uploads/' . $result_d2['vch_documento'] . '" target="_blank">Ver Laudo Médico Enviado</a></div>';
                 }
                 ?>
             </div>

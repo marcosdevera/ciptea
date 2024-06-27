@@ -29,7 +29,7 @@ try {
         $targetFile = $targetDirectory . $newFileName;
 
         // Configura o nome do arquivo e o status
-        $documentos->setVchDocumento($newFileName);
+        $documentos->setVchDocumento('../uploads/'.$newFileName);
         $documentos->setStatus(0);
         $documentos->setCodPessoa($cod_pessoa);
         $documentos->setCodTipoDocumento($cod_tipo_documento);

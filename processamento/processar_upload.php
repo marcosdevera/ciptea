@@ -9,16 +9,12 @@ if (!isset($_SESSION)) {
 }
 
 $cod_pessoa = $_SESSION['cod_pessoa'];
+$cod_tipo_documento = $_POST['cod_tipo_documento'];
+
 
 // Verifica se o POST contém 'cod_tipo_documento' e 'cod_pessoa'
-if (isset($_POST["cod_tipo_documento"]) && isset($_POST["cod_pessoa"])) {
-    $cod_tipo_documento = $_POST["cod_tipo_documento"];
-    $documentos->setCodTipoDocumento($cod_tipo_documento);
-    $documentos->setCodPessoa($cod_pessoa);
-}
-
 try {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['requerimento_upload'])) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
         // Verifica se o diretório de destino existe e cria se não existir
         $targetDirectory = "../uploads/";
         if (!is_dir($targetDirectory)) {
@@ -29,26 +25,39 @@ try {
 
         // Gera um nome de arquivo aleatório de 30 caracteres
         $randomFileName = bin2hex(random_bytes(15));
-        $fileExtension = pathinfo($_FILES['requerimento_upload']['name'], PATHINFO_EXTENSION);
+        $fileExtension = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
         $newFileName = $randomFileName . '.' . $fileExtension;
 
         $targetFile = $targetDirectory . $newFileName;
 
-        if (move_uploaded_file($_FILES['requerimento_upload']['tmp_name'], $targetFile)) {
-            // Define o nome do arquivo no objeto $documentos
-            $documentos->setVchDocumento($newFileName);
-            
-            // Define o status
+        
+        if(isset($newFileName)) {
+            $documentos->setVchDocumento($vch_documento);
+        }
+
+        if(isset($cod_pessoa)) {
+            $documentos->setCodPessoa($cod_pessoa);
+        }
+        
+        if(isset($cod_tipo_documento)) {
+            $documentos->setCodTipoDocumento($cod_tipo_documento);
+        }
+        
+        
+        
+        if($cod_tipo_documento == 5 && isset($vch_documento)){
             $documentos->setStatus(0);
+            $documentos->atualizarDocumento();
+        }
+        else{
+            $documentos->inserirDocumento($cod_pessoa, $cod_tipo_documento);
+        }
+        
 
-            // Verifica se o tipo de documento é 5 (Requerimento)
-            if ($cod_tipo_documento == 5) {
-                $documentos->atualizarDocumento();
-            } else {
-                $documentos->inserirDocumento($cod_pessoa, $cod_tipo_documento);
-            }
-
-            echo json_encode(['success' => true, 'message' => "Arquivo " . $newFileName . " foi enviado com sucesso.", 'filepath' => $targetFile]);
+        if (move_uploaded_file($_FILES['file']['tmp_name'], $targetFile)) {
+            // Define o nome do arquivo no objeto $documentos
+            echo"Arquivo" . $newFileName. " foi enviado com sucesso.";
+            
         } else {
             throw new Exception("Erro ao mover o arquivo para o diretório de destino.");
         }

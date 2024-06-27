@@ -227,6 +227,8 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                 <p>Para obter a carteira, primeiro faça o download do requerimento, imprima e assine. Em seguida tire uma foto e envie o documento que você assinou.</p>
                 <a href="formulario_requerimento.php?cod_pessoa=<?php echo $cod_pessoa; ?>" target="_blank" class="download-button">Baixar Requerimento</a>
                 <div class="upload-section" onclick="document.getElementById('requerimento_upload').click()">
+                    <input type="hidden" id="cod_pessoa" value="<?php echo $cod_pessoa ?>" >
+                    <input type="hidden" name="cod_tipo_documento" value="5">
                     <input type="file" id="requerimento_upload" name="requerimento_upload" data-cod_tipo_documento="5" style="display:none;">
                     <p>Clique ou arraste o requerimento assinado aqui para enviar.</p>
                     <div class="uploaded-file" id="requerimento-uploaded"></div>
@@ -277,6 +279,8 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                 <h4>5. Comprovante de Residência</h4>
                 <p>Envie uma foto visível de um comprovante de residência, como exemplo abaixo</p>
                 <div class="upload-section" onclick="document.getElementById('comprovante-residencia').click()">
+                
+
                     <input type="file" id="comprovante-residencia" name="comprovante-residencia" data-cod_tipo_documento="3" style="display:none;">
                     <p>Clique ou arraste o comprovante aqui.</p>
                     <img src="images/comprovante-residencia.webp" alt="Exemplo de Comprovante de Residência">
@@ -341,6 +345,8 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
         // Requerimento
         $('#uploadButtonRequerimento').click(function() {
             var fileInput = $('#requerimento_upload')[0];
+            var codPessoa = $('input[name="cod_pessoa"]').val();
+            var codTipoDocumento = $('input[name="cod_tipo_documento"]').val();
             if (fileInput.files.length === 0) {
                 alert("Por favor, selecione um arquivo para enviar.");
                 return;
@@ -353,7 +359,9 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
             }
             var formData = new FormData();
             formData.append('file', file);
-            formData.append('cod_tipo_documento', fileInput.getAttribute('data-cod_tipo_documento'));
+            formData.append('cod_pessoa', codPessoa);
+            formData.append('cod_tipo_documento', codTipoDocumento);
+         
             $.ajax({
                 url: 'processamento/processar_upload.php',
                 type: 'POST',

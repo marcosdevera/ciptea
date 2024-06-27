@@ -81,18 +81,79 @@ class Documentos {
         return $consulta;
     }
 
-    public function inserirDocumento() {
+    // public function inserirDocumento() {
+    //     $pdo = Database::conexao();
+    //     $data_atual = date('Y-m-d H:i:s');
+    //     $sql = "INSERT INTO ciptea.documentos (cod_pessoa, cod_tipo_documento, vch_documento, sdt_insercao, status)
+    //             VALUES (:cod_pessoa, :cod_tipo_documento, :vch_documento, :sdt_insercao, :status)";
+    //     $consulta = $pdo->prepare($sql);
+    //     $consulta->bindParam(':cod_pessoa', $this->cod_pessoa);
+    //     $consulta->bindParam(':cod_tipo_documento', $this->cod_tipo_documento);
+    //     $consulta->bindParam(':vch_documento', $this->vch_documento);
+    //     $consulta->bindParam(':sdt_insercao', $data_atual);
+    //     $consulta->bindParam(':status', 'pendente');
+    //     return $consulta->execute();
+    // }
+
+    public function inserirDocumento($cod_pessoa, $cod_tipo_documento) { //$cod_pessoa, $cod_tipo_documento
+        // Verificação de valores obrigatórios
+        if ($this->cod_pessoa === null) {
+            throw new Exception("cod_pessoa não pode ser nulo");
+        }
+        if ($this->cod_tipo_documento === null) {
+            throw new Exception("cod_tipo_documento não pode ser nulo");
+        }
+        if ($this->vch_documento === null) {
+            throw new Exception("vch_documento não pode ser nulo");
+        }
+        if ($this->status === null) {
+            throw new Exception("status não pode ser nulo");
+        }
+
         $pdo = Database::conexao();
         $data_atual = date('Y-m-d H:i:s');
         $sql = "INSERT INTO ciptea.documentos (cod_pessoa, cod_tipo_documento, vch_documento, sdt_insercao, status)
                 VALUES (:cod_pessoa, :cod_tipo_documento, :vch_documento, :sdt_insercao, :status)";
         $consulta = $pdo->prepare($sql);
-        $consulta->bindParam(':cod_pessoa', $this->cod_pessoa);
-        $consulta->bindParam(':cod_tipo_documento', $this->cod_tipo_documento);
+        $consulta->bindParam(':cod_pessoa', $cod_pessoa);
+        $consulta->bindParam(':cod_tipo_documento', $cod_tipo_documento);
         $consulta->bindParam(':vch_documento', $this->vch_documento);
         $consulta->bindParam(':sdt_insercao', $data_atual);
-        $consulta->bindParam(':status', 'pendente');
+        $consulta->bindParam(':status', $this->status);
         return $consulta->execute();
     }
+
+
+    public function atualizarDocumento(){ //$cod_pessoa, $cod_tipo_documento
+        // Verificação de valores obrigatórios
+        if ($this->cod_pessoa === null) {
+            throw new Exception("cod_pessoa não pode ser nulo");
+        }
+        if ($this->cod_tipo_documento === null) {
+            throw new Exception("cod_tipo_documento não pode ser nulo");
+        }
+        if ($this->vch_documento === null) {
+            throw new Exception("vch_documento não pode ser nulo");
+        }
+        if ($this->status === null) {
+            throw new Exception("status não pode ser nulo");
+        }
+
+        $pdo = Database::conexao();
+        $data_atual = date('Y-m-d H:i:s');
+        $sql = "UPDATE ciptea.documentos 
+                SET vch_documento = :vch_documento, sdt_insercao = :sdt_insercao, status = :status
+                WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = :cod_tipo_documento";
+        $consulta = $pdo->prepare($sql);
+        $consulta->bindParam(':vch_documento', $this->vch_documento);
+        $consulta->bindParam(':sdt_insercao', $data_atual);
+        $consulta->bindParam(':status', $this->status);
+        $consulta->bindParam(':cod_pessoa', $this->cod_pessoa);
+        $consulta->bindParam(':cod_tipo_documento', $this->cod_tipo_documento);
+        return $consulta->execute();
+    }
+    
+}
+?>
 }
 ?>

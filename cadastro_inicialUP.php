@@ -39,142 +39,166 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            background: url('images/background_login2.webp') no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            margin-top: 30px;
-            max-width: 800px;
-            width: 90%;
-            overflow: hidden;
-        }
-        .step {
-            margin-bottom: 20px;
-            display: flex;
-            align-items: flex-start;
-        }
-        .step-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            font-size: 1.2rem;
-            color: #ffffff;
-            flex-shrink: 0;
-        }
-        .step-icon.locked {
-            background-color: #b0b0b0;
-        }
-        .step-icon.unlocked {
-            background-color: #808080;
-        }
-        .step-icon.completed {
-            background-color: #28a745;
-        }
-        .step-icon.pending {
-            background-color: #ffc107;
-        }
-        .upload-section {
-            border: 2px dashed #007bff;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-            position: relative;
-            width: 100%;
-        }
-        .upload-section.dragover {
-            background-color: #e0f7ff;
-        }
-        .upload-section input[type="file"] {
-            display: none;
-        }
-        .upload-section img {
-            max-width: 100px;
-            display: block;
-            margin: 10px auto;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .header img {
-            width: 150px;
-            margin-bottom: 10px;
-        }
-        .header h1 {
-            font-size: 2rem;
-            margin: 0;
-            color: #007bff;
-        }
-        .uploaded-file {
-            text-align: left;
-            margin-top: 10px;
-        }
-        .uploaded-file a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .download-button {
-            display: inline-block;
-            padding: 10px 20px;
-            margin-top: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .download-button:hover {
-            background-color: #0056b3;
-        }
-        .edit-link {
-            color: #007bff;
-            font-weight: bold;
-            text-decoration: underline;
-        }
-        @media (max-width: 767px) {
-            .step {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .step-icon {
-                margin-bottom: 10px;
-                margin-right: 0;
-            }
-            .container {
-                margin-top: 20px;
-                padding: 20px;
-            }
-            .header img {
-                width: 100%;
-                max-width: 100px;
-            }
-            .header h1 {
-                font-size: 1.5rem;
-            }
-            .upload-section img {
-                max-width: 100%;
-            }
-        }
+  body {
+    background: url('images/background_login2.webp') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Alinha ao topo */
+    min-height: 100vh; /* Altura mínima da tela */
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    margin-top: 30px;
+    max-width: 800px;
+    width: 90%;
+    overflow: hidden;
+}
+
+.step {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.step-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 1.2rem;
+    color: #ffffff;
+    flex-shrink: 0;
+}
+
+.step-icon.locked {
+    background-color: #b0b0b0;
+}
+
+.step-icon.unlocked {
+    background-color: #808080;
+}
+
+.step-icon.completed {
+    background-color: #28a745;
+}
+
+.step-icon.pending {
+    background-color: #ffc107;
+}
+
+.upload-section {
+    border: 2px dashed #007bff;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box; /* Inclui padding e border na largura total */
+}
+
+.upload-section.dragover {
+    background-color: #e0f7ff;
+}
+
+.upload-section input[type="file"] {
+    display: none;
+}
+
+.upload-section img {
+    max-width: 100px;
+    display: block;
+    margin: 10px auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header img {
+    width: 250px; /* Aumenta o tamanho do logo */
+    max-width: 100%; /* Garante que o logo não ultrapasse a largura da tela */
+    margin-bottom: 10px;
+}
+
+.header h1 {
+    font-size: 2rem;
+    margin: 0;
+    color: #007bff;
+}
+
+.uploaded-file {
+    text-align: left;
+    margin-top: 10px;
+}
+
+.uploaded-file a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.download-button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.download-button:hover {
+    background-color: #0056b3;
+}
+
+.edit-link {
+    color: #007bff;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+@media (max-width: 767px) {
+    .step {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .step-icon {
+        margin-bottom: 10px;
+        margin-right: 0;
+    }
+    .container {
+        margin-top: 20px;
+        padding: 20px;
+    }
+    .header img {
+        width: 100%;
+        max-width: 200px;
+    }
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    .upload-section img {
+        max-width: 100%;
+    }
+}
+
+
     </style>
 </head>
 <body>

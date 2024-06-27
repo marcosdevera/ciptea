@@ -31,9 +31,9 @@ try {
         $targetFile = $targetDirectory . $newFileName;
 
         
-        $documentos->setVchDocumento($newFileName);
-        $documentos->setStatus(0);
-
+        if(isset($newFileName)) {
+            $documentos->setVchDocumento($vch_documento);
+        }
 
         if(isset($cod_pessoa)) {
             $documentos->setCodPessoa($cod_pessoa);
@@ -43,7 +43,9 @@ try {
             $documentos->setCodTipoDocumento($cod_tipo_documento);
         }
         
-        if($cod_tipo_documento == 5 && $newFileName == $newFileName){
+        
+        
+        if($cod_tipo_documento == 5 && isset($vch_documento)){
             $documentos->setStatus(0);
             $documentos->atualizarDocumento();
         }

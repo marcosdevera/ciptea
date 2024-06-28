@@ -167,7 +167,7 @@ if (isset($_POST['vch_senha'])) {
             $codPessoa = $pessoa->inserirPessoa($usuario);
         }
         echo "Cadastro realizado com sucesso!";
-        header("Location: ../cadastro_inicialUP.php");
+        header("Location: ../index.php");
         exit();
     }
 

@@ -33,7 +33,7 @@
         </div>
 
         <div class="photo">
-            <img src="<?php echo "ciptea/".$row_p['foto']; ?>" alt="Foto da Pessoa">
+            <img src="<?php echo "uploads/".$row_p['foto']; ?>" alt="Foto da Pessoa">
         </div>
         <div class="info">
             <?php

@@ -1,104 +1,60 @@
 <?php
-  include_once('classes/pessoa.class.php');
-  include_once("sessao.php");
+include_once('../classes/pessoa.class.php');
+include_once('../sessao.php');
 
-  $p = new Pessoa();
+if (!isset($_SESSION)) {
+    session_start();
+}
 
-  if(isset($_GET['cod_user'])){
-    $cod_usuario_decode = urldecode($_GET['cod_user']);
-    $cod_usuario = base64_decode($cod_usuario_decode);
-    $result_pessoa = $p->exibirPessoaUsuario($cod_usuario);
-    $row_p = $result_pessoa->fetch(PDO::FETCH_ASSOC);
-  }else{
-    $cod_usuario = $_SESSION["user_session"];
-  }
-    $result_pessoa = $p->exibirPessoaUsuario($cod_usuario);
-    $row_p = $result_pessoa->fetch(PDO::FETCH_ASSOC);
+$cod_pessoa = $_GET['cod_pessoa'];
+$p = new Pessoa();
+$result_pessoa = $p->exibirPessoaUsuario($cod_pessoa);
+$row_p = $result_pessoa->fetch(PDO::FETCH_ASSOC);
+
+$nome = $row_p['vch_nome'];
+$nomePai = $row_p['vch_nome_pai'];
+$nomeMae = $row_p['vch_nome_mae'];
+$dataNascimento = date("d/m/Y", strtotime($row_p['sdt_nascimento']));
+$endereco = $row_p['endereco'];
+$bairro = $row_p['bairro'];                
+$telefone = $row_p['vch_telefone_contato'];
+$tipoSanguineo = $row_p['vch_tipo_sanguineo'];
+$cid = $row_p['cid'];
+$cpf = $row_p['vch_cpf'];
+$rg = $row_p['vch_rg'];
+$cartao_sus = $row_p['vch_num_cartao_sus'];
+$num_carteira = $row_p['cod_pessoa'];
+
+// Aqui você pode adicionar a lógica para gerar a carteirinha, por exemplo, criar um PDF ou exibir os dados formatados
+
 ?>
 
 <!DOCTYPE html>
-<html lang="pt-BR">
-
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/style.css">
-  <title>CIPTEA - Crachá de Identificação</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carteirinha</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
-
 <body>
-  <div class="card">
-    <div class="header">
-        <img src="images/ciptea.png" alt="Header Image" class="header-image">
-        <div class="camacari">
-        <img src="images/brasaocamacari.png" alt="Logo" id="camacarilogo">
+    <div class="container mt-5">
+        <h1 class="text-center">Carteirinha</h1>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><?php echo $nome; ?></h5>
+                <p class="card-text">CPF: <?php echo $cpf; ?></p>
+                <p class="card-text">RG: <?php echo $rg; ?></p>
+                <p class="card-text">Data de Nascimento: <?php echo $dataNascimento; ?></p>
+                <p class="card-text">Endereço: <?php echo $endereco . ', ' . $bairro; ?></p>
+                <p class="card-text">Telefone: <?php echo $telefone; ?></p>
+                <p class="card-text">Tipo Sanguíneo: <?php echo $tipoSanguineo; ?></p>
+                <p class="card-text">CID: <?php echo $cid; ?></p>
+                <p class="card-text">Cartão SUS: <?php echo $cartao_sus; ?></p>
+                <p class="card-text">Número da Carteira: <?php echo $num_carteira; ?></p>
+                <!-- Aqui você pode adicionar mais campos ou personalizações para a carteirinha -->
+            </div>
         </div>
-      </div>
-      <div class="background-photo">
-        <div class="listra">
-          <img src="images/background.png" class="k" alt="Listra">
-        </div>
-        <div class="photo">
-          <!-- Aqui você pode adicionar uma foto da pessoa -->
-          <img src="<?php echo "ciptea/".$row_p['foto']?>" class="profile-img" alt="Foto da Pessoa">
-        </div>
-      </div>
-      <div class="content">
-        <div class="info">
-          <div class="texto" ><strong>Nome: </strong><span id="primeira_resposta"> <?php echo $row_p['vch_nome']?> </span></div>
-          <strong>Nome do pai: </strong> <span class="respostas"><?php echo $row_p['vch_nome_pai']?></span>
-          <strong>Nome da mãe: </strong><span class="respostas"><?php echo $row_p['vch_nome_mae']?></span>  
-          <strong>Endereço: </strong> <span class="respostas"><?php echo $row_p['endereco']?></span>
-          <strong>Número de contato: </strong><span class="respostas"> <?php echo $row_p['vch_telefone_contato']?> </span> 
-          <strong>Data de Nascimento: </strong><span class="respostas"><?php echo date("d/m/Y", strtotime($row_p["sdt_nascimento"]));?></span>
-          <strong>CID: </strong> <span class="respostas"><?php echo $row_p['cid']?></span>
-          <strong>TIPO SANGUÍNEO: </strong> <span class="respostas"><?php echo $row_p['vch_tipo_sanguineo']?></span>
-          
-        </div>
-      </div>
-      <div class="bottom-info">
-        <p><strong>ATENDIMENTO PRIORITÁRIO LEI N 13.977/2020</strong></p>
-      </div>
-  </div>
-  <!-- <div>
-    <button onclick="imprimirPagina()">Imprimir</button>
-  </div> -->
-<div class="card">
-    <div class="header2">
-      <img src="images/logo_sedes.png" alt="Header Image" class="header-image">
-      <div class="camacari2">
-      <!-- <img src="brasaocamacari.png" alt="Logo" id="camacarilogo"> -->
-      </div>
     </div>
-    <div class="background-photo2">
-      <div class="listra2">
-      <img src="images/background.png" class="k" alt="Listra">
-        </div>
-      <div class="photo2">
-        <!-- <img src="pfp.jpg" class="profile-img" alt="Foto da Pessoa"> -->
-      </div>
-    </div>
-    <div class="content2">
-      <div class="info2">
-        <p><strong>CPF: </strong> <span class="respostas"><?php echo $row_p['vch_cpf']?></span></p>
-        <p><strong>RG: </strong> <span class="respostas"><?php echo $row_p['vch_rg']?></span></p>
-        <p><strong>Nº Cartão do SUS: </strong><span class="respostas"><?php echo $row_p['vch_num_cartao_sus']?></span></p>
-        <p><strong>Número da carteira: </strong> <span class="respostas"><?php echo $row_p['cod_pessoa']?></span></p>
-        <!-- <p><strong>Nome: </strong><span class="respostas"> João da Silva </span></p>
-        <p><strong>Data de Nascimento: </strong><span class="respostas">01/01/1990</span></p>
-        <p><strong>Nº Cartão do SUS: </strong><span class="respostas"> 123456789</span></p>
-        <p><strong>CPF: </strong> <span class="respostas">123.456.789-01</span></p>
-        <p><strong>RG: </strong> <span class="respostas">987654321</span></p>
-        <p><strong>NOME MÃE: </strong><span class="respostas">Maria da Silva</span></p>
-        <p><strong>NOME PAI: </strong> <span class="respostas">José da Silva</span></p>
-        <p><strong>ENDEREÇO: </strong> <span class="respostas">Rua Exemplo, 123 - Bairro - Cidade</span></p> -->
-      </div>
-    </div>
-    <div class="bottom-info">
-      <p><strong>ATENDIMENTO PRIORITÁRIO LEI N 13.977/2020</strong></p>
-    </div>
-  </div>
-
 </body>
-
 </html>

@@ -33,7 +33,7 @@ foreach ($documentos_obrigatorios as $cod_tipo_documento) {
 }
 
 if (count($documentos_enviados) == count($documentos_obrigatorios)) {
-    $vch_documento = $row_p['vch_documento'] = 1;
+    
     $nome = $row_p['vch_nome'];
     $nomePai = $row_p['vch_nome_pai'];
     $nomeMae = $row_p['vch_nome_mae'];

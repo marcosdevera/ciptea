@@ -126,6 +126,14 @@
         .buttons .prev:hover {
             background-color: #999;
         }
+
+        .is-invalid {
+            border-color: red;
+        }
+
+        .radio-group input.is-invalid + label {
+            color: red;
+        }
     </style>
 </head>
 
@@ -138,7 +146,7 @@
         <div class="progress-bar">
             <div class="progress"></div>
         </div>
-        <form name="form" id="registrationForm" action="processamento/processar_usuario.php" method="POST" enctype="multipart/form-data" onsubmit="return validarSenhas()">
+        <form name="form" id="registrationForm" action="processamento/processar_usuario.php" method="POST" enctype="multipart/form-data" onsubmit="return validarSenhas() && completeProgress()">
             <div class="step active" id="step1">
                 <h2>Informações Pessoais</h2>
                 <div class="form-group">
@@ -164,8 +172,12 @@
             <div class="step" id="step2">
                 <h2>Endereço</h2>
                 <div class="form-group">
+                <div class="form-group">
+                    <label for="cep">CEP:</label>
+                    <input type="text" class="form-control" name="cep" id="cep" oninput="formatarCEP('cep')" maxlength="9" required onblur="buscarEndereco()">
+                </div>
                     <label for="endereco">Endereço:</label>
-                    <input type="text" class="form-control" name="endereco" id="endereco" required>
+                    <input type="text" class="form-control" name="endereco" id="endereco" placeholder="Exemplo: Avenida Alameda das Travessas, nº 111" required>
                 </div>
                 <div class="form-group">
                     <label for="bairro">Bairro:</label>
@@ -174,10 +186,6 @@
                 <div class="form-group">
                     <label for="cidade">Cidade:</label>
                     <input type="text" class="form-control" name="cidade" id="cidade" required>
-                </div>
-                <div class="form-group">
-                    <label for="cep">CEP:</label>
-                    <input type="text" class="form-control" name="cep" id="cep" oninput="formatarCEP('cep')" maxlength="9" required>
                 </div>
             </div>
             <div class="step" id="step3">
@@ -188,7 +196,7 @@
                 </div>
                 <div class="form-group">
                     <label for="cid">CID:</label>
-                    <input type="text" class="form-control" name="cid" id="cid" required>
+                    <input type="text" class="form-control" name="cid" id="cid" maxlength="6" required>
                 </div>
                 <div class="form-group">
                     <label for="vch_nome_pai">Nome do Pai:</label>
@@ -294,7 +302,7 @@
             <div class="buttons">
                 <button type="button" class="prev btn btn-secondary" onclick="nextPrev(-1)">Anterior</button>
                 <button type="button" class="next btn btn-primary" onclick="nextPrev(1)">Próximo</button>
-                <button type="submit" class="submit btn btn-primary" style="display: none;" onclick="completeProgress()">Enviar</button>
+                <button type="submit" class="submit btn btn-primary" style="display: none;">Enviar</button>
             </div>
         </form>
     </div>
@@ -327,6 +335,12 @@
         // Função para avançar ou retroceder entre os passos
         function nextPrev(n) {
             var steps = document.getElementsByClassName("step");
+
+            // Validate current step before proceeding
+            if (n == 1 && !validateStep(currentStep)) {
+                return false;
+            }
+
             steps[currentStep].classList.remove('active');
             steps[currentStep].classList.add('finished');
             setTimeout(function() {
@@ -340,6 +354,46 @@
                 steps[currentStep].classList.add('active');
                 showStep(currentStep);
             }, 500);
+        }
+
+        // Função para validar os campos obrigatórios na etapa atual
+        function validateStep(n) {
+            var steps = document.getElementsByClassName("step");
+            var inputs = steps[n].getElementsByTagName("input");
+            var selects = steps[n].getElementsByTagName("select");
+            var valid = true;
+
+            // Validar campos de input
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].hasAttribute("required") && inputs[i].value === "") {
+                    inputs[i].classList.add("is-invalid");
+                    valid = false;
+                } else {
+                    inputs[i].classList.remove("is-invalid");
+                }
+            }
+
+            // Validar campos de select
+            for (var i = 0; i < selects.length; i++) {
+                if (selects[i].hasAttribute("required") && selects[i].value === "") {
+                    selects[i].classList.add("is-invalid");
+                    valid = false;
+                } else {
+                    selects[i].classList.remove("is-invalid");
+                }
+            }
+
+            // Validar campos de radio
+            var radios = steps[n].querySelectorAll('input[type="radio"][name="sexo"]');
+            var radioChecked = Array.from(radios).some(radio => radio.checked);
+            if (radios.length > 0 && !radioChecked) {
+                radios.forEach(radio => radio.classList.add("is-invalid"));
+                valid = false;
+            } else {
+                radios.forEach(radio => radio.classList.remove("is-invalid"));
+            }
+
+            return valid;
         }
 
         // Função para atualizar a barra de progresso
@@ -581,6 +635,31 @@
         function completeProgress() {
             var progress = document.querySelector(".progress");
             progress.classList.add("complete");
+            return true; // Ensure form submission
+        }
+
+        // Função para buscar o endereço pelo CEP usando a API ViaCEP
+        function buscarEndereco() {
+            var cep = document.getElementById('cep').value.replace(/\D/g, '');
+            if (cep.length === 8) {
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.erro) {
+                            document.getElementById('endereco').value = data.logradouro;
+                            document.getElementById('bairro').value = data.bairro;
+                            document.getElementById('cidade').value = data.localidade;
+                        } else {
+                            alert('CEP não encontrado.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar CEP:', error);
+                        alert('Erro ao buscar CEP.');
+                    });
+            } else {
+                alert('CEP inválido.');
+            }
         }
 
     </script>

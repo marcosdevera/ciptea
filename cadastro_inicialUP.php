@@ -229,7 +229,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
       <div class="step-icon completed"><i class="fas fa-user"></i></div>
       <div>
         <h4>1. Dados Pessoais</h4>
-        <p>Preencheu seus dados pessoais, caso queira editar clique <a href="reenviar_cadastro.php"
+        <p>Caso queira alterar seus dados pessoais, clique <a href="reenviar_cadastro.php"
             class="edit-link">aqui</a>.</p>
       </div>
     </div>
@@ -239,8 +239,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
         <div class="step-icon unlocked" id="requerimento-icon"><i class="fas fa-id-card"></i></div>
         <div>
           <h4>2. Requerimento</h4>
-          <p>Para obter a carteira, primeiro faça o download do requerimento, imprima e assine. Em seguida tire uma foto
-            e envie o documento que você assinou.</p>
+          <p>Para obter a carteira faça download do requerimento, imprima, assine e envie.</p>
           <a href="formulario_requerimento.php?cod_pessoa=<?php echo $cod_pessoa; ?>" target="_blank"
             class="download-button">Baixar Requerimento</a>
           <button type="button" class="view-button <?php echo $result_d5 ? '' : 'disabled'; ?>" <?php echo $result_d5
@@ -284,7 +283,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
         <div class="step-icon unlocked" id="identidade-icon"><i class="fas fa-id-card-alt"></i></div>
         <div>
           <h4>4. Documento de Identidade</h4>
-          <p>Envie a imagem de um documento de identificação com foto (RG, CNH e etc).</p>
+          <p>Envie a imagem de um documento de identificação com foto (RG, CNH, etc).</p>
           <div class="upload-section" onclick="document.getElementById('documento-identidade').click()">
             <input type="file" id="documento-identidade" name="documento-identidade" data-cod_tipo_documento="4"
               style="display:none;">

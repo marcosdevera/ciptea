@@ -53,7 +53,7 @@ if ($result_foto && $result_foto->rowCount() > 0) {
                     $dataNascimento = date("d/m/Y", strtotime($row_p['sdt_nascimento']));
                     $endereco = $row_p['endereco'];
                     $bairro = $row_p['bairro'];                
-                    $telefone = $row_p['vch_telefone_contato'];
+                    $telefone = $row_p['vch_telefone'];
                     $tipoSanguineo = $row_p['vch_tipo_sanguineo'];
                     $cid = $row_p['cid'];
 

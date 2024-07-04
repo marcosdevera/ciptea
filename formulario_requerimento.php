@@ -3,8 +3,6 @@
 require_once('classes/TCPDF/tcpdf.php');
 include_once('classes/pessoa.class.php');
 
-
-
 $cod_pessoa = $_GET["cod_pessoa"];
 
 $pessoa = new Pessoa();

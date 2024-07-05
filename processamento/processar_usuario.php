@@ -166,7 +166,7 @@ if (isset($_POST['vch_senha'])) {
         } else {
             $codPessoa = $pessoa->inserirPessoa($usuario);
         }
-        $_SESSION['cod_pessoa'] = $codPessoa;
+    $_SESSION['cod_pessoa'] = $codPessoa;
 
         // Redirecionar para cadastro_inicialUP.php
         header("Location: ../cadastro_inicialUP.php");

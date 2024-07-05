@@ -293,219 +293,169 @@ class Pessoa
 
     
     //public function inserirPessoa($laudo, $foto, $comprovante, $documento, $usuario)
-    public function inserirPessoa($usuario)
-    {
-        try {
-            $pdo = Database::conexao();
-            $pdo->beginTransaction();
+ // Pessoa.class.php
+public function inserirPessoa($usuario)
+{
+    try {
+        $pdo = Database::conexao();
+        $pdo->beginTransaction();
 
-            $consulta = $pdo->prepare("INSERT INTO ciptea.dados_pessoa(vch_nome, vch_nome_social, vch_telefone, vch_telefone_contato, cid, vch_tipo_sanguineo, int_sexo, vch_nome_pai, vch_nome_mae, sdt_nascimento, endereco, bairro, cep, cidade, vch_rg, vch_cpf, vch_num_cartao_sus, bool_representante_legal) 
-            VALUES (:vch_nome, :vch_nome_social, :vch_telefone, :vch_telefone_contato, :cid, :vch_tipo_sanguineo, :int_sexo, :vch_nome_pai, :vch_nome_mae, :sdt_nascimento, :endereco, :bairro, :cep, :cidade, :vch_rg, :vch_cpf, :vch_num_cartao_sus, :bool_representante_legal)");
-            $consulta->bindParam(':vch_nome', $this->vch_nome);
-            $consulta->bindParam(':vch_nome_social', $this->vch_nome_social);
-            $consulta->bindParam(':vch_telefone_contato', $this->vch_telefone_contato);
-            $consulta->bindParam(':cid', $this->cid);
-            $consulta->bindParam(':vch_tipo_sanguineo', $this->vch_tipo_sanguineo);
-            $consulta->bindParam(':vch_telefone', $this->vch_telefone);
-            $consulta->bindParam(':int_sexo', $this->int_sexo);
-            $consulta->bindParam(':vch_nome_pai', $this->vch_nome_pai);
-            $consulta->bindParam(':vch_nome_mae', $this->vch_nome_mae);
-            $consulta->bindParam(':sdt_nascimento', $this->sdt_nascimento);
-            $consulta->bindParam(':endereco', $this->endereco);
-            $consulta->bindParam(':bairro', $this->bairro);
-            $consulta->bindParam(':cep', $this->cep);
-            $consulta->bindParam(':cidade', $this->cidade);
-            $consulta->bindParam(':vch_rg', $this->vch_rg);
-            $consulta->bindParam(':vch_cpf', $this->vch_cpf);
-            $consulta->bindParam(':vch_num_cartao_sus', $this->vch_num_cartao_sus);
-            $consulta->bindParam(':bool_representante_legal', $this->bool_representante_legal);
-            $consulta->execute();
+        $consulta = $pdo->prepare("INSERT INTO ciptea.dados_pessoa(vch_nome, vch_nome_social, vch_telefone, vch_telefone_contato, cid, vch_tipo_sanguineo, int_sexo, vch_nome_pai, vch_nome_mae, sdt_nascimento, endereco, bairro, cep, cidade, vch_rg, vch_cpf, vch_num_cartao_sus, bool_representante_legal) 
+        VALUES (:vch_nome, :vch_nome_social, :vch_telefone, :vch_telefone_contato, :cid, :vch_tipo_sanguineo, :int_sexo, :vch_nome_pai, :vch_nome_mae, :sdt_nascimento, :endereco, :bairro, :cep, :cidade, :vch_rg, :vch_cpf, :vch_num_cartao_sus, :bool_representante_legal)");
+        $consulta->bindParam(':vch_nome', $this->vch_nome);
+        $consulta->bindParam(':vch_nome_social', $this->vch_nome_social);
+        $consulta->bindParam(':vch_telefone_contato', $this->vch_telefone_contato);
+        $consulta->bindParam(':cid', $this->cid);
+        $consulta->bindParam(':vch_tipo_sanguineo', $this->vch_tipo_sanguineo);
+        $consulta->bindParam(':vch_telefone', $this->vch_telefone);
+        $consulta->bindParam(':int_sexo', $this->int_sexo);
+        $consulta->bindParam(':vch_nome_pai', $this->vch_nome_pai);
+        $consulta->bindParam(':vch_nome_mae', $this->vch_nome_mae);
+        $consulta->bindParam(':sdt_nascimento', $this->sdt_nascimento);
+        $consulta->bindParam(':endereco', $this->endereco);
+        $consulta->bindParam(':bairro', $this->bairro);
+        $consulta->bindParam(':cep', $this->cep);
+        $consulta->bindParam(':cidade', $this->cidade);
+        $consulta->bindParam(':vch_rg', $this->vch_rg);
+        $consulta->bindParam(':vch_cpf', $this->vch_cpf);
+        $consulta->bindParam(':vch_num_cartao_sus', $this->vch_num_cartao_sus);
+        $consulta->bindParam(':bool_representante_legal', $this->bool_representante_legal);
+        $consulta->execute();
 
-            $codPessoa = $pdo->lastInsertId();
+        $codPessoa = $pdo->lastInsertId();
 
+        $this->setUsuario($usuario);
+        $vch_login = $this->usuario->getVch_login();
+        $vch_senha = $this->usuario->getVch_senha();
+        $int_perfil = $this->usuario->getInt_perfil();
+        $int_situacao = $this->usuario->getInt_situacao();
+        $consulta_usuario = $pdo->prepare("INSERT INTO ciptea.usuario(vch_login, vch_senha, int_perfil, int_situacao) 
+        VALUES (:vch_login, :vch_senha, :int_perfil, :int_situacao)");
+        $consulta_usuario->bindParam(':vch_login', $vch_login);
+        $consulta_usuario->bindParam(':vch_senha', $vch_senha);
+        $consulta_usuario->bindParam(':int_perfil', $int_perfil);
+        $consulta_usuario->bindParam(':int_situacao', $int_situacao);
+        $consulta_usuario->execute();
 
-//            $data_atual = date('Y-m-d H:i:s');
+        $cod_usuario = $pdo->lastInsertId();
+        $update_pessoa = $pdo->prepare("UPDATE ciptea.dados_pessoa 
+        SET cod_usuario = :cod_usuario 
+        WHERE cod_pessoa = :cod_pessoa");
+        $update_pessoa->bindParam(':cod_usuario', $cod_usuario);
+        $update_pessoa->bindParam(':cod_pessoa', $codPessoa);
+        $update_pessoa->execute();
 
-            $this->setUsuario($usuario);
-            $vch_login = $this->usuario->getVch_login();
-            $vch_senha = $this->usuario->getVch_senha();
-            $int_perfil = $this->usuario->getInt_perfil();
-            $int_situacao = $this->usuario->getInt_situacao();
-            $consulta_usuario = $pdo->prepare("INSERT INTO ciptea.usuario(vch_login, vch_senha, int_perfil, int_situacao) 
-            VALUES (:vch_login, :vch_senha, :int_perfil, :int_situacao)");
-            $consulta_usuario->bindParam(':vch_login', $vch_login);
-            $consulta_usuario->bindParam(':vch_senha', $vch_senha);
-            $consulta_usuario->bindParam(':int_perfil', $int_perfil);
-            $consulta_usuario->bindParam(':int_situacao', $int_situacao);
-            $consulta_usuario->execute();
+        $pdo->commit();
 
-            $cod_usuario = $pdo->lastInsertId();
-            $update_pessoa = $pdo->prepare("UPDATE ciptea.dados_pessoa 
-            SET cod_usuario = :cod_usuario 
-            WHERE cod_pessoa = :cod_pessoa");
-            $update_pessoa->bindParam(':cod_usuario', $cod_usuario);
-            $update_pessoa->bindParam(':cod_pessoa', $codPessoa);
-            $update_pessoa->execute();
+        // Iniciar sessão e definir variáveis de sessão
+        session_start();
+        $_SESSION['cod_pessoa'] = $codPessoa;
+        $_SESSION['user_session'] = $cod_usuario;
+        $_SESSION["nivel"] = $int_perfil;
+        $_SESSION["sessiontime"] = time() + 10000;
 
-            $pdo->commit();
-            header('Location: ../index.php?msg=1');
-        } catch (PDOException $e) {
-            $pdo->rollBack();
-            echo "Ocorreu um erro: $e";
-        }
+        return $codPessoa;
+    } catch (PDOException $e) {
+        $pdo->rollBack();
+        echo "Ocorreu um erro: $e";
     }
+}
 
-   
+public function inserirPessoaResponsavel($responsavel, $usuario)
+{
+    try {
+        $pdo = Database::conexao();
+        $pdo->beginTransaction();
 
+        $consulta = $pdo->prepare("INSERT INTO ciptea.dados_pessoa(vch_nome, vch_nome_social, vch_telefone, vch_telefone_contato, cid, vch_tipo_sanguineo, int_sexo, vch_nome_pai, vch_nome_mae, sdt_nascimento, endereco, bairro, cep, cidade, vch_rg, vch_cpf, vch_num_cartao_sus, bool_representante_legal) 
+        VALUES (:vch_nome, :vch_nome_social, :vch_telefone, :vch_telefone_contato, :cid, :vch_tipo_sanguineo, :int_sexo, :vch_nome_pai, :vch_nome_mae, :sdt_nascimento, :endereco, :bairro, :cep, :cidade, :vch_rg, :vch_cpf, :vch_num_cartao_sus, :bool_representante_legal)");
+        $consulta->bindParam(':vch_nome', $this->vch_nome);
+        $consulta->bindParam(':vch_nome_social', $this->vch_nome_social);
+        $consulta->bindParam(':vch_telefone_contato', $this->vch_telefone_contato);
+        $consulta->bindParam(':cid', $this->cid);
+        $consulta->bindParam(':vch_tipo_sanguineo', $this->vch_tipo_sanguineo);
+        $consulta->bindParam(':vch_telefone', $this->vch_telefone);
+        $consulta->bindParam(':int_sexo', $this->int_sexo);
+        $consulta->bindParam(':vch_nome_pai', $this->vch_nome_pai);
+        $consulta->bindParam(':vch_nome_mae', $this->vch_nome_mae);
+        $consulta->bindParam(':sdt_nascimento', $this->sdt_nascimento);
+        $consulta->bindParam(':endereco', $this->endereco);
+        $consulta->bindParam(':bairro', $this->bairro);
+        $consulta->bindParam(':cep', $this->cep);
+        $consulta->bindParam(':cidade', $this->cidade);
+        $consulta->bindParam(':vch_rg', $this->vch_rg);
+        $consulta->bindParam(':vch_cpf', $this->vch_cpf);
+        $consulta->bindParam(':vch_num_cartao_sus', $this->vch_num_cartao_sus);
+        $consulta->bindParam(':bool_representante_legal', $this->bool_representante_legal);
+        $consulta->execute();
 
-    public function inserirPessoaResponsavel($responsavel, $usuario)
-    {
-        try {
-            $pdo = Database::conexao();
-            // Iniciando a transação
-            $pdo->beginTransaction();
-            
-            //$responsavel = new Responsavel();
+        $codPessoa = $pdo->lastInsertId();
 
-            // Inserindo os dados na tabela pessoa
-            $consulta = $pdo->prepare("INSERT INTO ciptea.dados_pessoa(vch_nome, vch_nome_social, vch_telefone, vch_telefone_contato, cid, vch_tipo_sanguineo, int_sexo, vch_nome_pai, vch_nome_mae, sdt_nascimento, endereco, bairro, cep, cidade, vch_rg, vch_cpf, vch_num_cartao_sus, bool_representante_legal) 
-            VALUES (:vch_nome, :vch_nome_social, :vch_telefone, :vch_telefone_contato, :cid, :vch_tipo_sanguineo, :int_sexo, :vch_nome_pai, :vch_nome_mae, :sdt_nascimento, :endereco, :bairro, :cep, :cidade, :vch_rg, :vch_cpf, :vch_num_cartao_sus, :bool_representante_legal)");
-            $consulta->bindParam(':vch_nome', $this->vch_nome);
-            $consulta->bindParam(':vch_nome_social', $this->vch_nome_social);
-            $consulta->bindParam(':vch_telefone_contato', $this->vch_telefone_contato);
-            $consulta->bindParam(':cid', $this->cid);
-            $consulta->bindParam(':vch_tipo_sanguineo', $this->vch_tipo_sanguineo);
-            $consulta->bindParam(':vch_telefone', $this->vch_telefone);
-            $consulta->bindParam(':int_sexo', $this->int_sexo);
-            $consulta->bindParam(':vch_nome_pai', $this->vch_nome_pai);
-            $consulta->bindParam(':vch_nome_mae', $this->vch_nome_mae);
-            $consulta->bindParam(':sdt_nascimento', $this->sdt_nascimento);
-            $consulta->bindParam(':endereco', $this->endereco);
-            $consulta->bindParam(':bairro', $this->bairro);
-            $consulta->bindParam(':cep', $this->cep);
-            $consulta->bindParam(':cidade', $this->cidade);
-            $consulta->bindParam(':vch_rg', $this->vch_rg);
-            $consulta->bindParam(':vch_cpf', $this->vch_cpf);
-            $consulta->bindParam(':vch_num_cartao_sus', $this->vch_num_cartao_sus);
-            $consulta->bindParam(':bool_representante_legal', $this->bool_representante_legal);
-            $consulta->execute();
-            // Obtendo o ID gerado pela inserção na tabela pessoa
-            $codPessoa = $pdo->lastInsertId();
+        $this->setResponsavel($responsavel);
 
-            
-            $this->setResponsavel($responsavel);
+        $vch_nome_resp = $this->responsavel->getVchNomeResponsavel();
+        $vch_telefone_resp = $this->responsavel->getVchTelefoneResponsavel();
+        $vch_cpf_resp = $this->responsavel->getVchCpfResponsavel();
+        $vch_endereco_resp = $this->responsavel->getVchEnderecoResponsavel();
+        $vch_bairro_resp = $this->responsavel->getVchBairroResponsavel();
+        $vch_cep = $this->responsavel->getVchCepResponsavel();
+        $vch_cidade_resp = $this->responsavel->getVchCidadeResponsavel();
+        $int_sexo_responsavel = $this->responsavel->getIntSexoResponsavel();
+        $int_num_responsavel = $this->responsavel->getNumResponsavel();
+        $vch_comp_responsavel = $this->responsavel->getCompResponsavel();
 
-            $vch_nome_resp = $this->responsavel->getVchNomeResponsavel();
-            $vch_telefone_resp = $this->responsavel->getVchTelefoneResponsavel();
-            $vch_cpf_resp = $this->responsavel->getVchCpfResponsavel();
-            $vch_endereco_resp = $this->responsavel->getVchEnderecoResponsavel();
-            $vch_bairro_resp = $this->responsavel->getVchBairroResponsavel();
-            $vch_cep = $this->responsavel->getVchCepResponsavel();
-            $vch_cidade_resp = $this->responsavel->getVchCidadeResponsavel();
-            $int_sexo_responsavel = $this->responsavel->getIntSexoResponsavel();
-            $int_num_responsavel = $this->responsavel->getNumResponsavel();
-            $vch_comp_responsavel = $this->responsavel->getCompResponsavel();
+        $stmtResponsavel = $pdo->prepare("INSERT INTO ciptea.dados_responsavel_legal(vch_nome_responsavel, int_sexo_responsavel, vch_telefone_responsavel, vch_cpf_responsavel, vch_endereco_responsavel, int_num_responsavel, vch_comp_responsavel, vch_bairro_responsavel, vch_cep_responsavel, vch_cidade_responsavel, cod_pessoa) 
+        VALUES (:vch_nome_responsavel, :int_sexo_responsavel,:vch_telefone_responsavel, :vch_cpf_responsavel, :vch_endereco_responsavel, :int_num_responsavel, :vch_comp_responsavel, :vch_bairro_responsavel, :vch_cep_responsavel, :vch_cidade_responsavel, :cod_pessoa)");
+        $stmtResponsavel->bindParam(':cod_pessoa', $codPessoa);
+        $stmtResponsavel->bindParam(':vch_nome_responsavel', $vch_nome_resp);
+        $stmtResponsavel->bindParam(':int_sexo_responsavel', $int_sexo_responsavel);
+        $stmtResponsavel->bindParam(':vch_telefone_responsavel', $vch_telefone_resp);
+        $stmtResponsavel->bindParam(':vch_cpf_responsavel', $vch_cpf_resp);
+        $stmtResponsavel->bindParam(':vch_endereco_responsavel', $vch_endereco_resp);
+        $stmtResponsavel->bindParam(':int_num_responsavel', $int_num_responsavel);
+        $stmtResponsavel->bindParam(':vch_comp_responsavel', $vch_comp_responsavel);
+        $stmtResponsavel->bindParam(':vch_bairro_responsavel', $vch_bairro_resp);
+        $stmtResponsavel->bindParam(':vch_cep_responsavel', $vch_cep);
+        $stmtResponsavel->bindParam(':vch_cidade_responsavel', $vch_cidade_resp);
+        $stmtResponsavel->execute();
 
-            // Inserindo os dados na tabela responsavel usando o ID da pessoa
-            $stmtResponsavel = $pdo->prepare("INSERT INTO ciptea.dados_responsavel_legal(vch_nome_responsavel, int_sexo_responsavel, vch_telefone_responsavel, vch_cpf_responsavel, vch_endereco_responsavel, int_num_responsavel, vch_comp_responsavel, vch_bairro_responsavel, vch_cep_responsavel, vch_cidade_responsavel, cod_pessoa) 
-            VALUES (:vch_nome_responsavel, :int_sexo_responsavel,:vch_telefone_responsavel, :vch_cpf_responsavel, :vch_endereco_responsavel, :int_num_responsavel, :vch_comp_responsavel, :vch_bairro_responsavel, :vch_cep_responsavel, :vch_cidade_responsavel, :cod_pessoa)");
-            $stmtResponsavel->bindParam(':cod_pessoa', $codPessoa);
-            $stmtResponsavel->bindParam(':vch_nome_responsavel', $vch_nome_resp);
-            $stmtResponsavel->bindParam(':int_sexo_responsavel', $int_sexo_responsavel);
-            $stmtResponsavel->bindParam(':vch_telefone_responsavel', $vch_telefone_resp);
-            $stmtResponsavel->bindParam(':vch_cpf_responsavel', $vch_cpf_resp);
-            $stmtResponsavel->bindParam(':vch_endereco_responsavel', $vch_endereco_resp);
-            $stmtResponsavel->bindParam(':int_num_responsavel', $int_num_responsavel);
-            $stmtResponsavel->bindParam(':vch_comp_responsavel', $vch_comp_responsavel);
-            $stmtResponsavel->bindParam(':vch_bairro_responsavel', $vch_bairro_resp);
-            $stmtResponsavel->bindParam(':vch_cep_responsavel', $vch_cep);
-            $stmtResponsavel->bindParam(':vch_cidade_responsavel', $vch_cidade_resp);
-            $stmtResponsavel->execute();
+        $this->setUsuario($usuario);
+        $vch_login = $this->usuario->getVch_login();
+        $vch_senha = $this->usuario->getVch_senha();
+        $int_perfil = $this->usuario->getInt_perfil();
+        $int_situacao = $this->usuario->getInt_situacao();
+        $consulta_usuario = $pdo->prepare("INSERT INTO ciptea.usuario(vch_login, vch_senha, int_perfil, int_situacao) 
+        VALUES (:vch_login, :vch_senha, :int_perfil, :int_situacao)");
+        $consulta_usuario->bindParam(':vch_login', $vch_login);
+        $consulta_usuario->bindParam(':vch_senha', $vch_senha);
+        $consulta_usuario->bindParam(':int_perfil', $int_perfil);
+        $consulta_usuario->bindParam(':int_situacao', $int_situacao);
+        $consulta_usuario->execute();
 
+        $cod_usuario = $pdo->lastInsertId();
+        $update_pessoa = $pdo->prepare("UPDATE ciptea.dados_pessoa 
+        SET cod_usuario = :cod_usuario 
+        WHERE cod_pessoa = :cod_pessoa");
+        $update_pessoa->bindParam(':cod_usuario', $cod_usuario);
+        $update_pessoa->bindParam(':cod_pessoa', $codPessoa);
+        $update_pessoa->execute();
 
-            // $data_atual = date('Y-m-d H:i:s');
-            // $this->setLaudo($laudo);
-            // $this->setFoto($foto);
-            // $cod_tipo_laudo = $this->laudo->getCodTipoDocumento();
-            // $vch_documento_laudo = $this->laudo->getVchDocumento();
-            // $status_laudo = $this->laudo->getStatus();
+        $pdo->commit();
 
-            // $cod_tipo_foto = $this->foto->getCodTipoDocumento();
-            // $vch_documento_foto = $this->foto->getVchDocumento();
-            // $status_foto = $this->foto->getStatus();
+        // Iniciar sessão e definir variáveis de sessão
+        session_start();
+        $_SESSION['cod_pessoa'] = $codPessoa;
+        $_SESSION['user_session'] = $cod_usuario;
+        $_SESSION["nivel"] = $int_perfil;
+        $_SESSION["sessiontime"] = time() + 10000;
 
-            // $this->setComprovante($comprovante);
-            // $cod_tipo_comprovante = $this->comprovante->getCodTipoDocumento();
-            // $vch_documento_comprovante = $this->comprovante->getVchDocumento();
-            // $status_comprovante = $this->comprovante->getStatus();
-
-            // $this->setDocumento($documento);
-            // $cod_tipo_documento = $this->documento->getCodTipoDocumento();
-            // $vch_documento_documento = $this->documento->getVchDocumento();
-            // $status_documento = $this->documento->getStatus();
-
-            // $consulta_documentos = $pdo->prepare("INSERT INTO ciptea.documentos(cod_pessoa, cod_tipo_documento, vch_documento, sdt_insercao, status) 
-            // VALUES (:cod_pessoa, :cod_tipo_documento, :vch_documento, :sdt_insercao, :status)");
-
-            // $consulta_documentos->bindParam(':cod_pessoa', $codPessoa);
-            // $consulta_documentos->bindParam(':cod_tipo_documento', $cod_tipo_laudo);
-            // $consulta_documentos->bindParam(':vch_documento', $vch_documento_laudo);
-            // $consulta_documentos->bindParam(':sdt_insercao', $data_atual);
-            // $consulta_documentos->bindParam(':status', $status_laudo);
-            // $consulta_documentos->execute();
-
-            // $consulta_documentos->bindParam(':cod_pessoa', $codPessoa);
-            // $consulta_documentos->bindParam(':cod_tipo_documento', $cod_tipo_foto);
-            // $consulta_documentos->bindParam(':vch_documento', $vch_documento_foto);
-            // $consulta_documentos->bindParam(':sdt_insercao', $data_atual);
-            // $consulta_documentos->bindParam(':status', $status_foto);
-            // $consulta_documentos->execute();
-
-            // $consulta_documentos->bindParam(':cod_pessoa', $codPessoa);
-            // $consulta_documentos->bindParam(':cod_tipo_documento', $cod_tipo_comprovante);
-            // $consulta_documentos->bindParam(':vch_documento', $vch_documento_comprovante);
-            // $consulta_documentos->bindParam(':sdt_insercao', $data_atual);
-            // $consulta_documentos->bindParam(':status', $status_comprovante);
-            // $consulta_documentos->execute();
-
-            // $consulta_documentos->bindParam(':cod_pessoa', $codPessoa);
-            // $consulta_documentos->bindParam(':cod_tipo_documento', $cod_tipo_documento);
-            // $consulta_documentos->bindParam(':vch_documento', $vch_documento_documento);
-            // $consulta_documentos->bindParam(':sdt_insercao', $data_atual);
-            // $consulta_documentos->bindParam(':status', $status_documento);
-            // $consulta_documentos->execute();
-
-            $this->setUsuario($usuario);
-            $vch_login = $this->usuario->getVch_login();
-            $vch_senha = $this->usuario->getVch_senha();
-            $int_perfil = $this->usuario->getInt_perfil();
-            $int_situacao = $this->usuario->getInt_situacao();
-            $consulta_usuario = $pdo->prepare("INSERT INTO ciptea.usuario(vch_login, vch_senha, int_perfil, int_situacao) 
-            VALUES (:vch_login, :vch_senha, :int_perfil, :int_situacao)");
-            $consulta_usuario->bindParam(':vch_login', $vch_login);
-            $consulta_usuario->bindParam(':vch_senha', $vch_senha);
-            $consulta_usuario->bindParam(':int_perfil', $int_perfil);
-            $consulta_usuario->bindParam(':int_situacao', $int_situacao);
-            $consulta_usuario->execute();
-
-            $cod_usuario = $pdo->lastInsertId();
-            
-            $update_pessoa = $pdo->prepare("UPDATE ciptea.dados_pessoa 
-            SET cod_usuario = :cod_usuario 
-            WHERE cod_pessoa = :cod_pessoa");
-            $update_pessoa->bindParam(':cod_usuario', $cod_usuario);
-            $update_pessoa->bindParam(':cod_pessoa', $codPessoa);
-            $update_pessoa->execute();
-            // Comitando a transação
-            $pdo->commit();
-
-            header('Location: ../index.php?msg=1');
-        } catch (PDOException $e) {
-            // Se ocorrer algum erro, reverta a transação
-            $pdo->rollBack();
-            echo "Erro: " . $e->getMessage();
-        }
+        return $codPessoa;
+    } catch (PDOException $e) {
+        $pdo->rollBack();
+        echo "Ocorreu um erro: $e";
     }
+}
+
 
     
     public function atualizarPessoa($cod_usuario){

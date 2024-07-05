@@ -3,12 +3,18 @@ include_once('sessao.php');
 include_once('classes/documentos.class.php');
 include_once('classes/pessoa.class.php');
 
+
 if (!isset($_SESSION)) {
-    session_start();
+  session_start();
+}
+
+if (!isset($_SESSION['cod_pessoa'])) {
+  // Redirecionar para a página de login se a sessão não estiver definida
+  header('Location: index.php');
+  exit();
 }
 
 $cod_pessoa = $_SESSION['cod_pessoa'];
-
 // Função para buscar documentos e verificar resultados
 function buscarDocumento($cod_pessoa, $cod_tipo_documento) {
     $documento = new Documentos();

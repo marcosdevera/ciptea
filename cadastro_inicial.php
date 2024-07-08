@@ -135,15 +135,19 @@
         }
 
         @keyframes shake {
-            0%, 100% {
+            0%,
+            100% {
                 transform: translateX(0);
             }
+
             25% {
                 transform: translateX(-5px);
             }
+
             50% {
                 transform: translateX(5px);
             }
+
             75% {
                 transform: translateX(-5px);
             }
@@ -186,7 +190,7 @@
                 <h2>Endereço</h2>
                 <div class="form-group">
                     <label for="cep">CEP:</label>
-                    <input type="text" class="form-control" name="cep" id="cep" oninput="aplicarMascaraCEP('cep')" maxlength="9" required onblur="buscarEndereco()">
+                    <input type="text" class="form-control" name="cep" id="cep" oninput="aplicarMascaraCEP('cep')" maxlength="9" required onblur="buscarEndereco('cep', 'endereco', 'bairro', 'cidade', 'cepError')">
                     <div id="cepError" class="error-message"></div>
                 </div>
                 <div class="form-group">
@@ -252,7 +256,8 @@
                 <h2>Representante Legal</h2>
                 <div class="form-group">
                     <label for="tem_representante">Possui Representante Legal?</label>
-                    <select class="form-control" name="bool_representante_legal" id="tem_representante" onchange="toggleRepresentanteLegal()">
+                    <select class="form-control" name="bool_representante_legal" id="tem_representante" onchange="toggleRepresentanteLegal()" required>
+                        <option value="">Selecione uma opção</option>
                         <option value="0">Não</option>
                         <option value="1">Sim</option>
                     </select>
@@ -275,12 +280,12 @@
                     </div>
                     <div class="form-group">
                         <label for="vch_cpf_responsavel">CPF do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_cpf_responsavel" id="vch_cpf_responsavel" oninput="formatarCPF('vch_cpf_responsavel')" onblur="validarCPFOnBlur('vch_cpf_responsavel', 'cpfErrorResponsavel')" maxlength="14">
+                        <input type="text" class="form-control" name="vch_cpf_responsavel" id="vch_cpf_responsavel" oninput="formatarCPF('vch_cpf_responsavel')" onblur="validarCPFOnBlurResponsavel('vch_cpf_responsavel')" maxlength="14">
                         <div id="cpfErrorResponsavel" class="error-message"></div>
                     </div>
                     <div class="form-group">
                         <label for="vch_cep_responsavel">CEP do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_cep_responsavel" id="vch_cep_responsavel" oninput="aplicarMascaraCEP('vch_cep_responsavel')" maxlength="9" onblur="buscarEndereco()">
+                        <input type="text" class="form-control" name="vch_cep_responsavel" id="vch_cep_responsavel" oninput="aplicarMascaraCEP('vch_cep_responsavel')" maxlength="9" onblur="buscarEndereco('vch_cep_responsavel', 'vch_endereco_responsavel', 'vch_bairro_responsavel', 'vch_cidade_responsavel', 'cepErrorResponsavel')">
                         <div id="cepErrorResponsavel" class="error-message"></div>
                     </div>
                     <div class="form-group">
@@ -300,7 +305,7 @@
             <div class="step" id="step5">
                 <h2>Informações de Acesso</h2>
                 <div class="form-group">
-                    <label for="vch_login">Email (Será utilizado para acessar o sistema):</label>
+                <label for="vch_login">Email (Será utilizado para acessar o sistema):</label>
                     <input type="text" class="form-control" name="vch_login" id="vch_login" onblur="verificarLogin()" required>
                     <div id="loginError" class="error-message"></div>
                 </div>
@@ -351,6 +356,25 @@
                 document.querySelector(".submit").style.display = "none";
             }
         }
+        function verificarLogin() {
+            var login = document.getElementById('vch_login').value;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'processamento/verificar_login.php');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var response = xhr.responseText;
+                    if (response === '1') {
+                        document.getElementById('loginError').innerText = 'Este login já está vinculado a um CPF, por favor, tente a recuperação de senha, ou um outro email.';
+                        emailValido = false;
+                    } else {
+                        document.getElementById('loginError').innerText = '';
+                        emailValido = true;
+                    }
+                }
+            };
+            xhr.send('login=' + login);
+        }
 
         function nextPrev(n) {
             var steps = document.getElementsByClassName("step");
@@ -362,7 +386,7 @@
 
             steps[currentStep].classList.remove('active');
             steps[currentStep].classList.add('finished');
-            setTimeout(function() {
+            setTimeout(function () {
                 steps[currentStep].style.display = "none";
                 steps[currentStep].classList.remove('finished');
                 currentStep = currentStep + n;
@@ -409,7 +433,7 @@
             }
 
             if (n == 2 && !cpfValido) {
-                document.getElementById("cpf-error").innerText = "CPF inválido ou já cadastrado.";
+                document.getElementById("cpf-error").innerText = "CPF inválido.";
                 valid = false;
             } else if (n == 4 && !emailValido) {
                 document.getElementById("loginError").innerText = "Email já cadastrado.";
@@ -419,6 +443,41 @@
             if (n == 1 && !cepValido) {
                 document.getElementById("cepError").innerText = "CEP inválido.";
                 valid = false;
+            }
+
+            if (n == 3) {
+                var hasRepresentante = document.getElementById("tem_representante").value == "1";
+                var representanteInputs = document.getElementById("representante_legal").getElementsByTagName("input");
+                var representanteSelects = document.getElementById("representante_legal").getElementsByTagName("select");
+                var representanteRadios = document.querySelectorAll('input[type="radio"][name="int_sexo_responsavel"]');
+
+                if (hasRepresentante) {
+                    for (var i = 0; i < representanteInputs.length; i++) {
+                        if (representanteInputs[i].hasAttribute("required") && representanteInputs[i].value === "") {
+                            representanteInputs[i].classList.add("is-invalid");
+                            valid = false;
+                        } else {
+                            representanteInputs[i].classList.remove("is-invalid");
+                        }
+                    }
+
+                    for (var i = 0; i < representanteSelects.length; i++) {
+                        if (representanteSelects[i].hasAttribute("required") && representanteSelects[i].value === "") {
+                            representanteSelects[i].classList.add("is-invalid");
+                            valid = false;
+                        } else {
+                            representanteSelects[i].classList.remove("is-invalid");
+                        }
+                    }
+
+                    var representanteRadioChecked = Array.from(representanteRadios).some(radio => radio.checked);
+                    if (representanteRadios.length > 0 && !representanteRadioChecked) {
+                        representanteRadios.forEach(radio => radio.classList.add("is-invalid"));
+                        valid = false;
+                    } else {
+                        representanteRadios.forEach(radio => radio.classList.remove("is-invalid"));
+                    }
+                }
             }
 
             return valid;
@@ -431,8 +490,8 @@
             progress.style.width = percent + "%";
         }
 
-        $(document).ready(function() {
-            $('#showPassword').change(function() {
+        $(document).ready(function () {
+            $('#showPassword').change(function () {
                 var passwordField = $('#vch_senha');
                 var confirmPasswordField = $('#vch_confirm_senha');
                 if ($(this).is(':checked')) {
@@ -444,15 +503,25 @@
                 }
             });
 
-            $('#vch_login').blur(function() {
-                verificarLogin();
-            });
-
-            $('#tem_representante').change(function() {
+            $('#tem_representante').change(function () {
                 if ($(this).val() == '1') {
                     $('#representante_legal').show();
+                    $('#vch_nome_responsavel').attr('required', 'required');
+                    $('#vch_telefone_responsavel').attr('required', 'required');
+                    $('#vch_cpf_responsavel').attr('required', 'required');
+                    $('#vch_cep_responsavel').attr('required', 'required');
+                    $('#vch_endereco_responsavel').attr('required', 'required');
+                    $('#vch_bairro_responsavel').attr('required', 'required');
+                    $('#vch_cidade_responsavel').attr('required', 'required');
                 } else {
                     $('#representante_legal').hide();
+                    $('#vch_nome_responsavel').removeAttr('required');
+                    $('#vch_telefone_responsavel').removeAttr('required');
+                    $('#vch_cpf_responsavel').removeAttr('required');
+                    $('#vch_cep_responsavel').removeAttr('required');
+                    $('#vch_endereco_responsavel').removeAttr('required');
+                    $('#vch_bairro_responsavel').removeAttr('required');
+                    $('#vch_cidade_responsavel').removeAttr('required');
                 }
             });
 
@@ -474,61 +543,63 @@
             alertDiv.style.display = "block";
         }
 
-        function verificarLogin() {
-            var login = document.getElementById('vch_login').value;
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'processamento/verificar_login.php');
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    var response = xhr.responseText;
-                    if (response === '1') {
-                        document.getElementById('loginError').innerText = 'Este login já está vinculado a um CPF, por favor, tente a recuperação de senha, ou um outro email.';
-                        emailValido = false;
-                    } else {
-                        document.getElementById('loginError').innerText = '';
-                        emailValido = true;
-                    }
-                }
-            };
-            xhr.send('login=' + login);
-        }
-
         function validarCPFOnBlur(inputId) {
+    var cpfInput = document.getElementById(inputId);
+    var cpf = cpfInput.value.replace(/\D/g, '');
+    var cpfErrorDiv = document.getElementById('cpf-error');
+
+    if (!validarCPF(cpf)) {
+        cpfErrorDiv.innerHTML = 'CPF inválido.';
+        cpfErrorDiv.style.display = 'block';
+        cpfInput.classList.add('is-invalid');
+        cpfValido = false;
+        return;
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'processamento/verificar_cpf.php');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            var response = JSON.parse(xhr.responseText);
+            if (response.status === 'error') {
+                cpfErrorDiv.innerHTML = response.message;
+                cpfErrorDiv.style.display = 'block';
+                cpfInput.classList.add('is-invalid');
+                cpfValido = false;
+            } else {
+                cpfErrorDiv.innerHTML = '';
+                cpfErrorDiv.style.display = 'none';
+                cpfInput.classList.remove('is-invalid');
+                cpfValido = true;
+            }
+        } else {
+            cpfErrorDiv.innerHTML = 'Erro ao verificar o CPF.';
+            cpfErrorDiv.style.display = 'block';
+            cpfInput.classList.add('is-invalid');
+            cpfValido = false;
+        }
+    };
+    xhr.send('cpf=' + cpf);
+}
+
+        function validarCPFOnBlurResponsavel(inputId) {
             var cpfInput = document.getElementById(inputId);
             var cpf = cpfInput.value.replace(/\D/g, '');
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'processamento/verificar_cpf.php');
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onload = function() {
-                var cpfErrorDiv = document.getElementById('cpf-error');
-                if (xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.status === 'error') {
-                        cpfErrorDiv.innerHTML = response.message;
-                        cpfErrorDiv.style.display = 'block';
-                        cpfInput.classList.add('is-invalid');
-                        cpfValido = false;
-                    } else {
-                        cpfErrorDiv.innerHTML = '';
-                        cpfErrorDiv.style.display = 'none';
-                        cpfInput.classList.remove('is-invalid');
-                        cpfValido = true;
-                    }
-                } else {
-                    cpfErrorDiv.innerHTML = 'Erro ao verificar o CPF.';
-                    cpfErrorDiv.style.display = 'block';
-                    cpfInput.classList.add('is-invalid');
-                    cpfValido = false;
-                }
-            };
-            xhr.send('cpf=' + cpf);
+            var isValid = validarCPF(cpf);
+            if (!isValid) {
+                document.getElementById("cpfErrorResponsavel").innerText = 'CPF inválido.';
+                cpfValido = false;
+            } else {
+                document.getElementById("cpfErrorResponsavel").innerText = '';
+                cpfValido = true;
+            }
         }
 
         function triggerButtonError() {
             var nextButton = document.querySelector(".next");
             nextButton.classList.add("btn-error");
-            setTimeout(function() {
+            setTimeout(function () {
                 nextButton.classList.remove("btn-error");
             }, 500);
         }
@@ -659,30 +730,30 @@
             inputTelefone.value = formatarTelefone(telefone);
         }
 
-        function buscarEndereco() {
-            var cep = document.getElementById('cep').value.replace(/\D/g, '');
+        function buscarEndereco(cepId, enderecoId, bairroId, cidadeId, errorId) {
+            var cep = document.getElementById(cepId).value.replace(/\D/g, '');
             if (cep.length === 8) {
                 fetch(`https://viacep.com.br/ws/${cep}/json/`)
                     .then(response => response.json())
                     .then(data => {
                         if (!data.erro) {
-                            document.getElementById('endereco').value = data.logradouro;
-                            document.getElementById('bairro').value = data.bairro;
-                            document.getElementById('cidade').value = data.localidade;
-                            document.getElementById('cepError').innerText = '';
+                            document.getElementById(enderecoId).value = data.logradouro;
+                            document.getElementById(bairroId).value = data.bairro;
+                            document.getElementById(cidadeId).value = data.localidade;
+                            document.getElementById(errorId).innerText = '';
                             cepValido = true;
                         } else {
-                            document.getElementById('cepError').innerText = 'CEP inválido.';
+                            document.getElementById(errorId).innerText = 'CEP inválido.';
                             cepValido = false;
                         }
                     })
                     .catch(error => {
                         console.error('Erro ao buscar CEP:', error);
-                        document.getElementById('cepError').innerText = 'Erro ao buscar CEP.';
+                        document.getElementById(errorId).innerText = 'Erro ao buscar CEP.';
                         cepValido = false;
                     });
             } else {
-                document.getElementById('cepError').innerText = 'CEP inválido.';
+                document.getElementById(errorId).innerText = 'CEP inválido.';
                 cepValido = false;
             }
         }

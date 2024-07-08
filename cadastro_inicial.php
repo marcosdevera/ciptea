@@ -1,21 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <!-- Metadados básicos da página -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Pessoa</title>
-    <!-- Favicon da página -->
     <link rel="icon" href="images/imagemtopo.png" type="image/png">
-    <!-- Bootstrap CSS para estilos prontos -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- Fonte personalizada do Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Estilo do corpo da página */
         body {
             font-family: 'Poppins', sans-serif;
             background: url('images/background_login2.webp') no-repeat center center fixed;
@@ -28,7 +21,6 @@
             height: 100vh;
         }
 
-        /* Estilo do contêiner principal */
         .container {
             background-color: rgba(255, 255, 255, 0.9);
             padding: 20px;
@@ -38,7 +30,6 @@
             width: 100%;
         }
 
-        /* Estilo dos passos do formulário */
         .step {
             display: none;
         }
@@ -53,7 +44,6 @@
             animation: fadeOut 0.5s;
         }
 
-        /* Animação de fade in */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -64,7 +54,6 @@
             }
         }
 
-        /* Animação de fade out */
         @keyframes fadeOut {
             from {
                 opacity: 1;
@@ -75,7 +64,6 @@
             }
         }
 
-        /* Estilo da barra de progresso */
         .progress-bar {
             background-color: #e0e0e0;
             border-radius: 5px;
@@ -94,7 +82,6 @@
             background-color: #28a745;
         }
 
-        /* Estilo dos botões */
         .buttons {
             display: flex;
             justify-content: space-between;
@@ -134,19 +121,51 @@
         .radio-group input.is-invalid + label {
             color: red;
         }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .error {
+            animation: shake 0.5s;
+            animation-iteration-count: 1;
+            background-color: red !important;
+            color: white !important;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        .form-check-input {
+            border-radius: 50%;
+        }
+
+        .form-check-label {
+            margin-left: 10px;
+        }
+
+        .show-password-container {
+            display: flex;
+            align-items: center;
+        }
     </style>
 </head>
-
 <body>
     <div class="container">
         <div class="header text-center">
-            <!-- Logo do site -->
             <img src="images/ciptea.png" alt="CIPTEA Logo" class="img-fluid">
         </div>
         <div class="progress-bar">
             <div class="progress"></div>
         </div>
-        <form name="form" id="registrationForm" action="processamento/processar_usuario.php" method="POST" enctype="multipart/form-data" onsubmit="return validarSenhas() && completeProgress()">
+        <form name="form" id="registrationForm" action="processamento/processar_usuario.php" method="POST" enctype="multipart/form-data" onsubmit="return validarFormulario()">
             <div class="step active" id="step1">
                 <h2>Informações Pessoais</h2>
                 <div class="form-group">
@@ -154,7 +173,7 @@
                     <input type="text" class="form-control" name="vch_nome" id="vch_nome" required>
                 </div>
                 <div class="form-group">
-                    <label for="vch_nome_social">Nome Social:</label>
+                    <label for="vch_nome_social">Nome Social (opcional):</label>
                     <input type="text" class="form-control" name="vch_nome_social" id="vch_nome_social">
                 </div>
                 <div class="form-group">
@@ -172,10 +191,11 @@
             <div class="step" id="step2">
                 <h2>Endereço</h2>
                 <div class="form-group">
-                <div class="form-group">
                     <label for="cep">CEP:</label>
-                    <input type="text" class="form-control" name="cep" id="cep" oninput="formatarCEP('cep')" maxlength="9" required onblur="buscarEndereco()">
+                    <input type="text" class="form-control" name="cep" id="cep" oninput="aplicarMascaraCEP('cep')" maxlength="9" required onblur="buscarEndereco()">
+                    <div id="cepError" class="error-message"></div>
                 </div>
+                <div class="form-group">
                     <label for="endereco">Endereço:</label>
                     <input type="text" class="form-control" name="endereco" id="endereco" placeholder="Exemplo: Avenida Alameda das Travessas, nº 111" required>
                 </div>
@@ -209,6 +229,7 @@
                 <div class="form-group">
                     <label for="vch_cpf">CPF:</label>
                     <input type="text" class="form-control" name="vch_cpf" id="vch_cpf" oninput="formatarCPF('vch_cpf')" onblur="validarCPFOnBlur('vch_cpf')" maxlength="14" required>
+                    <div id="cpf-error" class="text-danger"></div>
                 </div>
                 <div class="form-group">
                     <label for="vch_rg">RG:</label>
@@ -260,11 +281,13 @@
                     </div>
                     <div class="form-group">
                         <label for="vch_cpf_responsavel">CPF do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_cpf_responsavel" id="vch_cpf_responsavel" oninput="formatarCPF('vch_cpf_responsavel')" onblur="validarCPFOnBlur('vch_cpf_responsavel')" maxlength="14">
+                        <input type="text" class="form-control" name="vch_cpf_responsavel" id="vch_cpf_responsavel" oninput="formatarCPF('vch_cpf_responsavel')" onblur="validarCPFOnBlur('vch_cpf_responsavel', 'cpfErrorResponsavel')" maxlength="14">
+                        <div id="cpfErrorResponsavel" class="error-message"></div>
                     </div>
                     <div class="form-group">
                         <label for="vch_cep_responsavel">CEP do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_cep_responsavel" id="vch_cep_responsavel" oninput="aplicarMascaraCEP('vch_cep_responsavel')" maxlength="9">
+                        <input type="text" class="form-control" name="vch_cep_responsavel" id="vch_cep_responsavel" oninput="aplicarMascaraCEP('vch_cep_responsavel')" maxlength="9" onblur="buscarEndereco('vch_cep_responsavel', 'vch_endereco_responsavel', 'vch_bairro_responsavel', 'vch_cidade_responsavel', 'cepErrorResponsavel')">
+                        <div id="cepErrorResponsavel" class="error-message"></div>
                     </div>
                     <div class="form-group">
                         <label for="vch_endereco_responsavel">Endereço do Responsável:</label>
@@ -284,7 +307,8 @@
                 <h2>Informações de Acesso</h2>
                 <div class="form-group">
                     <label for="vch_login">Email (Será utilizado para acessar o sistema):</label>
-                    <input type="text" class="form-control" name="vch_login" id="vch_login" onblur="verificarLogin()" onclick="exibirAlerta()">
+                    <input type="text" class="form-control" name="vch_login" id="vch_login" onblur="verificarLogin()" required>
+                    <div id="loginError" class="error-message"></div>
                 </div>
                 <div class="form-group">
                     <label for="vch_senha">Criar senha de acesso (mínimo de 8 caracteres):</label>
@@ -294,7 +318,7 @@
                     <label for="vch_confirm_senha">Confirmar senha de acesso:</label>
                     <input type="password" class="form-control" name="vch_confirm_senha" id="vch_confirm_senha" minlength="8" required>
                 </div>
-                <div class="form-group form-check">
+                <div class="form-group form-check show-password-container">
                     <input type="checkbox" class="form-check-input" id="showPassword">
                     <label class="form-check-label" for="showPassword">Mostrar senha</label>
                 </div>
@@ -309,11 +333,13 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // Variável para rastrear o passo atual do formulário
         var currentStep = 0;
+        var cpfValido = false;
+        var emailValido = false;
+        var cepValido = false;
+
         showStep(currentStep);
 
-        // Função para exibir o passo atual
         function showStep(n) {
             var steps = document.getElementsByClassName("step");
             steps[n].style.display = "block";
@@ -332,12 +358,10 @@
             }
         }
 
-        // Função para avançar ou retroceder entre os passos
-        function nextPrev(n) {
+        async function nextPrev(n) {
             var steps = document.getElementsByClassName("step");
 
-            // Validate current step before proceeding
-            if (n == 1 && !validateStep(currentStep)) {
+            if (n == 1 && !await validateStep(currentStep)) {
                 return false;
             }
 
@@ -356,14 +380,12 @@
             }, 500);
         }
 
-        // Função para validar os campos obrigatórios na etapa atual
-        function validateStep(n) {
+        async function validateStep(n) {
             var steps = document.getElementsByClassName("step");
             var inputs = steps[n].getElementsByTagName("input");
             var selects = steps[n].getElementsByTagName("select");
             var valid = true;
 
-            // Validar campos de input
             for (var i = 0; i < inputs.length; i++) {
                 if (inputs[i].hasAttribute("required") && inputs[i].value === "") {
                     inputs[i].classList.add("is-invalid");
@@ -373,7 +395,6 @@
                 }
             }
 
-            // Validar campos de select
             for (var i = 0; i < selects.length; i++) {
                 if (selects[i].hasAttribute("required") && selects[i].value === "") {
                     selects[i].classList.add("is-invalid");
@@ -383,7 +404,6 @@
                 }
             }
 
-            // Validar campos de radio
             var radios = steps[n].querySelectorAll('input[type="radio"][name="sexo"]');
             var radioChecked = Array.from(radios).some(radio => radio.checked);
             if (radios.length > 0 && !radioChecked) {
@@ -393,10 +413,24 @@
                 radios.forEach(radio => radio.classList.remove("is-invalid"));
             }
 
+            if (n == 2 && !cpfValido) {
+                valid = false;
+                triggerButtonError();
+            }
+
+            if (n == 4 && !emailValido) {
+                valid = false;
+                triggerButtonError();
+            }
+
+            if (n == 1 && !cepValido) {
+                valid = false;
+                triggerButtonError();
+            }
+
             return valid;
         }
 
-        // Função para atualizar a barra de progresso
         function updateProgressBar(n) {
             var progress = document.querySelector(".progress");
             var steps = document.getElementsByClassName("step");
@@ -404,7 +438,6 @@
             progress.style.width = percent + "%";
         }
 
-        // Funções para interações específicas quando o documento estiver pronto
         $(document).ready(function() {
             $('#showPassword').change(function() {
                 var passwordField = $('#vch_senha');
@@ -443,14 +476,12 @@
             dataNascimentoInput.setAttribute('min', dataMinima);
         });
 
-        // Função para exibir um alerta
         function exibirAlerta() {
             var alertDiv = document.getElementById("alert-message");
             alertDiv.style.display = "block";
         }
 
-        // Função para verificar o login via AJAX
-        function verificarLogin() {
+        async function verificarLogin() {
             var login = document.getElementById('vch_login').value;
             var xhr = new XMLHttpRequest();
             xhr.open('POST', 'processamento/verificar_login.php');
@@ -459,14 +490,17 @@
                 if (xhr.status === 200) {
                     var response = xhr.responseText;
                     if (response === '1') {
-                        alert('Este login já está vinculado a um CPF, por favor, tente a recuperação de senha, ou um outro email.');
+                        document.getElementById('loginError').innerText = 'Este login já está vinculado a um CPF, por favor, tente a recuperação de senha, ou um outro email.';
+                        emailValido = false;
+                    } else {
+                        document.getElementById('loginError').innerText = '';
+                        emailValido = true;
                     }
                 }
             };
             xhr.send('login=' + login);
         }
 
-        // Função para validar se as senhas são iguais
         function validarSenhas() {
             var senha = document.getElementById("vch_senha").value;
             var confirmacao = document.getElementById("vch_confirm_senha").value;
@@ -477,7 +511,6 @@
             return true;
         }
 
-        // Função para formatar o CPF
         function formatCPF(cpf) {
             cpf = cpf.replace(/\D/g, '');
             cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
@@ -486,7 +519,6 @@
             return cpf;
         }
 
-        // Função para validar o CPF
         function validarCPF(cpf) {
             cpf = cpf.replace(/\D/g, '');
             if (cpf.length !== 11) return false;
@@ -526,40 +558,56 @@
             return true;
         }
 
-        // Função para formatar o CPF no campo de input
         function formatarCPF(inputId) {
             var cpfInput = document.getElementById(inputId);
             cpfInput.value = formatCPF(cpfInput.value);
         }
 
-        // Função para validar o CPF quando sair do campo de input
-        function validarCPFOnBlur(inputId) {
+        async function validarCPFOnBlur(inputId) {
             var cpfInput = document.getElementById(inputId);
             var cpf = cpfInput.value.replace(/\D/g, '');
             var xhr = new XMLHttpRequest();
             xhr.open('POST', 'processamento/verificar_cpf.php');
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xhr.onload = function() {
+                var cpfErrorDiv = document.getElementById('cpf-error');
                 if (xhr.status === 200) {
-                    var response = xhr.responseText;
-                    if (response === '1') {
-                        if (confirm('CPF já cadastrado. Para recuperar a senha, clique em "OK" para ser redirecionado para a Aba de recuperação de senha.')) {
-                            window.location.href = 'recuperar_senha.php';
-                        }
-                        cpfInput.value = '';
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.status === 'error') {
+                        cpfErrorDiv.innerHTML = response.message;
+                        cpfErrorDiv.style.display = 'block';
+                        cpfInput.classList.add('is-invalid');
+                        cpfValido = false;
+                    } else {
+                        cpfErrorDiv.innerHTML = '';
+                        cpfErrorDiv.style.display = 'none';
+                        cpfInput.classList.remove('is-invalid');
+                        cpfValido = true;
                     }
+                } else {
+                    cpfErrorDiv.innerHTML = 'Erro ao verificar o CPF.';
+                    cpfErrorDiv.style.display = 'block';
+                    cpfInput.classList.add('is-invalid');
+                    cpfValido = false;
                 }
             };
             xhr.send('cpf=' + cpf);
 
             var isValid = validarCPF(cpf);
             if (!isValid) {
-                alert('CPF inválido');
-                cpfInput.value = '';
+                var cpfErrorDiv = document.getElementById('cpf-error');
+                cpfErrorDiv.innerHTML = 'CPF inválido';
+                cpfErrorDiv.style.display = 'block';
+                cpfInput.classList.add('is-invalid');
+                cpfValido = false;
+            } else {
+                var cpfErrorDiv = document.getElementById('cpf-error');
+                cpfErrorDiv.innerHTML = '';
+                cpfErrorDiv.style.display = 'none';
+                cpfInput.classList.remove('is-invalid');
             }
         }
 
-        // Função para formatar o RG
         function formatarRG() {
             var rgInput = document.getElementById('vch_rg');
             var rg = rgInput.value.replace(/\D/g, '');
@@ -577,7 +625,6 @@
             rgInput.value = rg;
         }
 
-        // Função para formatar o número do CNS
         function formatarCNS() {
             var cnsInput = document.getElementById('vch_num_cartao_sus');
             var cns = cnsInput.value.replace(/\D/g, '');
@@ -595,21 +642,49 @@
             cnsInput.value = cns;
         }
 
-        // Função para formatar o CEP
         function formatarCEP(cep) {
             cep = cep.replace(/\D/g, '');
             cep = cep.replace(/^(\d{5})(\d{1})/, '$1-$2');
             return cep;
         }
 
-        // Função para aplicar máscara no campo de input do CEP
         function aplicarMascaraCEP(inputId) {
             var inputCEP = document.getElementById(inputId);
             var cep = inputCEP.value;
             inputCEP.value = formatarCEP(cep);
         }
 
-        // Função para formatar o telefone
+        async function buscarEndereco() {
+            var inputCEP = document.getElementById('cep');
+            var cep = inputCEP.value.replace(/\D/g, '');
+            if (cep.length === 8) {
+                try {
+                    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                    const data = await response.json();
+                    if (!data.erro) {
+                        document.getElementById('endereco').value = data.logradouro;
+                        document.getElementById('bairro').value = data.bairro;
+                        document.getElementById('cidade').value = data.localidade;
+                        document.getElementById('cepError').innerText = '';
+                        cepValido = true;
+                    } else {
+                        document.getElementById('cepError').innerText = 'CEP inválido.';
+                        inputCEP.classList.add('is-invalid');
+                        cepValido = false;
+                    }
+                } catch (error) {
+                    console.error('Erro ao buscar CEP:', error);
+                    document.getElementById('cepError').innerText = 'Erro ao buscar CEP.';
+                    inputCEP.classList.add('is-invalid');
+                    cepValido = false;
+                }
+            } else {
+                document.getElementById('cepError').innerText = 'CEP inválido.';
+                inputCEP.classList.add('is-invalid');
+                cepValido = false;
+            }
+        }
+
         function formatarTelefone(telefone) {
             telefone = telefone.replace(/\D/g, '');
             if (telefone.length === 11) {
@@ -624,45 +699,47 @@
             return telefone;
         }
 
-        // Função para aplicar máscara no campo de input do telefone
         function aplicarMascaraTelefone(id) {
             var inputTelefone = document.getElementById(id);
             var telefone = inputTelefone.value;
             inputTelefone.value = formatarTelefone(telefone);
         }
 
-        // Função para completar a barra de progresso e mudar a cor para verde
         function completeProgress() {
             var progress = document.querySelector(".progress");
             progress.classList.add("complete");
-            return true; // Ensure form submission
+            return true;
         }
 
-        // Função para buscar o endereço pelo CEP usando a API ViaCEP
-        function buscarEndereco() {
-            var cep = document.getElementById('cep').value.replace(/\D/g, '');
-            if (cep.length === 8) {
-                fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.erro) {
-                            document.getElementById('endereco').value = data.logradouro;
-                            document.getElementById('bairro').value = data.bairro;
-                            document.getElementById('cidade').value = data.localidade;
-                        } else {
-                            alert('CEP não encontrado.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erro ao buscar CEP:', error);
-                        alert('Erro ao buscar CEP.');
-                    });
+        function triggerButtonError() {
+            var nextButton = document.querySelector('.next');
+            var submitButton = document.querySelector('.submit');
+            if (currentStep == 4) {
+                submitButton.classList.add('error');
+                setTimeout(function() {
+                    submitButton.classList.remove('error');
+                }, 500);
             } else {
-                alert('CEP inválido.');
+                nextButton.classList.add('error');
+                setTimeout(function() {
+                    nextButton.classList.remove('error');
+                }, 500);
             }
         }
 
+        function validarFormulario() {
+            if (!cpfValido || !emailValido || !cepValido) {
+                triggerButtonError();
+                return false;
+            }
+            return validarSenhas();
+        }
     </script>
 </body>
-
 </html>
+
+
+
+
+
+

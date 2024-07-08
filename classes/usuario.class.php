@@ -116,6 +116,19 @@ class Usuario {
             $update->execute(); 
             header('Location: ../index.php');   
        }
+
+
+       //funcao de verificação de email no banco
+    public function emailExiste($vch_login) {
+        $pdo = Database::conexao();
+        $query = "SELECT COUNT(*) FROM ciptea.usuario WHERE vch_login = :vch_login";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':vch_login', $vch_login);
+        $stmt->execute();
+        return $stmt->fetchColumn() > 0;
+    }
 }
+
+
 
 ?>

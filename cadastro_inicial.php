@@ -195,7 +195,7 @@
                 </div>
                 <div class="form-group">
                     <label for="endereco">Endereço:</label>
-                    <input type="text" class="form-control" name="endereco" id="endereco" required>
+                    <input type="text" class="form-control" name="endereco" id="endereco" placeholder="Exemplo: Avenida Alameda das Travessas, nº 111"  required>
                 </div>
                 <div class="form-group">
                     <label for="bairro">Bairro:</label>
@@ -290,7 +290,7 @@
                     </div>
                     <div class="form-group">
                         <label for="vch_endereco_responsavel">Endereço do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_endereco_responsavel" id="vch_endereco_responsavel">
+                        <input type="text" class="form-control" name="vch_endereco_responsavel" id="vch_endereco_responsavel" placeholder="Exemplo: Avenida Alameda das Travessas, nº 111" >
                     </div>
                     <div class="form-group">
                         <label for="vch_bairro_responsavel">Bairro do Responsável:</label>

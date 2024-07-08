@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -128,35 +129,28 @@
             margin-top: 5px;
         }
 
-        .error {
+        .btn-error {
             animation: shake 0.5s;
-            animation-iteration-count: 1;
             background-color: red !important;
-            color: white !important;
         }
 
         @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
-            100% { transform: translateX(0); }
-        }
-
-        .form-check-input {
-            border-radius: 50%;
-        }
-
-        .form-check-label {
-            margin-left: 10px;
-        }
-
-        .show-password-container {
-            display: flex;
-            align-items: center;
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-5px);
+            }
+            50% {
+                transform: translateX(5px);
+            }
+            75% {
+                transform: translateX(-5px);
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header text-center">
@@ -173,7 +167,7 @@
                     <input type="text" class="form-control" name="vch_nome" id="vch_nome" required>
                 </div>
                 <div class="form-group">
-                    <label for="vch_nome_social">Nome Social (opcional):</label>
+                    <label for="vch_nome_social">Nome Social (caso tenha):</label>
                     <input type="text" class="form-control" name="vch_nome_social" id="vch_nome_social">
                 </div>
                 <div class="form-group">
@@ -197,7 +191,7 @@
                 </div>
                 <div class="form-group">
                     <label for="endereco">Endereço:</label>
-                    <input type="text" class="form-control" name="endereco" id="endereco" placeholder="Exemplo: Avenida Alameda das Travessas, nº 111" required>
+                    <input type="text" class="form-control" name="endereco" id="endereco" required>
                 </div>
                 <div class="form-group">
                     <label for="bairro">Bairro:</label>
@@ -286,7 +280,7 @@
                     </div>
                     <div class="form-group">
                         <label for="vch_cep_responsavel">CEP do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_cep_responsavel" id="vch_cep_responsavel" oninput="aplicarMascaraCEP('vch_cep_responsavel')" maxlength="9" onblur="buscarEndereco('vch_cep_responsavel', 'vch_endereco_responsavel', 'vch_bairro_responsavel', 'vch_cidade_responsavel', 'cepErrorResponsavel')">
+                        <input type="text" class="form-control" name="vch_cep_responsavel" id="vch_cep_responsavel" oninput="aplicarMascaraCEP('vch_cep_responsavel')" maxlength="9" onblur="buscarEndereco()">
                         <div id="cepErrorResponsavel" class="error-message"></div>
                     </div>
                     <div class="form-group">
@@ -318,7 +312,7 @@
                     <label for="vch_confirm_senha">Confirmar senha de acesso:</label>
                     <input type="password" class="form-control" name="vch_confirm_senha" id="vch_confirm_senha" minlength="8" required>
                 </div>
-                <div class="form-group form-check show-password-container">
+                <div class="form-group form-check">
                     <input type="checkbox" class="form-check-input" id="showPassword">
                     <label class="form-check-label" for="showPassword">Mostrar senha</label>
                 </div>
@@ -358,10 +352,11 @@
             }
         }
 
-        async function nextPrev(n) {
+        function nextPrev(n) {
             var steps = document.getElementsByClassName("step");
 
-            if (n == 1 && !await validateStep(currentStep)) {
+            if (n == 1 && !validateStep(currentStep)) {
+                triggerButtonError();
                 return false;
             }
 
@@ -380,7 +375,7 @@
             }, 500);
         }
 
-        async function validateStep(n) {
+        function validateStep(n) {
             var steps = document.getElementsByClassName("step");
             var inputs = steps[n].getElementsByTagName("input");
             var selects = steps[n].getElementsByTagName("select");
@@ -414,18 +409,16 @@
             }
 
             if (n == 2 && !cpfValido) {
+                document.getElementById("cpf-error").innerText = "CPF inválido ou já cadastrado.";
                 valid = false;
-                triggerButtonError();
-            }
-
-            if (n == 4 && !emailValido) {
+            } else if (n == 4 && !emailValido) {
+                document.getElementById("loginError").innerText = "Email já cadastrado.";
                 valid = false;
-                triggerButtonError();
             }
 
             if (n == 1 && !cepValido) {
+                document.getElementById("cepError").innerText = "CEP inválido.";
                 valid = false;
-                triggerButtonError();
             }
 
             return valid;
@@ -481,7 +474,7 @@
             alertDiv.style.display = "block";
         }
 
-        async function verificarLogin() {
+        function verificarLogin() {
             var login = document.getElementById('vch_login').value;
             var xhr = new XMLHttpRequest();
             xhr.open('POST', 'processamento/verificar_login.php');
@@ -501,11 +494,48 @@
             xhr.send('login=' + login);
         }
 
-        function validarSenhas() {
-            var senha = document.getElementById("vch_senha").value;
-            var confirmacao = document.getElementById("vch_confirm_senha").value;
-            if (senha !== confirmacao) {
-                alert("As senhas digitadas não são iguais. Para realizar o cadastro, as senhas precisam ser iguais.");
+        function validarCPFOnBlur(inputId) {
+            var cpfInput = document.getElementById(inputId);
+            var cpf = cpfInput.value.replace(/\D/g, '');
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'processamento/verificar_cpf.php');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                var cpfErrorDiv = document.getElementById('cpf-error');
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.status === 'error') {
+                        cpfErrorDiv.innerHTML = response.message;
+                        cpfErrorDiv.style.display = 'block';
+                        cpfInput.classList.add('is-invalid');
+                        cpfValido = false;
+                    } else {
+                        cpfErrorDiv.innerHTML = '';
+                        cpfErrorDiv.style.display = 'none';
+                        cpfInput.classList.remove('is-invalid');
+                        cpfValido = true;
+                    }
+                } else {
+                    cpfErrorDiv.innerHTML = 'Erro ao verificar o CPF.';
+                    cpfErrorDiv.style.display = 'block';
+                    cpfInput.classList.add('is-invalid');
+                    cpfValido = false;
+                }
+            };
+            xhr.send('cpf=' + cpf);
+        }
+
+        function triggerButtonError() {
+            var nextButton = document.querySelector(".next");
+            nextButton.classList.add("btn-error");
+            setTimeout(function() {
+                nextButton.classList.remove("btn-error");
+            }, 500);
+        }
+
+        function validarFormulario() {
+            if (!cpfValido || !emailValido) {
+                triggerButtonError();
                 return false;
             }
             return true;
@@ -517,6 +547,11 @@
             cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
             cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
             return cpf;
+        }
+
+        function formatarCPF(inputId) {
+            var cpfInput = document.getElementById(inputId);
+            cpfInput.value = formatCPF(cpfInput.value);
         }
 
         function validarCPF(cpf) {
@@ -556,56 +591,6 @@
             }
 
             return true;
-        }
-
-        function formatarCPF(inputId) {
-            var cpfInput = document.getElementById(inputId);
-            cpfInput.value = formatCPF(cpfInput.value);
-        }
-
-        async function validarCPFOnBlur(inputId) {
-            var cpfInput = document.getElementById(inputId);
-            var cpf = cpfInput.value.replace(/\D/g, '');
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'processamento/verificar_cpf.php');
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onload = function() {
-                var cpfErrorDiv = document.getElementById('cpf-error');
-                if (xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.status === 'error') {
-                        cpfErrorDiv.innerHTML = response.message;
-                        cpfErrorDiv.style.display = 'block';
-                        cpfInput.classList.add('is-invalid');
-                        cpfValido = false;
-                    } else {
-                        cpfErrorDiv.innerHTML = '';
-                        cpfErrorDiv.style.display = 'none';
-                        cpfInput.classList.remove('is-invalid');
-                        cpfValido = true;
-                    }
-                } else {
-                    cpfErrorDiv.innerHTML = 'Erro ao verificar o CPF.';
-                    cpfErrorDiv.style.display = 'block';
-                    cpfInput.classList.add('is-invalid');
-                    cpfValido = false;
-                }
-            };
-            xhr.send('cpf=' + cpf);
-
-            var isValid = validarCPF(cpf);
-            if (!isValid) {
-                var cpfErrorDiv = document.getElementById('cpf-error');
-                cpfErrorDiv.innerHTML = 'CPF inválido';
-                cpfErrorDiv.style.display = 'block';
-                cpfInput.classList.add('is-invalid');
-                cpfValido = false;
-            } else {
-                var cpfErrorDiv = document.getElementById('cpf-error');
-                cpfErrorDiv.innerHTML = '';
-                cpfErrorDiv.style.display = 'none';
-                cpfInput.classList.remove('is-invalid');
-            }
         }
 
         function formatarRG() {
@@ -654,37 +639,6 @@
             inputCEP.value = formatarCEP(cep);
         }
 
-        async function buscarEndereco() {
-            var inputCEP = document.getElementById('cep');
-            var cep = inputCEP.value.replace(/\D/g, '');
-            if (cep.length === 8) {
-                try {
-                    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-                    const data = await response.json();
-                    if (!data.erro) {
-                        document.getElementById('endereco').value = data.logradouro;
-                        document.getElementById('bairro').value = data.bairro;
-                        document.getElementById('cidade').value = data.localidade;
-                        document.getElementById('cepError').innerText = '';
-                        cepValido = true;
-                    } else {
-                        document.getElementById('cepError').innerText = 'CEP inválido.';
-                        inputCEP.classList.add('is-invalid');
-                        cepValido = false;
-                    }
-                } catch (error) {
-                    console.error('Erro ao buscar CEP:', error);
-                    document.getElementById('cepError').innerText = 'Erro ao buscar CEP.';
-                    inputCEP.classList.add('is-invalid');
-                    cepValido = false;
-                }
-            } else {
-                document.getElementById('cepError').innerText = 'CEP inválido.';
-                inputCEP.classList.add('is-invalid');
-                cepValido = false;
-            }
-        }
-
         function formatarTelefone(telefone) {
             telefone = telefone.replace(/\D/g, '');
             if (telefone.length === 11) {
@@ -705,41 +659,34 @@
             inputTelefone.value = formatarTelefone(telefone);
         }
 
-        function completeProgress() {
-            var progress = document.querySelector(".progress");
-            progress.classList.add("complete");
-            return true;
-        }
-
-        function triggerButtonError() {
-            var nextButton = document.querySelector('.next');
-            var submitButton = document.querySelector('.submit');
-            if (currentStep == 4) {
-                submitButton.classList.add('error');
-                setTimeout(function() {
-                    submitButton.classList.remove('error');
-                }, 500);
+        function buscarEndereco() {
+            var cep = document.getElementById('cep').value.replace(/\D/g, '');
+            if (cep.length === 8) {
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.erro) {
+                            document.getElementById('endereco').value = data.logradouro;
+                            document.getElementById('bairro').value = data.bairro;
+                            document.getElementById('cidade').value = data.localidade;
+                            document.getElementById('cepError').innerText = '';
+                            cepValido = true;
+                        } else {
+                            document.getElementById('cepError').innerText = 'CEP inválido.';
+                            cepValido = false;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar CEP:', error);
+                        document.getElementById('cepError').innerText = 'Erro ao buscar CEP.';
+                        cepValido = false;
+                    });
             } else {
-                nextButton.classList.add('error');
-                setTimeout(function() {
-                    nextButton.classList.remove('error');
-                }, 500);
+                document.getElementById('cepError').innerText = 'CEP inválido.';
+                cepValido = false;
             }
-        }
-
-        function validarFormulario() {
-            if (!cpfValido || !emailValido || !cepValido) {
-                triggerButtonError();
-                return false;
-            }
-            return validarSenhas();
         }
     </script>
 </body>
+
 </html>
-
-
-
-
-
-

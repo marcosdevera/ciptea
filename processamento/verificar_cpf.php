@@ -3,8 +3,7 @@
 include_once("../classes/conexao.class.php");
 
 try {
-    
-    $cpf = $_POST['cpf'];
+    $cpf = str_replace(array(".", "-"), "", $_POST['cpf']);
      
     $pdo = Database::conexao();
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM ciptea.dados_pessoa WHERE vch_cpf = :cpf");
@@ -14,11 +13,11 @@ try {
     $result = $stmt->fetchColumn();
     
     if ($result > 0) {
-        echo '1'; // CPF já cadastrado
+        echo json_encode(['status' => 'error', 'message' => 'CPF já cadastrado. <a href="recuperar_senha.php">Recuperar senha</a>']);
     } else {
-        echo '0'; // CPF não cadastrado
+        echo json_encode(['status' => 'success']);
     }
 } catch(PDOException $e) {
-    echo 'Erro ao conectar ao banco de dados: ' . $e->getMessage();
+    echo json_encode(['status' => 'error', 'message' => 'Erro ao conectar ao banco de dados: ' . $e->getMessage()]);
 }
 ?>

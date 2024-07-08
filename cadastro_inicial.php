@@ -305,7 +305,7 @@
             <div class="step" id="step5">
                 <h2>Informações de Acesso</h2>
                 <div class="form-group">
-                <label for="vch_login">Email (Será utilizado para acessar o sistema):</label>
+                    <label for="vch_login">Email (Será utilizado para acessar o sistema):</label>
                     <input type="text" class="form-control" name="vch_login" id="vch_login" onblur="verificarLogin()" required>
                     <div id="loginError" class="error-message"></div>
                 </div>
@@ -356,25 +356,6 @@
                 document.querySelector(".submit").style.display = "none";
             }
         }
-        function verificarLogin() {
-            var login = document.getElementById('vch_login').value;
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'processamento/verificar_login.php');
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    var response = xhr.responseText;
-                    if (response === '1') {
-                        document.getElementById('loginError').innerText = 'Este login já está vinculado a um CPF, por favor, tente a recuperação de senha, ou um outro email.';
-                        emailValido = false;
-                    } else {
-                        document.getElementById('loginError').innerText = '';
-                        emailValido = true;
-                    }
-                }
-            };
-            xhr.send('login=' + login);
-        }
 
         function nextPrev(n) {
             var steps = document.getElementsByClassName("step");
@@ -386,7 +367,7 @@
 
             steps[currentStep].classList.remove('active');
             steps[currentStep].classList.add('finished');
-            setTimeout(function () {
+            setTimeout(function() {
                 steps[currentStep].style.display = "none";
                 steps[currentStep].classList.remove('finished');
                 currentStep = currentStep + n;
@@ -490,8 +471,8 @@
             progress.style.width = percent + "%";
         }
 
-        $(document).ready(function () {
-            $('#showPassword').change(function () {
+        $(document).ready(function() {
+            $('#showPassword').change(function() {
                 var passwordField = $('#vch_senha');
                 var confirmPasswordField = $('#vch_confirm_senha');
                 if ($(this).is(':checked')) {
@@ -503,7 +484,7 @@
                 }
             });
 
-            $('#tem_representante').change(function () {
+            $('#tem_representante').change(function() {
                 if ($(this).val() == '1') {
                     $('#representante_legal').show();
                     $('#vch_nome_responsavel').attr('required', 'required');
@@ -544,44 +525,44 @@
         }
 
         function validarCPFOnBlur(inputId) {
-    var cpfInput = document.getElementById(inputId);
-    var cpf = cpfInput.value.replace(/\D/g, '');
-    var cpfErrorDiv = document.getElementById('cpf-error');
+            var cpfInput = document.getElementById(inputId);
+            var cpf = cpfInput.value.replace(/\D/g, '');
+            var cpfErrorDiv = document.getElementById('cpf-error');
 
-    if (!validarCPF(cpf)) {
-        cpfErrorDiv.innerHTML = 'CPF inválido.';
-        cpfErrorDiv.style.display = 'block';
-        cpfInput.classList.add('is-invalid');
-        cpfValido = false;
-        return;
-    }
-
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'processamento/verificar_cpf.php');
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            var response = JSON.parse(xhr.responseText);
-            if (response.status === 'error') {
-                cpfErrorDiv.innerHTML = response.message;
+            if (!validarCPF(cpf)) {
+                cpfErrorDiv.innerHTML = 'CPF inválido.';
                 cpfErrorDiv.style.display = 'block';
                 cpfInput.classList.add('is-invalid');
                 cpfValido = false;
-            } else {
-                cpfErrorDiv.innerHTML = '';
-                cpfErrorDiv.style.display = 'none';
-                cpfInput.classList.remove('is-invalid');
-                cpfValido = true;
+                return;
             }
-        } else {
-            cpfErrorDiv.innerHTML = 'Erro ao verificar o CPF.';
-            cpfErrorDiv.style.display = 'block';
-            cpfInput.classList.add('is-invalid');
-            cpfValido = false;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'processamento/verificar_cpf.php');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.status === 'error') {
+                        cpfErrorDiv.innerHTML = response.message;
+                        cpfErrorDiv.style.display = 'block';
+                        cpfInput.classList.add('is-invalid');
+                        cpfValido = false;
+                    } else {
+                        cpfErrorDiv.innerHTML = '';
+                        cpfErrorDiv.style.display = 'none';
+                        cpfInput.classList.remove('is-invalid');
+                        cpfValido = true;
+                    }
+                } else {
+                    cpfErrorDiv.innerHTML = 'Erro ao verificar o CPF.';
+                    cpfErrorDiv.style.display = 'block';
+                    cpfInput.classList.add('is-invalid');
+                    cpfValido = false;
+                }
+            };
+            xhr.send('cpf=' + cpf);
         }
-    };
-    xhr.send('cpf=' + cpf);
-}
 
         function validarCPFOnBlurResponsavel(inputId) {
             var cpfInput = document.getElementById(inputId);
@@ -597,11 +578,13 @@
         }
 
         function triggerButtonError() {
-            var nextButton = document.querySelector(".next");
-            nextButton.classList.add("btn-error");
-            setTimeout(function () {
-                nextButton.classList.remove("btn-error");
-            }, 500);
+            var buttons = document.querySelectorAll(" .next, .submit");
+            buttons.forEach(button => {
+                button.classList.add("btn-error");
+                setTimeout(function() {
+                    button.classList.remove("btn-error");
+                }, 500);
+            });
         }
 
         function validarFormulario() {
@@ -728,6 +711,25 @@
             var inputTelefone = document.getElementById(id);
             var telefone = inputTelefone.value;
             inputTelefone.value = formatarTelefone(telefone);
+        }
+        function verificarLogin() {
+            var login = document.getElementById('vch_login').value;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'processamento/verificar_login.php');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var response = xhr.responseText;
+                    if (response === '1') {
+                        document.getElementById('loginError').innerText = 'Este login já está vinculado a um CPF, por favor, tente a recuperação de senha, ou um outro email.';
+                        emailValido = false;
+                    } else {
+                        document.getElementById('loginError').innerText = '';
+                        emailValido = true;
+                    }
+                }
+            };
+            xhr.send('login=' + login);
         }
 
         function buscarEndereco(cepId, enderecoId, bairroId, cidadeId, errorId) {

@@ -107,8 +107,10 @@ body {
 }
 
 .nome {
-    font-size: 16px; /* Tamanho de fonte atual */
+    font-size: 18px; /* Tamanho de fonte atual */
     margin-top: 70px; /* Ajuste a posição para baixo se necessário */
+    font-weight: bold;    /* Define o texto como negrito */
+    text-align: center;   /* Centraliza o texto */
 }
 
 .detalhes {

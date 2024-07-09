@@ -12,16 +12,14 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Pessoa</title>
+    <title>Reenviar Cadastro - CIPTEA</title>
     <link rel="icon" href="images/imagemtopo.png" type="image/png">
-    <!-- Bootstrap CSS para estilos prontos -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- Fonte personalizada do Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -35,6 +33,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             align-items: center;
             height: 100vh;
         }
+
         .container {
             background-color: rgba(255, 255, 255, 0.9);
             padding: 20px;
@@ -43,38 +42,47 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             max-width: 600px;
             width: 100%;
         }
+
         .step {
             display: none;
         }
+
         .step.active {
             display: block;
             animation: fadeIn 0.5s;
         }
+
         .step.finished {
             display: block;
             animation: fadeOut 0.5s;
         }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
             }
+
             to {
                 opacity: 1;
             }
         }
+
         @keyframes fadeOut {
             from {
                 opacity: 1;
             }
+
             to {
                 opacity: 0;
             }
         }
+
         .progress-bar {
             background-color: #e0e0e0;
             border-radius: 5px;
             margin-bottom: 20px;
         }
+
         .progress {
             height: 20px;
             background-color: #007bff;
@@ -82,11 +90,17 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             width: 0;
             transition: width 0.3s;
         }
+
+        .progress.complete {
+            background-color: #28a745;
+        }
+
         .buttons {
             display: flex;
             justify-content: space-between;
             margin-top: 20px;
         }
+
         .buttons button {
             padding: 10px 20px;
             font-size: 16px;
@@ -94,22 +108,65 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             border-radius: 20px;
             border: none;
         }
+
         .buttons .next {
             background-color: #007bff;
             color: #fff;
         }
+
         .buttons .next:hover {
             background-color: #0056b3;
         }
+
         .buttons .prev {
             background-color: #ccc;
             color: #333;
         }
+
         .buttons .prev:hover {
             background-color: #999;
         }
+
+        .is-invalid {
+            border-color: red;
+        }
+
+        .radio-group input.is-invalid + label {
+            color: red;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .btn-error {
+            animation: shake 0.5s;
+            background-color: red !important;
+        }
+
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+
+            75% {
+                transform: translateX(-5px);
+            }
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header text-center">
@@ -119,8 +176,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             <div class="progress"></div>
         </div>
         <form name="form" action="processamento/processar_usuario.php" method="POST" enctype="multipart/form-data">
-        
-        <input type="hidden" name="cod_pessoa" id="cod_pessoa" value="<?php echo $cod_pessoa; ?>" required>
+            <input type="hidden" name="cod_pessoa" id="cod_pessoa" value="<?php echo $cod_pessoa; ?>" required>
 
             <div class="step active" id="step1">
                 <h2>Informações Pessoais</h2>
@@ -195,7 +251,8 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 <h2>Representante Legal</h2>
                 <div class="form-group">
                     <label for="tem_representante">Possui Representante Legal?</label>
-                    <select class="form-control" name="bool_representante_legal" id="tem_representante" onchange="toggleRepresentanteLegal()">
+                    <select class="form-control" name="bool_representante_legal" id="tem_representante" onchange="toggleRepresentanteLegal()" required>
+                        <option value="">Selecione uma opção</option>
                         <option value="0" <?php echo isset($row_p['bool_representante_legal']) && $row_p['bool_representante_legal'] == 0 ? 'selected' : ''; ?>>Não</option>
                         <option value="1" <?php echo isset($row_p['bool_representante_legal']) && $row_p['bool_representante_legal'] == 1 ? 'selected' : ''; ?>>Sim</option>
                     </select>
@@ -221,10 +278,12 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                     <div class="form-group">
                         <label for="vch_cpf_responsavel">CPF do Responsável:</label>
                         <input type="text" class="form-control" name="vch_cpf_responsavel" id="vch_cpf_responsavel" oninput="formatarCPF('vch_cpf_responsavel')" onblur="validarCPFOnBlur('vch_cpf_responsavel')" maxlength="14" value="<?php echo isset($row_p['vch_cpf_responsavel']) ? $row_p['vch_cpf_responsavel'] : ''; ?>">
+                        <div id="cpfErrorResponsavel" class="error-message"></div>
                     </div>
                     <div class="form-group">
                         <label for="vch_cep_responsavel">CEP do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_cep_responsavel" id="vch_cep_responsavel" oninput="aplicarMascaraCEP('vch_cep_responsavel')" maxlength="9" value="<?php echo isset($row_p['vch_cep_responsavel']) ? $row_p['vch_cep_responsavel'] : ''; ?>">
+                        <input type="text" class="form-control" name="vch_cep_responsavel" id="vch_cep_responsavel" oninput="aplicarMascaraCEP('vch_cep_responsavel')" maxlength="9" value="<?php echo isset($row_p['vch_cep_responsavel']) ? $row_p['vch_cep_responsavel'] : ''; ?>" onblur="buscarEndereco('vch_cep_responsavel', 'vch_endereco_responsavel', 'vch_bairro_responsavel', 'vch_cidade_responsavel', 'cepErrorResponsavel')">
+                        <div id="cepErrorResponsavel" class="error-message"></div>
                     </div>
                     <div class="form-group">
                         <label for="vch_endereco_responsavel">Endereço do Responsável:</label>
@@ -256,28 +315,26 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 </div>
                 <div class="form-group">
                     <label for="cep">CEP:</label>
-                    <input type="text" class="form-control" name="cep" id="cep" oninput="formatarCEP('cep')" maxlength="9" value="<?php echo isset($row_p['cep']) ? $row_p['cep'] : ''; ?>" required>
+                    <input type="text" class="form-control" name="cep" id="cep" oninput="formatarCEP('cep')" maxlength="9" value="<?php echo isset($row_p['cep']) ? $row_p['cep'] : ''; ?>" required onblur="buscarEndereco('cep', 'endereco', 'bairro', 'cidade', 'cepError')">
+                    <div id="cepError" class="error-message"></div>
                 </div>
             </div>
             <div class="buttons">
                 <button type="button" class="prev btn btn-secondary" onclick="nextPrev(-1)">Anterior</button>
                 <button type="button" class="next btn btn-primary" onclick="nextPrev(1)">Próximo</button>
-
-                <input type="hidden" name="MM_action" class="MM_action" value="4">
-                <input type="submit" class="submit btn btn-primary" value="Alterar dados">
-                
-                
+                <button type="submit" class="submit btn btn-primary" style="display: none;">Enviar</button>
             </div>
         </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // Variável para rastrear o passo atual do formulário
         var currentStep = 0;
+        var cpfValido = false;
+        var cepValido = false;
+
         showStep(currentStep);
 
-        // Função para exibir o passo atual
         function showStep(n) {
             var steps = document.getElementsByClassName("step");
             steps[n].style.display = "block";
@@ -296,9 +353,14 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             }
         }
 
-        // Função para avançar ou retroceder entre os passos
         function nextPrev(n) {
             var steps = document.getElementsByClassName("step");
+
+            if (n == 1 && !validateStep(currentStep)) {
+                triggerButtonError();
+                return false;
+            }
+
             steps[currentStep].classList.remove('active');
             steps[currentStep].classList.add('finished');
             setTimeout(function() {
@@ -314,7 +376,87 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             }, 500);
         }
 
-        // Função para atualizar a barra de progresso
+        function validateStep(n) {
+            var steps = document.getElementsByClassName("step");
+            var inputs = steps[n].getElementsByTagName("input");
+            var selects = steps[n].getElementsByTagName("select");
+            var valid = true;
+
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].hasAttribute("required") && inputs[i].value === "") {
+                    inputs[i].classList.add("is-invalid");
+                    valid = false;
+                } else {
+                    inputs[i].classList.remove("is-invalid");
+                }
+            }
+
+            for (var i = 0; i < selects.length; i++) {
+                if (selects[i].hasAttribute("required") && selects[i].value === "") {
+                    selects[i].classList.add("is-invalid");
+                    valid = false;
+                } else {
+                    selects[i].classList.remove("is-invalid");
+                }
+            }
+
+            var radios = steps[n].querySelectorAll('input[type="radio"][name="sexo"]');
+            var radioChecked = Array.from(radios).some(radio => radio.checked);
+            if (radios.length > 0 && !radioChecked) {
+                radios.forEach(radio => radio.classList.add("is-invalid"));
+                valid = false;
+            } else {
+                radios.forEach(radio => radio.classList.remove("is-invalid"));
+            }
+
+            if (n == 2 && !cpfValido) {
+                document.getElementById("cpf-error").innerText = "CPF inválido.";
+                valid = false;
+            }
+
+            if (n == 1 && !cepValido) {
+                document.getElementById("cepError").innerText = "CEP inválido.";
+                valid = false;
+            }
+
+            if (n == 3) {
+                var hasRepresentante = document.getElementById("tem_representante").value == "1";
+                var representanteInputs = document.getElementById("representante_legal").getElementsByTagName("input");
+                var representanteSelects = document.getElementById("representante_legal").getElementsByTagName("select");
+                var representanteRadios = document.querySelectorAll('input[type="radio"][name="int_sexo_responsavel"]');
+
+                if (hasRepresentante) {
+                    for (var i = 0; i < representanteInputs.length; i++) {
+                        if (representanteInputs[i].hasAttribute("required") && representanteInputs[i].value === "") {
+                            representanteInputs[i].classList.add("is-invalid");
+                            valid = false;
+                        } else {
+                            representanteInputs[i].classList.remove("is-invalid");
+                        }
+                    }
+
+                    for (var i = 0; i < representanteSelects.length; i++) {
+                        if (representanteSelects[i].hasAttribute("required") && representanteSelects[i].value === "") {
+                            representanteSelects[i].classList.add("is-invalid");
+                            valid = false;
+                        } else {
+                            representanteSelects[i].classList.remove("is-invalid");
+                        }
+                    }
+
+                    var representanteRadioChecked = Array.from(representanteRadios).some(radio => radio.checked);
+                    if (representanteRadios.length > 0 && !representanteRadioChecked) {
+                        representanteRadios.forEach(radio => radio.classList.add("is-invalid"));
+                        valid = false;
+                    } else {
+                        representanteRadios.forEach(radio => radio.classList.remove("is-invalid"));
+                    }
+                }
+            }
+
+            return valid;
+        }
+
         function updateProgressBar(n) {
             var progress = document.querySelector(".progress");
             var steps = document.getElementsByClassName("step");
@@ -322,29 +464,26 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             progress.style.width = percent + "%";
         }
 
-        // Funções para interações específicas quando o documento estiver pronto
         $(document).ready(function() {
-            $('#showPassword').change(function() {
-                var passwordField = $('#vch_senha');
-                var confirmPasswordField = $('#vch_confirm_senha');
-                if ($(this).is(':checked')) {
-                    passwordField.attr('type', 'text');
-                    confirmPasswordField.attr('type', 'text');
-                } else {
-                    passwordField.attr('type', 'password');
-                    confirmPasswordField.attr('type', 'password');
-                }
-            });
-
-            $('#vch_login').blur(function() {
-                verificarLogin();
-            });
-
             $('#tem_representante').change(function() {
                 if ($(this).val() == '1') {
                     $('#representante_legal').show();
+                    $('#vch_nome_responsavel').attr('required', 'required');
+                    $('#vch_telefone_responsavel').attr('required', 'required');
+                    $('#vch_cpf_responsavel').attr('required', 'required');
+                    $('#vch_cep_responsavel').attr('required', 'required');
+                    $('#vch_endereco_responsavel').attr('required', 'required');
+                    $('#vch_bairro_responsavel').attr('required', 'required');
+                    $('#vch_cidade_responsavel').attr('required', 'required');
                 } else {
                     $('#representante_legal').hide();
+                    $('#vch_nome_responsavel').removeAttr('required');
+                    $('#vch_telefone_responsavel').removeAttr('required');
+                    $('#vch_cpf_responsavel').removeAttr('required');
+                    $('#vch_cep_responsavel').removeAttr('required');
+                    $('#vch_endereco_responsavel').removeAttr('required');
+                    $('#vch_bairro_responsavel').removeAttr('required');
+                    $('#vch_cidade_responsavel').removeAttr('required');
                 }
             });
 
@@ -361,41 +500,56 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             dataNascimentoInput.setAttribute('min', dataMinima);
         });
 
-        // Função para exibir um alerta
-        function exibirAlerta() {
-            var alertDiv = document.getElementById("alert-message");
-            alertDiv.style.display = "block";
-        }
+        function validarCPFOnBlur(inputId) {
+            var cpfInput = document.getElementById(inputId);
+            var cpf = cpfInput.value.replace(/\D/g, '');
+            var cpfErrorDiv = document.getElementById('cpf-error');
 
-        // Função para verificar o login via AJAX
-        function verificarLogin() {
-            var login = document.getElementById('vch_login').value;
+            if (!validarCPF(cpf)) {
+                cpfErrorDiv.innerHTML = 'CPF inválido.';
+                cpfErrorDiv.style.display = 'block';
+                cpfInput.classList.add('is-invalid');
+                cpfValido = false;
+                return;
+            }
+
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'processamento/verificar_login.php');
+            xhr.open('POST', 'processamento/verificar_cpf.php');
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xhr.onload = function() {
                 if (xhr.status === 200) {
-                    var response = xhr.responseText;
-                    if (response === '1') {
-                        alert('Este login já está vinculado a um CPF, por favor, tente a recuperação de senha, ou um outro email.');
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.status === 'error') {
+                        cpfErrorDiv.innerHTML = response.message;
+                        cpfErrorDiv.style.display = 'block';
+                        cpfInput.classList.add('is-invalid');
+                        cpfValido = false;
+                    } else {
+                        cpfErrorDiv.innerHTML = '';
+                        cpfErrorDiv.style.display = 'none';
+                        cpfInput.classList.remove('is-invalid');
+                        cpfValido = true;
                     }
+                } else {
+                    cpfErrorDiv.innerHTML = 'Erro ao verificar o CPF.';
+                    cpfErrorDiv.style.display = 'block';
+                    cpfInput.classList.add('is-invalid');
+                    cpfValido = false;
                 }
             };
-            xhr.send('login=' + login);
+            xhr.send('cpf=' + cpf);
         }
 
-        // Função para validar se as senhas são iguais
-        function validarSenhas() {
-            var senha = document.getElementById("vch_senha").value;
-            var confirmacao = document.getElementById("vch_confirm_senha").value;
-            if (senha !== confirmacao) {
-                alert("As senhas digitadas não são iguais. Para realizar o cadastro, as senhas precisam ser iguais.");
-                return false;
-            }
-            return true;
+        function triggerButtonError() {
+            var buttons = document.querySelectorAll(" .next, .submit");
+            buttons.forEach(button => {
+                button.classList.add("btn-error");
+                setTimeout(function() {
+                    button.classList.remove("btn-error");
+                }, 500);
+            });
         }
 
-        // Função para formatar o CPF
         function formatCPF(cpf) {
             cpf = cpf.replace(/\D/g, '');
             cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
@@ -404,7 +558,11 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             return cpf;
         }
 
-        // Função para validar o CPF
+        function formatarCPF(inputId) {
+            var cpfInput = document.getElementById(inputId);
+            cpfInput.value = formatCPF(cpfInput.value);
+        }
+
         function validarCPF(cpf) {
             cpf = cpf.replace(/\D/g, '');
             if (cpf.length !== 11) return false;
@@ -444,40 +602,6 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             return true;
         }
 
-        // Função para formatar o CPF no campo de input
-        function formatarCPF(inputId) {
-            var cpfInput = document.getElementById(inputId);
-            cpfInput.value = formatCPF(cpfInput.value);
-        }
-
-        // Função para validar o CPF quando sair do campo de input
-        function validarCPFOnBlur(inputId) {
-            var cpfInput = document.getElementById(inputId);
-            var cpf = cpfInput.value.replace(/\D/g, '');
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'processamento/verificar_cpf.php');
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    var response = xhr.responseText;
-                    if (response === '1') {
-                        if (confirm('CPF já cadastrado. Para recuperar a senha, clique em "OK" para ser redirecionado para a Aba de recuperação de senha.')) {
-                            window.location.href = 'recuperar_senha.php';
-                        }
-                        cpfInput.value = '';
-                    }
-                }
-            };
-            xhr.send('cpf=' + cpf);
-
-            var isValid = validarCPF(cpf);
-            if (!isValid) {
-                alert('CPF inválido');
-                cpfInput.value = '';
-            }
-        }
-
-        // Função para formatar o RG
         function formatarRG() {
             var rgInput = document.getElementById('vch_rg');
             var rg = rgInput.value.replace(/\D/g, '');
@@ -495,7 +619,6 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             rgInput.value = rg;
         }
 
-        // Função para formatar o número do CNS
         function formatarCNS() {
             var cnsInput = document.getElementById('vch_num_cartao_sus');
             var cns = cnsInput.value.replace(/\D/g, '');
@@ -513,21 +636,18 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             cnsInput.value = cns;
         }
 
-        // Função para formatar o CEP
         function formatarCEP(cep) {
             cep = cep.replace(/\D/g, '');
             cep = cep.replace(/^(\d{5})(\d{1})/, '$1-$2');
             return cep;
         }
 
-        // Função para aplicar máscara no campo de input do CEP
         function aplicarMascaraCEP(inputId) {
             var inputCEP = document.getElementById(inputId);
             var cep = inputCEP.value;
             inputCEP.value = formatarCEP(cep);
         }
 
-        // Função para formatar o telefone
         function formatarTelefone(telefone) {
             telefone = telefone.replace(/\D/g, '');
             if (telefone.length === 11) {
@@ -542,19 +662,39 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             return telefone;
         }
 
-        // Função para aplicar máscara no campo de input do telefone
         function aplicarMascaraTelefone(id) {
             var inputTelefone = document.getElementById(id);
             var telefone = inputTelefone.value;
             inputTelefone.value = formatarTelefone(telefone);
         }
 
-        // Função para completar a barra de progresso e mudar a cor para verde
-        function completeProgress() {
-            var progress = document.querySelector(".progress");
-            progress.classList.add("complete");
+        function buscarEndereco(cepId, enderecoId, bairroId, cidadeId, errorId) {
+            var cep = document.getElementById(cepId).value.replace(/\D/g, '');
+            if (cep.length === 8) {
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.erro) {
+                            document.getElementById(enderecoId).value = data.logradouro;
+                            document.getElementById(bairroId).value = data.bairro;
+                            document.getElementById(cidadeId).value = data.localidade;
+                            document.getElementById(errorId).innerText = '';
+                            cepValido = true;
+                        } else {
+                            document.getElementById(errorId).innerText = 'CEP inválido.';
+                            cepValido = false;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar CEP:', error);
+                        document.getElementById(errorId).innerText = 'Erro ao buscar CEP.';
+                        cepValido = false;
+                    });
+            } else {
+                document.getElementById(errorId).innerText = 'CEP inválido.';
+                cepValido = false;
+            }
         }
-
     </script>
 </body>
 

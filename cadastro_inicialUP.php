@@ -8,7 +8,6 @@ if (!isset($_SESSION)) {
 }
 
 if (!isset($_SESSION['cod_pessoa'])) {
-    // Redirecionar para a página de login se a sessão não estiver definida
     header('Location: index.php');
     exit();
 }
@@ -126,7 +125,6 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
 
         .upload-section img {
             max-width: 200px;
-            /* Aumentado para melhor visualização */
             display: block;
             margin: 10px auto;
         }
@@ -134,6 +132,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
         .header {
             text-align: center;
             margin-bottom: 30px;
+            position: relative;
         }
 
         .header img {
@@ -146,6 +145,23 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
             font-size: 2rem;
             margin: 0;
             color: #007bff;
+        }
+
+        .logout-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .logout-button:hover {
+            background-color: #c82333;
         }
 
         .uploaded-file {
@@ -231,13 +247,13 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
 </head>
 
 <body>
-
     <div class="container">
         <div class="header">
             <a href="index.php">
                 <img src="images/ciptea.png" alt="ciptea_logo">
             </a>
             <h1>Cadastro CIPTEA</h1>
+            <button class="logout-button" onclick="window.location.href='processamento/logout.php'">Logout</button>
         </div>
 
         <h2>Passos para Cadastro</h2>
@@ -260,7 +276,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                     <div class="upload-section" onclick="document.getElementById('requerimento_upload').click()">
                         <input type="file" id="requerimento_upload" name="requerimento_upload" data-cod_tipo_documento="5" style="display:none;">
                         <p>Clique ou arraste o requerimento assinado aqui para enviar.</p>
-                        <div class="uploaded-file" id="requerimento-uploaded"></div>
+                        <div class="uploaded-file" id="requerimento-uploaded"><?php if ($result_d5) { echo '<p>Arquivo enviado: ' . $result_d5['vch_documento'] . '</p>'; } ?></div>
                     </div>
                     <button type="button" id="uploadButtonRequerimento" class="btn btn-primary">Enviar Requerimento</button>
                     <div class="message" id="requerimento-message"></div>
@@ -277,8 +293,12 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                     <div class="upload-section" onclick="document.getElementById('foto-34').click()">
                         <input type="file" id="foto-34" name="foto-34" data-cod_tipo_documento="1" style="display:none;">
                         <p>Clique ou arraste a foto 3x4 aqui.</p>
-                        <img src="images/exemplo3.4.png" alt="Exemplo de Foto 3/4">
-                        <div class="uploaded-file" id="foto-34-uploaded"></div>
+                        <?php if ($result_d1): ?>
+                            <img src="uploads/<?php echo $result_d1['vch_documento']; ?>" alt="Foto 3x4">
+                        <?php else: ?>
+                            <img src="images/exemplo3.4.png" alt="Exemplo de Foto 3/4">
+                        <?php endif; ?>
+                        <div class="uploaded-file" id="foto-34-uploaded"><?php if ($result_d1) { echo '<p>Arquivo enviado: ' . $result_d1['vch_documento'] . '</p>'; } ?></div>
                     </div>
                     <button type="button" id="uploadButtonFoto" class="btn btn-primary">Enviar Foto 3x4</button>
                     <button type="button" class="view-button <?php echo $result_d1 ? '' : 'disabled'; ?>" <?php echo $result_d1 ? 'onclick="window.open(\'uploads/' . $result_d1['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Foto Enviada</button>
@@ -296,8 +316,12 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                     <div class="upload-section" onclick="document.getElementById('documento-identidade').click()">
                         <input type="file" id="documento-identidade" name="documento-identidade" data-cod_tipo_documento="4" style="display:none;">
                         <p>Clique ou arraste o documento de identidade aqui.</p>
-                        <img src="images/novacarteira.jpeg" alt="Exemplo de Documento de Identidade">
-                        <div class="uploaded-file" id="documento-identidade-uploaded"></div>
+                        <?php if ($result_d4): ?>
+                            <img src="uploads/<?php echo $result_d4['vch_documento']; ?>" alt="Documento de Identidade">
+                        <?php else: ?>
+                            <img src="images/novacarteira.jpeg" alt="Exemplo de Documento de Identidade">
+                        <?php endif; ?>
+                        <div class="uploaded-file" id="documento-identidade-uploaded"><?php if ($result_d4) { echo '<p>Arquivo enviado: ' . $result_d4['vch_documento'] . '</p>'; } ?></div>
                     </div>
                     <button type="button" id="uploadButtonIdentidade" class="btn btn-primary">Enviar Documento de Identidade</button>
                     <button type="button" class="view-button <?php echo $result_d4 ? '' : 'disabled'; ?>" <?php echo $result_d4 ? 'onclick="window.open(\'uploads/' . $result_d4['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Documento de Identidade Enviado</button>
@@ -315,8 +339,12 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                     <div class="upload-section" onclick="document.getElementById('comprovante-residencia').click()">
                         <input type="file" id="comprovante-residencia" name="comprovante-residencia" data-cod_tipo_documento="3" style="display:none;">
                         <p>Clique ou arraste o comprovante aqui.</p>
-                        <img src="images/comprovante-residencia.webp" alt="Exemplo de Comprovante de Residência">
-                        <div class="uploaded-file" id="comprovante-residencia-uploaded"></div>
+                        <?php if ($result_d3): ?>
+                            <img src="uploads/<?php echo $result_d3['vch_documento']; ?>" alt="Comprovante de Residência">
+                        <?php else: ?>
+                            <img src="images/comprovante-residencia.webp" alt="Exemplo de Comprovante de Residência">
+                        <?php endif; ?>
+                        <div class="uploaded-file" id="comprovante-residencia-uploaded"><?php if ($result_d3) { echo '<p>Arquivo enviado: ' . $result_d3['vch_documento'] . '</p>'; } ?></div>
                     </div>
                     <button type="button" id="uploadButtonResidencia" class="btn btn-primary">Enviar Comprovante de Residência</button>
                     <button type="button" class="view-button <?php echo $result_d3 ? '' : 'disabled'; ?>" <?php echo $result_d3 ? 'onclick="window.open(\'uploads/' . $result_d3['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Comprovante de Residência Enviado</button>
@@ -334,7 +362,10 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                     <div class="upload-section" onclick="document.getElementById('laudo-medico').click()">
                         <input type="file" id="laudo-medico" name="laudo-medico" data-cod_tipo_documento="2" style="display:none;">
                         <p>Clique ou arraste o laudo médico aqui.</p>
-                        <div class="uploaded-file" id="laudo-medico-uploaded"></div>
+                        <?php if ($result_d2): ?>
+                            <img src="uploads/<?php echo $result_d2['vch_documento']; ?>" alt="Laudo Médico">
+                        <?php endif; ?>
+                        <div class="uploaded-file" id="laudo-medico-uploaded"><?php if ($result_d2) { echo '<p>Arquivo enviado: ' . $result_d2['vch_documento'] . '</p>'; } ?></div>
                     </div>
                     <button type="button" id="uploadButtonLaudo" class="btn btn-primary">Enviar Laudo Médico</button>
                     <button type="button" class="view-button <?php echo $result_d2 ? '' : 'disabled'; ?>" <?php echo $result_d2 ? 'onclick="window.open(\'uploads/' . $result_d2['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Laudo Médico Enviado</button>
@@ -425,7 +456,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                         processData: false,
                         success: function (response) {
                             var res = JSON.parse(response);
-                            $('#requerimento-uploaded').html('<a href="uploads/' + res.fileName + '" target="_blank">Ver Requerimento Enviado</a>');
+                            $('#requerimento-uploaded').html('<p>Arquivo enviado: ' + res.fileName + '</p>');
                             updateIcon('requerimento-icon');
                             updateViewButton('step-2', res.fileName);
                             showMessage('requerimento-message', res.message);
@@ -436,7 +467,6 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                     });
                 });
 
-                // Repetir a função para outros uploads (foto, identidade, etc)
                 $('#uploadButtonFoto').click(function () {
                     var fileInput = $('#foto-34')[0];
                     if (fileInput.files.length === 0) {
@@ -461,7 +491,8 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                         processData: false,
                         success: function (response) {
                             var res = JSON.parse(response);
-                            $('#foto-34-uploaded').html('<a href="uploads/' + res.fileName + '" target="_blank">Ver Foto Enviada</a>');
+                            $('#foto-34-uploaded').html('<p>Arquivo enviado: ' + res.fileName + '</p>');
+                            $('#foto-34').siblings('img').attr('src', 'uploads/' + res.fileName); // Atualiza a imagem exibida
                             updateIcon('foto-icon');
                             updateViewButton('step-3', res.fileName);
                             showMessage('foto-message', res.message);
@@ -496,7 +527,8 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                         processData: false,
                         success: function (response) {
                             var res = JSON.parse(response);
-                            $('#documento-identidade-uploaded').html('<a href="uploads/' + res.fileName + '" target="_blank">Ver Documento de Identidade Enviado</a>');
+                            $('#documento-identidade-uploaded').html('<p>Arquivo enviado: ' + res.fileName + '</p>');
+                            $('#documento-identidade').siblings('img').attr('src', 'uploads/' + res.fileName); // Atualiza a imagem exibida
                             updateIcon('identidade-icon');
                             updateViewButton('step-4', res.fileName);
                             showMessage('identidade-message', res.message);
@@ -531,7 +563,8 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                         processData: false,
                         success: function (response) {
                             var res = JSON.parse(response);
-                            $('#comprovante-residencia-uploaded').html('<a href="uploads/' + res.fileName + '" target="_blank">Ver Comprovante de Residência Enviado</a>');
+                            $('#comprovante-residencia-uploaded').html('<p>Arquivo enviado: ' + res.fileName + '</p>');
+                            $('#comprovante-residencia').siblings('img').attr('src', 'uploads/' + res.fileName); // Atualiza a imagem exibida
                             updateIcon('residencia-icon');
                             updateViewButton('step-5', res.fileName);
                             showMessage('residencia-message', res.message);
@@ -566,7 +599,8 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                         processData: false,
                         success: function (response) {
                             var res = JSON.parse(response);
-                            $('#laudo-medico-uploaded').html('<a href="uploads/' + res.fileName + '" target="_blank">Ver Laudo Médico Enviado</a>');
+                            $('#laudo-medico-uploaded').html('<p>Arquivo enviado: ' + res.fileName + '</p>');
+                            $('#laudo-medico').siblings('img').attr('src', 'uploads/' + res.fileName); // Atualiza a imagem exibida
                             updateIcon('laudo-icon');
                             updateViewButton('step-6', res.fileName);
                             showMessage('laudo-message', res.message);

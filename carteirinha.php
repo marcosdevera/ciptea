@@ -1,104 +1,98 @@
 <?php
+ob_start(); // Inicia o buffer de saída
+
+require 'vendor/autoload.php'; // Inclui o autoload do Composer
 include_once('classes/pessoa.class.php');
 include_once('sessao.php');
 include_once('classes/documentos.class.php');
 
+use setasign\Fpdi\Tcpdf\Fpdi;
+
+// Verifica se a sessão está iniciada
 if (!isset($_SESSION)) {
     session_start();
 }
 
+// Verifica se 'cod_pessoa' está definido
+if (!isset($_POST['cod_pessoa']) && !isset($_GET['cod_pessoa'])) {
+    echo 'cod_pessoa não fornecido.';
+    exit;
+}
+
+// Obter 'cod_pessoa' da URL ou POST
+$cod_pessoa = isset($_POST['cod_pessoa']) ? $_POST['cod_pessoa'] : $_GET['cod_pessoa'];
+
 $p = new Pessoa();
 $d = new Documentos();
 
-$cod_pessoa = $_SESSION['cod_pessoa'];
-
 $result_pessoa = $p->exibirPessoaUsuario($cod_pessoa);
+$row_p = $result_pessoa->fetch(PDO::FETCH_ASSOC) ?: [];
 
-if ($result_pessoa->rowCount() === 0) {
-    die("Usuário não encontrado.");
-}
+$result_foto = $d->buscarDocumentoPessoa($cod_pessoa, 1);
+$foto_path = $result_foto && $result_foto->rowCount() > 0 ? 'uploads/' . $result_foto->fetch(PDO::FETCH_ASSOC)['vch_documento'] : 'uploads/default_photo.png';
 
-$row_p = $result_pessoa->fetch(PDO::FETCH_ASSOC);
+$front_pdf = 'images/1.pdf';
+$back_pdf = 'images/2.pdf';
 
-// Buscar a foto 3x4
-$result_foto = $d->buscarDocumentoPessoa($cod_pessoa, 1); // 1 é o código do tipo de documento para a foto 3x4
-$foto_path = 'uploads/default_photo.png'; // Caminho para uma foto padrão caso a foto do usuário não exista
+$pdf = new Fpdi();
+$pdf->AddPage('P', [72, 114]);
+$pdf->setSourceFile($front_pdf);
+$tplIdx = $pdf->importPage(1);
+$pdf->useTemplate($tplIdx, 0, 0, 72, 114);
 
-if ($result_foto && $result_foto->rowCount() > 0) {
-    $row_foto = $result_foto->fetch(PDO::FETCH_ASSOC);
-    $foto_path = 'uploads/' . $row_foto['vch_documento'];
-}
+// Remover margens e desativar quebra automática de página
+$pdf->SetMargins(0, 0, 0);
+$pdf->SetAutoPageBreak(false);
+
+// Adicionar a imagem da pessoa
+$pdf->Image($foto_path, 24.5, 25, 22.5, 31);
+
+// Definir a fonte e a cor do texto
+$pdf->SetFont('Helvetica', 'B', 12); // Negrito e tamanho maior para o nome
+$pdf->SetTextColor(0, 0, 0);
+$pdf->SetXY(5, 60);
+$pdf->Cell(62, 10, $row_p['vch_nome'], 0, 1, 'C');
+
+$pdf->SetFont('Helvetica', '', 8);
+$pdf->SetXY(5, 69);
+$pdf->MultiCell(62, 4, 
+    "Nome Pai: " . $row_p['vch_nome_pai'] . "\n" .
+    "Nome Mãe: " . $row_p['vch_nome_mae'] . "\n" .
+    "Data Nascimento: " . date("d/m/Y", strtotime($row_p['sdt_nascimento'])) . "\n" .
+    "Endereço: " . $row_p['endereco'] . " " . $row_p['bairro'] . "\n" .
+    "Telefone: " . $row_p['vch_telefone'] . "\n" .
+    "Tipo Sanguíneo: " . $row_p['vch_tipo_sanguineo'], 0, 'L');
+
+// Posicionar o texto na parte inferior da primeira página
+$pdf->SetTextColor(255, 255, 0);
+$pdf->SetFont('Helvetica', 'B', 8);
+$pdf->SetXY(0, 104); // Ajuste Y para uma posição próxima ao fundo
+$pdf->Cell(72, 10, 'ATENDIMENTO PRIORITÁRIO LEI Nº 13.977/2020', 0, 1, 'C');
+
+// Verso do crachá
+$pdf->AddPage('P', [72, 114]);
+$pdf->setSourceFile($back_pdf);
+$tplIdx = $pdf->importPage(1);
+$pdf->useTemplate($tplIdx, 0, 0, 72, 114);
+
+$pdf->SetFont('Helvetica', '', 8);
+$pdf->SetTextColor(0, 0, 0);
+$pdf->SetXY(5, 60);
+$pdf->MultiCell(62, 4, 
+    "CID: " . $row_p['cid'] . "\n" .
+    "CPF: " . $row_p['vch_cpf'] . "\n" .
+    "RG: " . $row_p['vch_rg'] . "\n" .
+    "Cartão SUS: " . $row_p['vch_num_cartao_sus'] . "\n" .
+    "Num. Carteira: " . $cod_pessoa, 0, 'L');
+
+// Posicionar o texto na parte inferior da segunda página
+$pdf->SetTextColor(255, 255, 0);
+$pdf->SetFont('Helvetica', 'B', 8);
+$pdf->SetXY(0, 104); // Ajuste Y para uma posição próxima ao fundo
+$pdf->Cell(72, 10, 'ATENDIMENTO PRIORITÁRIO LEI Nº 13.977/2020', 0, 1, 'C');
+
+ob_end_clean(); // Limpa o buffer de saída
+
+// Saída do PDF
+$pdf->Output('identificacao.pdf', 'I');
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carteira de Identificação</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="id-card">
-        <div class="background"></div>
-        <div class="header-background"></div>
-        <div class="photo">
-            <img src="<?php echo $foto_path; ?>" alt="Foto da Pessoa">
-        </div>
-        <div class="info">
-            <?php
-                if ($row_p) {
-                    $nome = $row_p['vch_nome'];
-                    $nomePai = $row_p['vch_nome_pai'];
-                    $nomeMae = $row_p['vch_nome_mae'];
-                    $dataNascimento = date("d/m/Y", strtotime($row_p['sdt_nascimento']));
-                    $endereco = $row_p['endereco'];
-                    $bairro = $row_p['bairro'];                
-                    $telefone = $row_p['vch_telefone'];
-                    $tipoSanguineo = $row_p['vch_tipo_sanguineo'];
-                    $cid = $row_p['cid'];
-
-                    echo "<p class='nome'>$nome</p>";
-                    echo "<p class='detalhes'><strong>Nome Pai:</strong> $nomePai</p>";
-                    echo "<p class='detalhes'><strong>Nome Mãe:</strong> $nomeMae</p>";
-                    echo "<p class='detalhes'><strong>Data Nascimento:</strong> $dataNascimento</p>";
-                    echo "<p class='detalhes'><strong>Endereço:</strong> " . $endereco . " " . $bairro . "</p>";
-                    echo "<p class='detalhes'><strong>Telefone:</strong> $telefone</p>";
-                    echo "<p class='detalhes'><strong>Tipo Sanguíneo:</strong> $tipoSanguineo</p>";
-                } else {
-                    echo "<p class='detalhes'>Dados do usuário não encontrados.</p>";
-                }
-            ?>
-        </div>
-        <div class="footer">
-            ATENDIMENTO PRIORITÁRIO LEI Nº 13.977/2020
-        </div>
-    </div>
-
-    <div class="id-card">
-        <div class="background"></div>
-        <div class="header-background-back"></div>
-
-        <div class="info back-info">
-            <?php
-                if ($row_p) {
-                    $cpf = $row_p['vch_cpf'];
-                    $rg = $row_p['vch_rg'];
-                    $cartao_sus = $row_p['vch_num_cartao_sus'];
-                    $num_carteira = $row_p['cod_pessoa'];
-
-                    echo "<p class='detalhes'><strong>CID:</strong> $cid</p>";            
-                    echo "<p class='detalhes'><strong>CPF:</strong> $cpf</p>";
-                    echo "<p class='detalhes'><strong>RG:</strong> $rg</p>";
-                    echo "<p class='detalhes'><strong>Cartão SUS:</strong> $cartao_sus</p>";
-                    echo "<p class='detalhes'><strong>Num. Carteira:</strong> $num_carteira</p>";
-                } else {
-                    echo "<p class='detalhes'>Dados do usuário não encontrados.</p>";
-                }
-            ?>
-        </div>
-        <div class="footer">
-            ATENDIMENTO PRIORITÁRIO LEI Nº 13.977/2020
-        </div>
-    </div>
-</body>
-</html>

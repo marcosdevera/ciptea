@@ -37,7 +37,11 @@ try {
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($result['total'] > 0) {
-        echo json_encode(['status' => 'error', 'message' => 'CPF já cadastrado.']);
+        echo json_encode([
+            'status' => 'error', 
+            'message' => 'CPF já cadastrado. <a href="recuperar_senha.php">Recuperar senha</a>'
+        ]);
+        
     } else {
         echo json_encode(['status' => 'success']);
     }

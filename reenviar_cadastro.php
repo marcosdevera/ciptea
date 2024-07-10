@@ -203,6 +203,26 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 </div>
             </div>
             <div class="step" id="step2">
+                <h2>Endereço</h2>
+                <div class="form-group">
+                    <label for="endereco">Endereço:</label>
+                    <input type="text" class="form-control" name="endereco" id="endereco" value="<?php echo isset($row_p['endereco']) ? $row_p['endereco'] : ''; ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="bairro">Bairro:</label>
+                    <input type="text" class="form-control" name="bairro" id="bairro" value="<?php echo isset($row_p['bairro']) ? $row_p['bairro'] : ''; ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="cidade">Cidade:</label>
+                    <input type="text" class="form-control" name="cidade" id="cidade" value="<?php echo isset($row_p['cidade']) ? $row_p['cidade'] : ''; ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="cep">CEP:</label>
+                    <input type="text" class="form-control" name="cep" id="cep" oninput="aplicarMascaraCEP('cep')" maxlength="9" value="<?php echo isset($row_p['cep']) ? $row_p['cep'] : ''; ?>" required>
+                    <div id="cepError" class="error-message"></div>
+                </div>
+            </div>
+            <div class="step" id="step3">
                 <h2>Contato e Documento</h2>
                 <div class="form-group">
                     <label for="vch_telefone">Telefone:</label>
@@ -222,7 +242,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 </div>
                 <div class="form-group">
                     <label for="vch_cpf">CPF:</label>
-                    <input type="text" class="form-control" name="vch_cpf" id="vch_cpf" oninput="formatarCPF('vch_cpf')" onblur="validarCPFOnBlur('vch_cpf')" maxlength="14" value="<?php echo isset($row_p['vch_cpf']) ? $row_p['vch_cpf'] : ''; ?>" required>
+                    <input type="text" class="form-control" name="vch_cpf" id="vch_cpf" oninput="formatarCPF('vch_cpf')" maxlength="14" value="<?php echo isset($row_p['vch_cpf']) ? $row_p['vch_cpf'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="vch_rg">RG:</label>
@@ -247,7 +267,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                     </select>
                 </div>
             </div>
-            <div class="step" id="step3">
+            <div class="step" id="step4">
                 <h2>Representante Legal</h2>
                 <div class="form-group">
                     <label for="tem_representante">Possui Representante Legal?</label>
@@ -277,7 +297,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                     </div>
                     <div class="form-group">
                         <label for="vch_cpf_responsavel">CPF do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_cpf_responsavel" id="vch_cpf_responsavel" oninput="formatarCPF('vch_cpf_responsavel')" onblur="validarCPFOnBlur('vch_cpf_responsavel')" maxlength="14" value="<?php echo isset($row_p['vch_cpf_responsavel']) ? $row_p['vch_cpf_responsavel'] : ''; ?>">
+                        <input type="text" class="form-control" name="vch_cpf_responsavel" id="vch_cpf_responsavel" oninput="formatarCPF('vch_cpf_responsavel')" maxlength="14" value="<?php echo isset($row_p['vch_cpf_responsavel']) ? $row_p['vch_cpf_responsavel'] : ''; ?>">
                         <div id="cpfErrorResponsavel" class="error-message"></div>
                     </div>
                     <div class="form-group">
@@ -299,30 +319,10 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                     </div>
                 </div>
             </div>
-            <div class="step" id="step4">
-                <h2>Endereço</h2>
-                <div class="form-group">
-                    <label for="endereco">Endereço:</label>
-                    <input type="text" class="form-control" name="endereco" id="endereco" value="<?php echo isset($row_p['endereco']) ? $row_p['endereco'] : ''; ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="bairro">Bairro:</label>
-                    <input type="text" class="form-control" name="bairro" id="bairro" value="<?php echo isset($row_p['bairro']) ? $row_p['bairro'] : ''; ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="cidade">Cidade:</label>
-                    <input type="text" class="form-control" name="cidade" id="cidade" value="<?php echo isset($row_p['cidade']) ? $row_p['cidade'] : ''; ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="cep">CEP:</label>
-                    <input type="text" class="form-control" name="cep" id="cep" oninput="formatarCEP('cep')" maxlength="9" value="<?php echo isset($row_p['cep']) ? $row_p['cep'] : ''; ?>" required onblur="buscarEndereco('cep', 'endereco', 'bairro', 'cidade', 'cepError')">
-                    <div id="cepError" class="error-message"></div>
-                </div>
-            </div>
             <div class="buttons">
                 <button type="button" class="prev btn btn-secondary" onclick="nextPrev(-1)">Anterior</button>
                 <button type="button" class="next btn btn-primary" onclick="nextPrev(1)">Próximo</button>
-                <button type="submit" class="submit btn btn-primary" style="display: none;">Enviar</button>
+                <button type="submit" class="submit btn btn-primary" style="display: none;">Alterar dados</button>
             </div>
         </form>
     </div>
@@ -330,8 +330,8 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         var currentStep = 0;
-        var cpfValido = false;
-        var cepValido = false;
+        var cpfValido = true;
+        var cepValido = true;
 
         showStep(currentStep);
 
@@ -407,11 +407,6 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 valid = false;
             } else {
                 radios.forEach(radio => radio.classList.remove("is-invalid"));
-            }
-
-            if (n == 2 && !cpfValido) {
-                document.getElementById("cpf-error").innerText = "CPF inválido.";
-                valid = false;
             }
 
             if (n == 1 && !cepValido) {
@@ -499,46 +494,6 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             dataNascimentoInput.setAttribute('max', dataMaxima);
             dataNascimentoInput.setAttribute('min', dataMinima);
         });
-
-        function validarCPFOnBlur(inputId) {
-            var cpfInput = document.getElementById(inputId);
-            var cpf = cpfInput.value.replace(/\D/g, '');
-            var cpfErrorDiv = document.getElementById('cpf-error');
-
-            if (!validarCPF(cpf)) {
-                cpfErrorDiv.innerHTML = 'CPF inválido.';
-                cpfErrorDiv.style.display = 'block';
-                cpfInput.classList.add('is-invalid');
-                cpfValido = false;
-                return;
-            }
-
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'processamento/verificar_cpf.php');
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.status === 'error') {
-                        cpfErrorDiv.innerHTML = response.message;
-                        cpfErrorDiv.style.display = 'block';
-                        cpfInput.classList.add('is-invalid');
-                        cpfValido = false;
-                    } else {
-                        cpfErrorDiv.innerHTML = '';
-                        cpfErrorDiv.style.display = 'none';
-                        cpfInput.classList.remove('is-invalid');
-                        cpfValido = true;
-                    }
-                } else {
-                    cpfErrorDiv.innerHTML = 'Erro ao verificar o CPF.';
-                    cpfErrorDiv.style.display = 'block';
-                    cpfInput.classList.add('is-invalid');
-                    cpfValido = false;
-                }
-            };
-            xhr.send('cpf=' + cpf);
-        }
 
         function triggerButtonError() {
             var buttons = document.querySelectorAll(" .next, .submit");

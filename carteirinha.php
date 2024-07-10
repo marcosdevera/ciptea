@@ -45,7 +45,7 @@ $pdf->SetMargins(0, 0, 0);
 $pdf->SetAutoPageBreak(false);
 
 // Adicionar a imagem da pessoa
-$pdf->Image($foto_path, 24.5, 25, 22.5, 31);
+$pdf->Image($foto_path, 24.5, 25.3, 22.5, 31);
 
 // Definir a fonte e a cor do texto
 $pdf->SetFont('Helvetica', 'B', 12); // Negrito e tamanho maior para o nome

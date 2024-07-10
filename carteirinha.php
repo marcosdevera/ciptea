@@ -7,6 +7,7 @@ include_once('sessao.php');
 include_once('classes/documentos.class.php');
 
 use setasign\Fpdi\Tcpdf\Fpdi;
+use Intervention\Image\ImageManagerStatic as Image;
 
 // Verifica se a sessão está iniciada
 if (!isset($_SESSION)) {
@@ -31,6 +32,14 @@ $row_p = $result_pessoa->fetch(PDO::FETCH_ASSOC) ?: [];
 $result_foto = $d->buscarDocumentoPessoa($cod_pessoa, 1);
 $foto_path = $result_foto && $result_foto->rowCount() > 0 ? 'uploads/' . $result_foto->fetch(PDO::FETCH_ASSOC)['vch_documento'] : 'uploads/default_photo.png';
 
+// Ajustar a imagem para o tamanho 3x4 (300x400 pixels)
+$image = Image::make($foto_path);
+$image->fit(300, 400, function ($constraint) {
+    $constraint->upsize();
+});
+$adjusted_photo_path = 'uploads/adjusted_photo.png';
+$image->save($adjusted_photo_path);
+
 $front_pdf = 'images/1.pdf';
 $back_pdf = 'images/2.pdf';
 
@@ -45,7 +54,7 @@ $pdf->SetMargins(0, 0, 0);
 $pdf->SetAutoPageBreak(false);
 
 // Adicionar a imagem da pessoa
-$pdf->Image($foto_path, 24.5, 25.3, 22.5, 31);
+$pdf->Image($adjusted_photo_path, 24.5, 25.3, 22.7, 31);
 
 // Definir a fonte e a cor do texto
 $pdf->SetFont('Helvetica', 'B', 12); // Negrito e tamanho maior para o nome

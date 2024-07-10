@@ -80,7 +80,7 @@ $pdf->Image($adjusted_photo_path, 24.5, 25.3, 22.7, 31);
 $pdf->SetFont('Helvetica', 'B', 12); // Negrito e tamanho maior para o nome
 $pdf->SetTextColor(0, 0, 0);
 $pdf->SetXY(5, 60);
-$pdf->Cell(62, 10, $row_p['vch_nome'], 0, 1, 'C');
+$pdf->Cell(62, 10, strtoupper($row_p['vch_nome']), 0, 1, 'C');
 
 $pdf->SetFont('Helvetica', '', 8);
 $pdf->SetXY(5, 69);

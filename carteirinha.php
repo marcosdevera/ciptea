@@ -20,6 +20,26 @@ if (!isset($_POST['cod_pessoa']) && !isset($_GET['cod_pessoa'])) {
     exit;
 }
 
+function formatarTelefone($numero) {
+    // Remove qualquer caractere não numérico
+    $numero = preg_replace('/\D/', '', $numero);
+    
+    // Verifica o comprimento do número para determinar o formato
+    $tamanho = strlen($numero);
+    
+    if ($tamanho === 10) {
+        // Formato: (XX) XXXX-XXXX
+        return preg_replace('/(\d{2})(\d{4})(\d{4})/', '($1) $2-$3', $numero);
+    } elseif ($tamanho === 11) {
+        // Formato: (XX) XXXXX-XXXX
+        return preg_replace('/(\d{2})(\d{5})(\d{4})/', '($1) $2-$3', $numero);
+    } else {
+        // Retorna o número sem formatação se não tiver 10 ou 11 dígitos
+        return $numero;
+    }
+}
+
+
 // Obter 'cod_pessoa' da URL ou POST
 $cod_pessoa = isset($_POST['cod_pessoa']) ? $_POST['cod_pessoa'] : $_GET['cod_pessoa'];
 
@@ -69,7 +89,7 @@ $pdf->MultiCell(62, 4,
     "Nome Mãe: " . $row_p['vch_nome_mae'] . "\n" .
     "Data Nascimento: " . date("d/m/Y", strtotime($row_p['sdt_nascimento'])) . "\n" .
     "Endereço: " . $row_p['endereco'] . " " . $row_p['bairro'] . "\n" .
-    "Telefone: " . $row_p['vch_telefone'] . "\n" .
+    "Telefone: " . formatarTelefone($row_p['vch_telefone'])  . "\n" .
     "Tipo Sanguíneo: " . $row_p['vch_tipo_sanguineo'], 0, 'L');
 
 // Posicionar o texto na parte inferior da primeira página

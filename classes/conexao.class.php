@@ -18,12 +18,12 @@ class Database
     {
         # Informações sobre o banco de dados:
        // $db_host = "10.0.1.56";
-       // $db_host = "10.0.1.56";
-        $db_host = "127.0.0.1";
-        $db_nome = "sedes";
-        $db_usuario = "postgres";
-        $db_senha = "nova_senha";
-        $db_driver = "pgsql";
+       $db_host = "10.0.1.56";
+       //$db_host = "127.0.0.1";
+       $db_nome = "sedes";
+       $db_usuario = "postgres";
+       $db_senha = "postgresteste";
+       $db_driver = "pgsql";
 
         // $db_host = "10.0.1.56";
         // //$db_host = "127.0.0.1";

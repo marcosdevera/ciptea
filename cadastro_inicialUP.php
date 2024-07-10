@@ -253,7 +253,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                 <img src="images/ciptea.png" alt="ciptea_logo">
             </a>
             <h1>Cadastro CIPTEA</h1>
-            <button class="logout-button" onclick="window.location.href='processamento/logout.php'">Logout</button>
+            <button class="logout-button" onclick="window.location.href='processamento/logout.php'">Sair</button>
         </div>
 
         <h2>Passos para Cadastro</h2>

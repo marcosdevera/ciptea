@@ -39,7 +39,6 @@ function formatarTelefone($numero) {
     }
 }
 
-
 // Obter 'cod_pessoa' da URL ou POST
 $cod_pessoa = isset($_POST['cod_pessoa']) ? $_POST['cod_pessoa'] : $_GET['cod_pessoa'];
 
@@ -77,12 +76,12 @@ $pdf->SetAutoPageBreak(false);
 $pdf->Image($adjusted_photo_path, 24.5, 25.3, 22.7, 31);
 
 // Definir a fonte e a cor do texto
-$pdf->SetFont('Helvetica', 'B', 12); // Negrito e tamanho maior para o nome
+$pdf->SetFont('helvetica', 'B', 12); // Negrito e tamanho maior para o nome
 $pdf->SetTextColor(0, 0, 0);
 $pdf->SetXY(5, 60);
 $pdf->Cell(62, 10, strtoupper($row_p['vch_nome']), 0, 1, 'C');
 
-$pdf->SetFont('Helvetica', '', 8);
+$pdf->SetFont('helvetica', '', 8);
 $pdf->SetXY(5, 69);
 $pdf->MultiCell(62, 4, 
     "Nome Pai: " . $row_p['vch_nome_pai'] . "\n" .
@@ -94,7 +93,7 @@ $pdf->MultiCell(62, 4,
 
 // Posicionar o texto na parte inferior da primeira página
 $pdf->SetTextColor(255, 255, 0);
-$pdf->SetFont('Helvetica', 'B', 8);
+$pdf->SetFont('helvetica', 'B', 8);
 $pdf->SetXY(0, 104); // Ajuste Y para uma posição próxima ao fundo
 $pdf->Cell(72, 10, 'ATENDIMENTO PRIORITÁRIO LEI Nº 13.977/2020', 0, 1, 'C');
 
@@ -104,7 +103,7 @@ $pdf->setSourceFile($back_pdf);
 $tplIdx = $pdf->importPage(1);
 $pdf->useTemplate($tplIdx, 0, 0, 72, 114);
 
-$pdf->SetFont('Helvetica', '', 8);
+$pdf->SetFont('helvetica', '', 8);
 $pdf->SetTextColor(0, 0, 0);
 $pdf->SetXY(5, 60);
 $pdf->MultiCell(62, 4, 
@@ -116,7 +115,7 @@ $pdf->MultiCell(62, 4,
 
 // Posicionar o texto na parte inferior da segunda página
 $pdf->SetTextColor(255, 255, 0);
-$pdf->SetFont('Helvetica', 'B', 8);
+$pdf->SetFont('helvetica', 'B', 8);
 $pdf->SetXY(0, 104); // Ajuste Y para uma posição próxima ao fundo
 $pdf->Cell(72, 10, 'ATENDIMENTO PRIORITÁRIO LEI Nº 13.977/2020', 0, 1, 'C');
 

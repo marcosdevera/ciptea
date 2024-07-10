@@ -243,6 +243,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 <div class="form-group">
                     <label for="vch_cpf">CPF:</label>
                     <input type="text" class="form-control" name="vch_cpf" id="vch_cpf" oninput="formatarCPF('vch_cpf')" maxlength="14" value="<?php echo isset($row_p['vch_cpf']) ? $row_p['vch_cpf'] : ''; ?>" required>
+                    <input type="text" class="form-control" name="vch_cpf" id="vch_cpf" oninput="formatarCPF('vch_cpf')" maxlength="14" value="<?php echo isset($row_p['vch_cpf']) ? $row_p['vch_cpf'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="vch_rg">RG:</label>
@@ -298,6 +299,7 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                     <div class="form-group">
                         <label for="vch_cpf_responsavel">CPF do Responsável:</label>
                         <input type="text" class="form-control" name="vch_cpf_responsavel" id="vch_cpf_responsavel" oninput="formatarCPF('vch_cpf_responsavel')" maxlength="14" value="<?php echo isset($row_p['vch_cpf_responsavel']) ? $row_p['vch_cpf_responsavel'] : ''; ?>">
+                        <input type="text" class="form-control" name="vch_cpf_responsavel" id="vch_cpf_responsavel" oninput="formatarCPF('vch_cpf_responsavel')" maxlength="14" value="<?php echo isset($row_p['vch_cpf_responsavel']) ? $row_p['vch_cpf_responsavel'] : ''; ?>">
                         <div id="cpfErrorResponsavel" class="error-message"></div>
                     </div>
                     <div class="form-group">
@@ -319,6 +321,26 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                     </div>
                 </div>
             </div>
+            <div class="step" id="step4">
+                <h2>Endereço</h2>
+                <div class="form-group">
+                    <label for="endereco">Endereço:</label>
+                    <input type="text" class="form-control" name="endereco" id="endereco" value="<?php echo isset($row_p['endereco']) ? $row_p['endereco'] : ''; ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="bairro">Bairro:</label>
+                    <input type="text" class="form-control" name="bairro" id="bairro" value="<?php echo isset($row_p['bairro']) ? $row_p['bairro'] : ''; ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="cidade">Cidade:</label>
+                    <input type="text" class="form-control" name="cidade" id="cidade" value="<?php echo isset($row_p['cidade']) ? $row_p['cidade'] : ''; ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="cep">CEP:</label>
+                    <input type="text" class="form-control" name="cep" id="cep" oninput="aplicarMascaraCEP('cep')" maxlength="9" value="<?php echo isset($row_p['cep']) ? $row_p['cep'] : ''; ?>" required>
+                    <div id="cepError" class="error-message"></div>
+                </div>
+            </div>
             <div class="buttons">
                 <button type="button" class="prev btn btn-secondary" onclick="nextPrev(-1)">Anterior</button>
                 <button type="button" class="next btn btn-primary" onclick="nextPrev(1)">Próximo</button>
@@ -330,6 +352,8 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         var currentStep = 0;
+        var cpfValido = true;
+        var cepValido = true;
         var cpfValido = true;
         var cepValido = true;
 

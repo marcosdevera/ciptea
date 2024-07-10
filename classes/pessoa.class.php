@@ -508,18 +508,20 @@ class Pessoa
     }
 
     
-    public function atualizarPessoa($cod_usuario){
+    public function atualizarPessoa($cod_pessoa){
         try {
             $pdo = Database::conexao();
             // Iniciando a transação
             $pdo->beginTransaction();
-            $data_atual = date('Y-m-d H:i:s');
-            // Inserindo os dados na tabela pessoa
+    
+            // Atualizando os dados na tabela pessoa
             $update_pessoa = $pdo->prepare("UPDATE ciptea.dados_pessoa 
             SET vch_nome = :vch_nome,
+                vch_nome_social = :vch_nome_social,
                 cid = :cid,
                 vch_tipo_sanguineo = :vch_tipo_sanguineo,
-                vch_telefone_contato = :vch_telefone_contato,
+                vch_telefone = :vch_telefone,
+                vch_telefone_contato = :vch_telefone_contato,   
                 vch_nome_pai = :vch_nome_pai,
                 vch_nome_mae = :vch_nome_mae,
                 sdt_nascimento = :sdt_nascimento,
@@ -530,12 +532,15 @@ class Pessoa
                 vch_rg = :vch_rg,
                 vch_cpf = :vch_cpf,
                 vch_num_cartao_sus = :vch_num_cartao_sus,
-                bool_representante_legal = :bool_representante_legal 
-            WHERE cod_usuario = :cod_usuario");
-            $update_pessoa->bindParam(':cod_usuario', $cod_usuario);
+                bool_representante_legal = :bool_representante_legal, 
+                int_sexo = :int_sexo
+            WHERE cod_pessoa = :cod_pessoa");
+            $update_pessoa->bindParam(':cod_pessoa', $cod_pessoa);
             $update_pessoa->bindParam(':vch_nome', $this->vch_nome);
+            $update_pessoa->bindParam(':vch_nome_social', $this->vch_nome_social);
             $update_pessoa->bindParam(':cid', $this->cid);
             $update_pessoa->bindParam(':vch_tipo_sanguineo', $this->vch_tipo_sanguineo);
+            $update_pessoa->bindParam(':vch_telefone', $this->vch_telefone);
             $update_pessoa->bindParam(':vch_telefone_contato', $this->vch_telefone_contato);
             $update_pessoa->bindParam(':vch_nome_pai', $this->vch_nome_pai);
             $update_pessoa->bindParam(':vch_nome_mae', $this->vch_nome_mae);
@@ -548,97 +553,20 @@ class Pessoa
             $update_pessoa->bindParam(':vch_cpf', $this->vch_cpf);
             $update_pessoa->bindParam(':vch_num_cartao_sus', $this->vch_num_cartao_sus);
             $update_pessoa->bindParam(':bool_representante_legal', $this->bool_representante_legal);
+            $update_pessoa->bindParam(':int_sexo', $this->int_sexo);
             $update_pessoa->execute();
-            // Obtendo o ID gerado pela inserção na tabela pessoa
-            // $codPessoa = $pdo->lastInsertId();
-
-            // if($sl == 1){
-            //     $this->setLaudo($laudo);
-            //     $vch_documento_laudo = $this->laudo->getVchDocumento();
-            //     $status_laudo = $this->laudo->getStatus();
-            //     $update_documentos = $pdo->prepare("UPDATE ciptea.documentos 
-            //     SET vch_documento = :vch_documento,
-            //         status = :status, sdt_insercao = :sdt_insercao 
-            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 2");
-            //     $update_documentos->bindParam(':cod_pessoa', $cod_pessoa);
-            //     $update_documentos->bindParam(':vch_documento', $vch_documento_laudo);
-            //     $update_documentos->bindParam(':status', $status_laudo);
-            //     $update_documentos->bindParam(':sdt_insercao', $data_atual);
-            //     $update_documentos->execute();
-            // }
-            // if($sf == 1){
-            //     $this->setFoto($foto);
-            //     $vch_documento_foto = $this->foto->getVchDocumento();
-            //     $status_foto = $this->foto->getStatus();
-
-            //     $update_documentos2 = $pdo->prepare("UPDATE ciptea.documentos 
-            //     SET vch_documento = :vch_documento,
-            //         status = :status, sdt_insercao = :sdt_insercao 
-            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 1");
-            //     $update_documentos2->bindParam(':cod_pessoa', $cod_pessoa);
-            //     $update_documentos2->bindParam(':vch_documento', $vch_documento_foto);
-            //     $update_documentos2->bindParam(':status', $status_foto);
-            //     $update_documentos2->bindParam(':sdt_insercao', $data_atual);
-            //     $update_documentos2->execute();
-            // }
-            // if($sc == 1){
-            //     $this->setComprovante($comprovante);
-            //     $vch_documento_comprovante = $this->comprovante->getVchDocumento();
-            //     $status_comprovante = $this->comprovante->getStatus();
-
-            //     $update_documentos3 = $pdo->prepare("UPDATE ciptea.documentos 
-            //     SET vch_documento = :vch_documento,
-            //         status = :status, sdt_insercao = :sdt_insercao  
-            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 3");
-            //     $update_documentos3->bindParam(':cod_pessoa', $cod_pessoa);
-            //     $update_documentos3->bindParam(':vch_documento', $vch_documento_comprovante);
-            //     $update_documentos3->bindParam(':status', $status_comprovante);
-            //     $update_documentos3->bindParam(':sdt_insercao', $data_atual);
-            //     $update_documentos3->execute();    
-            // }
-            // if($sd == 1){
-            //     $this->setDocumento($documento);
-            //     $vch_documento_documento = $this->documento->getVchDocumento();
-            //     $status_documento = $this->documento->getStatus();
-
-            //     $update_documentos4 = $pdo->prepare("UPDATE ciptea.documentos 
-            //     SET vch_documento = :vch_documento,
-            //         status = :status, sdt_insercao = :sdt_insercao 
-            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 4");
-            //     $update_documentos4->bindParam(':cod_pessoa', $cod_pessoa);
-            //     $update_documentos4->bindParam(':vch_documento', $vch_documento_documento);
-            //     $update_documentos4->bindParam(':status', $status_documento);
-            //     $update_documentos4->bindParam(':sdt_insercao', $data_atual);
-            //     $update_documentos4->execute();    
-            // }
-
-            // if($sr == 1){
-            //     $this->setRequerimento($requerimento);
-            //     $vch_documento_requerimento = $this->requerimento->getVchDocumento();
-            //     $status_requerimento = $this->requerimento->getStatus();
-
-            //     $update_documentos5 = $pdo->prepare("UPDATE ciptea.documentos 
-            //     SET vch_documento = :vch_documento, 
-            //         status = :status, sdt_insercao = :sdt_insercao 
-            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 5");
-            //     $update_documentos5->bindParam(':cod_pessoa', $cod_pessoa);
-            //     $update_documentos5->bindParam(':vch_documento', $vch_documento_requerimento);
-            //     $update_documentos5->bindParam(':status', $status_requerimento);
-            //     $update_documentos5->bindParam(':sdt_insercao', $data_atual);
-            //     $update_documentos5->execute();    
-            // }
+    
             // Comitando a transação
             $pdo->commit();
-
+    
             header('Location: ../cadastro_inicialUP.php');
         } catch (PDOException $e) {
             // Se ocorrer algum erro, reverta a transação
             $pdo->rollBack();
             echo "Erro: " . $e->getMessage();
-        }     
-        
-       
+        }
     }
+    
 
     // public function atualizarPessoaResponsavel($sl, $sf, $sc, $sd, $sr, $laudo, $foto, $comprovante, $documento, $requerimento, $cod_usuario, $cod_pessoa){
     //     try {
@@ -800,6 +728,7 @@ class Pessoa
             // Inserindo os dados na tabela pessoa
             $update_pessoa = $pdo->prepare("UPDATE ciptea.dados_pessoa 
             SET vch_nome = :vch_nome,
+                vch_nome_social = :vch_nome_social,
                 cid = :cid,
                 vch_tipo_sanguineo = :vch_tipo_sanguineo,
                 vch_telefone = :vch_telefone,
@@ -819,6 +748,7 @@ class Pessoa
             WHERE cod_pessoa = :cod_pessoa");
             $update_pessoa->bindParam(':cod_pessoa', $cod_pessoa);
             $update_pessoa->bindParam(':vch_nome', $this->vch_nome);
+            $update_pessoa->bindParam(':vch_nome_social', $this->vch_nome_social);
             $update_pessoa->bindParam(':cid', $this->cid);
             $update_pessoa->bindParam(':vch_tipo_sanguineo', $this->vch_tipo_sanguineo);
             $update_pessoa->bindParam(':vch_telefone', $this->vch_telefone);
@@ -881,6 +811,7 @@ class Pessoa
             echo "Erro: " . $e->getMessage();
         }        
     }
+    
     
     public function exibirPessoa()
     {

@@ -1,11 +1,7 @@
 {
-    // Use o IntelliSense para aprender sobre possíveis atributos.
-    // Passe o mouse para ver as descrições dos atributos existentes.
-    // Para obter mais informações, visite: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": [   
-
-   
+    "configurations": [
+        
         {
             "name": "Listen for XDebug",
             "type": "php",
@@ -19,7 +15,7 @@
             "program": "${file}",
             "cwd": "${fileDirname}",
             "port": 9003,
-            "runtimeExecutable": "C:\\xampp\\php\\php.exe"
+            "runtimeExecutable": "D:\\XAMPP\\php\\php.exe"
         }
     ]
 }

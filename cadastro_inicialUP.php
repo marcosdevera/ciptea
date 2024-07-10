@@ -72,6 +72,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
             margin-bottom: 20px;
             display: flex;
             align-items: flex-start;
+            flex-wrap: wrap;
         }
 
         .step-icon {
@@ -241,6 +242,44 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
 
             .upload-section img {
                 max-width: 100%;
+            }
+
+            .logout-button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+
+            .download-button,
+            .view-button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+
+        @media (max-width: 575px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 1.2rem;
+            }
+
+            .step-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .download-button,
+            .view-button {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+
+            .logout-button {
+                font-size: 12px;
+                padding: 6px 12px;
             }
         }
     </style>

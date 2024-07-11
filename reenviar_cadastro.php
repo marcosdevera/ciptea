@@ -109,10 +109,6 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
         .buttons .prev:hover {
             background-color: #999;
         }
-        .error-message {
-            color: red;
-            font-size: 12px;
-        }
     </style>
 </head>
 <body>
@@ -123,147 +119,212 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
         <div class="progress-bar">
             <div class="progress"></div>
         </div>
-        <form name="form" action="processamento/processar_usuario.php" method="POST" enctype="multipart/form-data">
+        <form name="form" id="registrationForm" action="processamento/processar_usuario.php" method="POST"
+            enctype="multipart/form-data" onsubmit="return validarFormulario()">
 
-        <input type="hidden" name="cod_pessoa" id="cod_pessoa" value="<?php echo $cod_pessoa; ?>" required>
+            <input type="hidden" name="cod_pessoa" id="cod_pessoa" value="<?php echo $cod_pessoa; ?>" required>
 
             <div class="step active" id="step1">
                 <h2>Informações Pessoais</h2>
-    
                 <div class="form-group">
                     <label for="vch_nome">Nome:</label>
-                    <input type="text" class="form-control" name="vch_nome" id="vch_nome" value="<?php echo isset($row_p['vch_nome']) ? $row_p['vch_nome'] : ''; ?>" required>
+                    <input type="text" class="form-control" name="vch_nome" id="vch_nome"
+                        value="<?php echo isset($row_p['vch_nome']) ? $row_p['vch_nome'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
-                    <label for="vch_nome_social">Nome Social:</label>
-                    <input type="text" class="form-control" name="vch_nome_social" id="vch_nome_social" value="<?php echo isset($row_p['vch_nome_social']) ? $row_p['vch_nome_social'] : ''; ?>">
+                    <label for="vch_nome_social">Nome Social (caso tenha):</label>
+                    <input type="text" class="form-control" name="vch_nome_social" id="vch_nome_social"
+                        value="<?php echo isset($row_p['vch_nome_social']) ? $row_p['vch_nome_social'] : ''; ?>">
                 </div>
                 <div class="form-group">
                     <label for="sexo">Sexo:</label>
                     <div class="radio-group">
-                        <input type="radio" name="sexo" id="sexo_m" value="1" <?php echo isset($row_p['int_sexo']) && $row_p['int_sexo'] == 1 ? 'checked' : ''; ?> required>
+                        <input type="radio" name="sexo" id="sexo_m" value="1" <?php echo isset($row_p['int_sexo']) &&
+                            $row_p['int_sexo']==1 ? 'checked' : '' ; ?> required>
                         <label for="sexo_m">Masculino</label>
-                        <input type="radio" name="sexo" id="sexo_f" value="2" <?php echo isset($row_p['int_sexo']) && $row_p['int_sexo'] == 2 ? 'checked' : ''; ?> required>
+                        <input type="radio" name="sexo" id="sexo_f" value="2" <?php echo isset($row_p['int_sexo']) &&
+                            $row_p['int_sexo']==2 ? 'checked' : '' ; ?> required>
                         <label for="sexo_f">Feminino</label>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="sdt_nascimento">Data de Nascimento:</label>
-                    <input type="date" class="form-control" name="sdt_nascimento" id="sdt_nascimento" value="<?php echo isset($row_p['sdt_nascimento']) ? $row_p['sdt_nascimento'] : ''; ?>" required>
+                    <input type="date" class="form-control" name="sdt_nascimento" id="sdt_nascimento"
+                        value="<?php echo isset($row_p['sdt_nascimento']) ? $row_p['sdt_nascimento'] : ''; ?>" required>
                 </div>
             </div>
             <div class="step" id="step2">
-                <h2>Contato e Documento</h2>
+                <h2>Endereço</h2>
                 <div class="form-group">
-                    <label for="vch_telefone">Telefone:</label>
-                    <input type="text" class="form-control" name="vch_telefone" id="vch_telefone" oninput="aplicarMascaraTelefone('vch_telefone')" maxlength="15" value="<?php echo isset($row_p['vch_telefone']) ? $row_p['vch_telefone'] : ''; ?>" required>
+                    <label for="cep">CEP:</label>
+                    <input type="text" class="form-control" name="cep" id="cep" oninput="aplicarMascaraCEP('cep')"
+                        maxlength="9" value="<?php echo isset($row_p['cep']) ? $row_p['cep'] : ''; ?>" required
+                        onblur="buscarEndereco('cep', 'endereco', 'bairro', 'cidade', 'cepError')">
+                    <div id="cepError" class="error-message"></div>
                 </div>
                 <div class="form-group">
-                    <label for="cid">CID:</label>
-                    <input type="text" class="form-control" name="cid" id="cid" value="<?php echo isset($row_p['cid']) ? $row_p['cid'] : ''; ?>" required>
+                    <label for="endereco">Endereço:</label>
+                    <input type="text" class="form-control" name="endereco" id="endereco"
+                        placeholder="Exemplo: Avenida Alameda das Travessas, nº 111"
+                        value="<?php echo isset($row_p['endereco']) ? $row_p['endereco'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
-                    <label for="vch_nome_pai">Nome do Pai:</label>
-                    <input type="text" class="form-control" name="vch_nome_pai" id="vch_nome_pai" maxlength="50" value="<?php echo isset($row_p['vch_nome_pai']) ? $row_p['vch_nome_pai'] : ''; ?>" required>
+                    <label for="bairro">Bairro:</label>
+                    <input type="text" class="form-control" name="bairro" id="bairro"
+                        value="<?php echo isset($row_p['bairro']) ? $row_p['bairro'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
-                    <label for="vch_nome_mae">Nome da Mãe:</label>
-                    <input type="text" class="form-control" name="vch_nome_mae" id="vch_nome_mae" maxlength="50" value="<?php echo isset($row_p['vch_nome_mae']) ? $row_p['vch_nome_mae'] : ''; ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="vch_cpf">CPF:</label>
-                    <input type="text" class="form-control" name="vch_cpf" id="vch_cpf" oninput="formatarCPF('vch_cpf')" onblur="validarCPFOnBlur('vch_cpf')" maxlength="14" value="<?php echo isset($row_p['vch_cpf']) ? $row_p['vch_cpf'] : ''; ?>" required>
-                    <span id="cpf-error" class="error-message"></span>
-                </div>
-                <div class="form-group">
-                    <label for="vch_rg">RG:</label>
-                    <input type="text" class="form-control" name="vch_rg" id="vch_rg" onkeyup="formatarRG()" maxlength="13" value="<?php echo isset($row_p['vch_rg']) ? $row_p['vch_rg'] : ''; ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="vch_num_cartao_sus">Número do Cartão do SUS:</label>
-                    <input type="text" class="form-control" name="vch_num_cartao_sus" id="vch_num_cartao_sus" oninput="formatarCNS()" maxlength="18" value="<?php echo isset($row_p['vch_num_cartao_sus']) ? $row_p['vch_num_cartao_sus'] : ''; ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="vch_tipo_sanguineo">Tipo Sanguíneo:</label>
-                    <input type="text" class="form-control" name="vch_tipo_sanguineo" id="vch_tipo_sanguineo" maxlength="2" value="<?php echo isset($row_p['vch_tipo_sanguineo']) ? $row_p['vch_tipo_sanguineo'] : ''; ?>" required>
+                    <label for="cidade">Cidade:</label>
+                    <input type="text" class="form-control" name="cidade" id="cidade"
+                        value="<?php echo isset($row_p['cidade']) ? $row_p['cidade'] : ''; ?>" required>
                 </div>
             </div>
             <div class="step" id="step3">
+                <h2>Contato e Documento</h2>
+                <div class="form-group">
+                    <label for="vch_telefone">Telefone:</label>
+                    <input type="text" class="form-control" name="vch_telefone" id="vch_telefone"
+                        oninput="aplicarMascaraTelefone('vch_telefone')" maxlength="15"
+                        value="<?php echo isset($row_p['vch_telefone']) ? $row_p['vch_telefone'] : ''; ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="cid">CID:</label>
+                    <input type="text" class="form-control" name="cid" id="cid" maxlength="6"
+                        value="<?php echo isset($row_p['cid']) ? $row_p['cid'] : ''; ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="vch_nome_pai">Nome do Pai:</label>
+                    <input type="text" class="form-control" name="vch_nome_pai" id="vch_nome_pai" maxlength="50"
+                        value="<?php echo isset($row_p['vch_nome_pai']) ? $row_p['vch_nome_pai'] : ''; ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="vch_nome_mae">Nome da Mãe:</label>
+                    <input type="text" class="form-control" name="vch_nome_mae" id="vch_nome_mae" maxlength="50"
+                        value="<?php echo isset($row_p['vch_nome_mae']) ? $row_p['vch_nome_mae'] : ''; ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="vch_cpf">CPF:</label>
+                    <input type="text" class="form-control" name="vch_cpf" id="vch_cpf" oninput="formatarCPF('vch_cpf')"
+                        maxlength="14" value="<?php echo isset($row_p['vch_cpf']) ? $row_p['vch_cpf'] : ''; ?>"
+                        required>
+                    <div id="cpf-error" class="text-danger"></div>
+                </div>
+                <div class="form-group">
+                    <label for="vch_rg">RG:</label>
+                    <input type="text" class="form-control" name="vch_rg" id="vch_rg" onkeyup="formatarRG()"
+                        maxlength="13" value="<?php echo isset($row_p['vch_rg']) ? $row_p['vch_rg'] : ''; ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="vch_num_cartao_sus">Número do Cartão do SUS:</label>
+                    <input type="text" class="form-control" name="vch_num_cartao_sus" id="vch_num_cartao_sus"
+                        oninput="formatarCNS()" maxlength="18"
+                        value="<?php echo isset($row_p['vch_num_cartao_sus']) ? $row_p['vch_num_cartao_sus'] : ''; ?>"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label for="vch_tipo_sanguineo">Tipo Sanguíneo:</label>
+                    <select class="form-control" name="vch_tipo_sanguineo" id="vch_tipo_sanguineo" required>
+                        <option value="">Selecione o tipo sanguíneo</option>
+                        <option value="A+" <?php echo isset($row_p['vch_tipo_sanguineo']) &&
+                            $row_p['vch_tipo_sanguineo']=='A+' ? 'selected' : '' ; ?>>A+</option>
+                        <option value="A-" <?php echo isset($row_p['vch_tipo_sanguineo']) &&
+                            $row_p['vch_tipo_sanguineo']=='A-' ? 'selected' : '' ; ?>>A-</option>
+                        <option value="B+" <?php echo isset($row_p['vch_tipo_sanguineo']) &&
+                            $row_p['vch_tipo_sanguineo']=='B+' ? 'selected' : '' ; ?>>B+</option>
+                        <option value="B-" <?php echo isset($row_p['vch_tipo_sanguineo']) &&
+                            $row_p['vch_tipo_sanguineo']=='B-' ? 'selected' : '' ; ?>>B-</option>
+                        <option value="AB+" <?php echo isset($row_p['vch_tipo_sanguineo']) &&
+                            $row_p['vch_tipo_sanguineo']=='AB+' ? 'selected' : '' ; ?>>AB+</option>
+                        <option value="AB-" <?php echo isset($row_p['vch_tipo_sanguineo']) &&
+                            $row_p['vch_tipo_sanguineo']=='AB-' ? 'selected' : '' ; ?>>AB-</option>
+                        <option value="O+" <?php echo isset($row_p['vch_tipo_sanguineo']) &&
+                            $row_p['vch_tipo_sanguineo']=='O+' ? 'selected' : '' ; ?>>O+</option>
+                        <option value="O-" <?php echo isset($row_p['vch_tipo_sanguineo']) &&
+                            $row_p['vch_tipo_sanguineo']=='O-' ? 'selected' : '' ; ?>>O-</option>
+                    </select>
+                </div>
+            </div>
+            <div class="step" id="step4">
                 <h2>Representante Legal</h2>
                 <div class="form-group">
                     <label for="tem_representante">Possui Representante Legal?</label>
-                    <select class="form-control" name="bool_representante_legal" id="tem_representante" onchange="toggleRepresentanteLegal()">
-                        <option value="0" <?php echo isset($row_p['bool_representante_legal']) && $row_p['bool_representante_legal'] == 0 ? 'selected' : ''; ?>>Não</option>
-                        <option value="1" <?php echo isset($row_p['bool_representante_legal']) && $row_p['bool_representante_legal'] == 1 ? 'selected' : ''; ?>>Sim</option>
+                    <select class="form-control" name="bool_representante_legal" id="tem_representante"
+                        onchange="toggleRepresentanteLegal()">
+                        <option value="0" <?php echo isset($row_p['bool_representante_legal']) &&
+                            $row_p['bool_representante_legal']==0 ? 'selected' : '' ; ?>>Não</option>
+                        <option value="1" <?php echo isset($row_p['bool_representante_legal']) &&
+                            $row_p['bool_representante_legal']==1 ? 'selected' : '' ; ?>>Sim</option>
                     </select>
                 </div>
                 <div id="representante_legal" style="display: none;">
                     <div class="form-group">
                         <label for="vch_nome_responsavel">Nome do Representante:</label>
-                        <input type="text" class="form-control" name="vch_nome_responsavel" id="vch_nome_responsavel" value="<?php echo isset($row_p['vch_nome_responsavel']) ? $row_p['vch_nome_responsavel'] : ''; ?>">
+                        <input type="text" class="form-control" name="vch_nome_responsavel" id="vch_nome_responsavel"
+                            value="<?php echo isset($row_p['vch_nome_responsavel']) ? $row_p['vch_nome_responsavel'] : ''; ?>">
                     </div>
                     <div class="form-group">
                         <label for="int_sexo_responsavel">Sexo do Responsável:</label>
                         <div class="radio-group">
-                            <input type="radio" name="int_sexo_responsavel" id="sexo_responsavel_m" value="1" <?php echo isset($row_p['int_sexo_responsavel']) && $row_p['int_sexo_responsavel'] == 1 ? 'checked' : ''; ?>>
+                            <input type="radio" name="int_sexo_responsavel" id="sexo_responsavel_m" value="1" <?php echo
+                                isset($row_p['int_sexo_responsavel']) && $row_p['int_sexo_responsavel']==1 ? 'checked'
+                                : '' ; ?>>
                             <label for="sexo_responsavel_m">Masculino</label>
-                            <input type="radio" name="int_sexo_responsavel" id="sexo_responsavel_f" value="2" <?php echo isset($row_p['int_sexo_responsavel']) && $row_p['int_sexo_responsavel'] == 2 ? 'checked' : ''; ?>>
+                            <input type="radio" name="int_sexo_responsavel" id="sexo_responsavel_f" value="2" <?php echo
+                                isset($row_p['int_sexo_responsavel']) && $row_p['int_sexo_responsavel']==2 ? 'checked'
+                                : '' ; ?>>
                             <label for="sexo_responsavel_f">Feminino</label>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="vch_telefone_responsavel">Telefone do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_telefone_responsavel" id="vch_telefone_responsavel" oninput="aplicarMascaraTelefone('vch_telefone_responsavel')" maxlength="15" value="<?php echo isset($row_p['vch_telefone_responsavel']) ? $row_p['vch_telefone_responsavel'] : ''; ?>">
+                        <input type="text" class="form-control" name="vch_telefone_responsavel"
+                            id="vch_telefone_responsavel" oninput="aplicarMascaraTelefone('vch_telefone_responsavel')"
+                            maxlength="15"
+                            value="<?php echo isset($row_p['vch_telefone_responsavel']) ? $row_p['vch_telefone_responsavel'] : ''; ?>">
                     </div>
                     <div class="form-group">
                         <label for="vch_cpf_responsavel">CPF do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_cpf_responsavel" id="vch_cpf_responsavel" oninput="formatarCPF('vch_cpf_responsavel')" onblur="validarCPFOnBlur('vch_cpf_responsavel')" maxlength="14" value="<?php echo isset($row_p['vch_cpf_responsavel']) ? $row_p['vch_cpf_responsavel'] : ''; ?>">
-                        <span id="cpf-responsavel-error" class="error-message"></span>
+                        <input type="text" class="form-control" name="vch_cpf_responsavel" id="vch_cpf_responsavel"
+                            oninput="formatarCPF('vch_cpf_responsavel')" maxlength="14"
+                            value="<?php echo isset($row_p['vch_cpf_responsavel']) ? $row_p['vch_cpf_responsavel'] : ''; ?>">
+                        <div id="cpfErrorResponsavel" class="error-message"></div>
                     </div>
                     <div class="form-group">
                         <label for="vch_cep_responsavel">CEP do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_cep_responsavel" id="vch_cep_responsavel" oninput="aplicarMascaraCEP('vch_cep_responsavel')" onblur="buscarEndereco('vch_cep_responsavel', 'vch_endereco_responsavel', 'vch_bairro_responsavel', 'vch_cidade_responsavel')" maxlength="9" value="<?php echo isset($row_p['vch_cep_responsavel']) ? $row_p['vch_cep_responsavel'] : ''; ?>">
-                        <span id="vch_cep_responsavel-error" class="error-message"></span>
+                        <input type="text" class="form-control" name="vch_cep_responsavel" id="vch_cep_responsavel"
+                            oninput="aplicarMascaraCEP('vch_cep_responsavel')" maxlength="9"
+                            onblur="buscarEndereco('vch_cep_responsavel', 'vch_endereco_responsavel', 'vch_bairro_responsavel', 'vch_cidade_responsavel', 'cepErrorResponsavel')"
+                            value="<?php echo isset($row_p['vch_cep_responsavel']) ? $row_p['vch_cep_responsavel'] : ''; ?>">
+                        <div id="cepErrorResponsavel" class="error-message"></div>
                     </div>
                     <div class="form-group">
                         <label for="vch_endereco_responsavel">Endereço do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_endereco_responsavel" id="vch_endereco_responsavel" value="<?php echo isset($row_p['vch_endereco_responsavel']) ? $row_p['vch_endereco_responsavel'] : ''; ?>">
+                        <input type="text" class="form-control" name="vch_endereco_responsavel"
+                            id="vch_endereco_responsavel"
+                            value="<?php echo isset($row_p['vch_endereco_responsavel']) ? $row_p['vch_endereco_responsavel'] : ''; ?>">
                     </div>
                     <div class="form-group">
                         <label for="vch_bairro_responsavel">Bairro do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_bairro_responsavel" id="vch_bairro_responsavel" value="<?php echo isset($row_p['vch_bairro_responsavel']) ? $row_p['vch_bairro_responsavel'] : ''; ?>">
+                        <input type="text" class="form-control" name="vch_bairro_responsavel"
+                            id="vch_bairro_responsavel"
+                            value="<?php echo isset($row_p['vch_bairro_responsavel']) ? $row_p['vch_bairro_responsavel'] : ''; ?>">
                     </div>
                     <div class="form-group">
                         <label for="vch_cidade_responsavel">Cidade do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_cidade_responsavel" id="vch_cidade_responsavel" value="<?php echo isset($row_p['vch_cidade_responsavel']) ? $row_p['vch_cidade_responsavel'] : ''; ?>">
+                        <input type="text" class="form-control" name="vch_cidade_responsavel"
+                            id="vch_cidade_responsavel"
+                            value="<?php echo isset($row_p['vch_cidade_responsavel']) ? $row_p['vch_cidade_responsavel'] : ''; ?>">
                     </div>
-                </div>
-            </div>
-            <div class="step" id="step4">
-                <h2>Endereço</h2>
-                <div class="form-group">
-                    <label for="endereco">Endereço:</label>
-                    <input type="text" class="form-control" name="endereco" id="endereco" value="<?php echo isset($row_p['endereco']) ? $row_p['endereco'] : ''; ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="bairro">Bairro:</label>
-                    <input type="text" class="form-control" name="bairro" id="bairro" value="<?php echo isset($row_p['bairro']) ? $row_p['bairro'] : ''; ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="cidade">Cidade:</label>
-                    <input type="text" class="form-control" name="cidade" id="cidade" value="<?php echo isset($row_p['cidade']) ? $row_p['cidade'] : ''; ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="cep">CEP:</label>
-                    <input type="text" class="form-control" name="cep" id="cep" oninput="aplicarMascaraCEP('cep')" onblur="buscarEndereco('cep', 'endereco', 'bairro', 'cidade')" maxlength="9" value="<?php echo isset($row_p['cep']) ? $row_p['cep'] : ''; ?>" required>
-                    <span id="cep-error" class="error-message"></span>
                 </div>
             </div>
             <div class="buttons">
                 <button type="button" class="prev btn btn-secondary" onclick="nextPrev(-1)">Anterior</button>
                 <button type="button" class="next btn btn-primary" onclick="nextPrev(1)">Próximo</button>
-                <input type="hidden" name="MM_action" class="MM_action" value="4">
-                <input type="submit" class="submit btn btn-primary" value="Alterar dados">
+                <button type="submit" class="submit btn btn-primary" style="display: none;">Enviar</button>
+            </div>
+        </form>
+    </div>
+                
             </div>
         </form>
     </div>
@@ -413,7 +474,9 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 if (xhr.status === 200) {
                     var response = xhr.responseText;
                     if (response === '1') {
-                        document.getElementById(inputId + '-error').textContent = 'CPF já cadastrado.';
+                        if (confirm('CPF já cadastrado. Para recuperar a senha, clique em "OK" para ser redirecionado para a Aba de recuperação de senha.')) {
+                            window.location.href = 'recuperar_senha.php';
+                        }
                         cpfInput.value = '';
                     }
                 }
@@ -421,10 +484,8 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             xhr.send('cpf=' + cpf);
             var isValid = validarCPF(cpf);
             if (!isValid) {
-                document.getElementById(inputId + '-error').textContent = 'CPF inválido';
+                alert('CPF inválido');
                 cpfInput.value = '';
-            } else {
-                document.getElementById(inputId + '-error').textContent = '';
             }
         }
         function formatarRG() {
@@ -464,29 +525,6 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             var inputCEP = document.getElementById(inputId);
             var cep = inputCEP.value;
             inputCEP.value = formatarCEP(cep);
-        }
-        function buscarEndereco(cepInputId, enderecoInputId, bairroInputId, cidadeInputId) {
-            var cep = document.getElementById(cepInputId).value.replace(/\D/g, '');
-            if (cep.length !== 8) {
-                document.getElementById(cepInputId + '-error').textContent = 'CEP inválido';
-                return;
-            }
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'https://viacep.com.br/ws/' + cep + '/json/');
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.erro) {
-                        document.getElementById(cepInputId + '-error').textContent = 'CEP não encontrado';
-                    } else {
-                        document.getElementById(enderecoInputId).value = response.logradouro;
-                        document.getElementById(bairroInputId).value = response.bairro;
-                        document.getElementById(cidadeInputId).value = response.localidade;
-                        document.getElementById(cepInputId + '-error').textContent = '';
-                    }
-                }
-            };
-            xhr.send();
         }
         function formatarTelefone(telefone) {
             telefone = telefone.replace(/\D/g, '');

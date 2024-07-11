@@ -12,7 +12,7 @@ try {
     $responsavel = new Responsavel();
     $usuario = new Usuario();
 //    $documentos = new Documentos();
-   
+
 $pessoa = new Pessoa();
 $responsavel = new Responsavel();
 $usuario = new Usuario();
@@ -111,9 +111,7 @@ if (isset($_POST['vch_cidade_responsavel'])) {
 if (isset($_POST['vch_login'])) {
     $usuario->setVch_login($_POST['vch_login']);
 }
-if ($usuario->emailExiste($_POST['vch_login'])) {
-    throw new Exception("Este email já está cadastrado, Volte a pagina e tente um email diferente.");
-}
+
 if (isset($_POST['vch_senha'])) {
     $usuario->setVch_senha(password_hash($_POST['vch_senha'], PASSWORD_DEFAULT));
 }

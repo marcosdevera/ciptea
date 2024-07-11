@@ -67,7 +67,7 @@
                             <?php
                                 while($row_documento = $doc->fetch(PDO::FETCH_ASSOC)){ ?>
                                     <tr>
-                                        <td style="vertical-align: middle"><?php echo "<a target='_blank' href='ciptea/".$row_documento["vch_documento"]."'><img src='images/document.png' alt='Abrir Documento'></a>"?></td>
+                                        <td style="vertical-align: middle"><?php echo "<a target='_blank' href='uploads/".$row_documento["vch_documento"]."'><img src='images/document.png' alt='Abrir Documento'></a>"?></td>
                                         <td><h4>Tipo da documentação</h4><?php if($row_documento["cod_tipo_documento"] == 1){echo "Foto de identificação";}else if($row_documento["cod_tipo_documento"] == 2){echo "Laudo médico";}else if($row_documento["cod_tipo_documento"] == 3){echo "Comprovante de residência";}else if($row_documento["cod_tipo_documento"] == 4){echo "Documento com foto";}else{echo "Requerimento";} ?></td>
                                         <td class="text-center"><h4>Data de inserção</h4> <?php echo $row_documento["sdt_insercao"] != "" ? date("d/m/Y", strtotime($row_documento["sdt_insercao"])) : ""?> </td>
                                         <td class="text-center"><h4>Status</h4> <strong><?php if($row_documento["status"] == 0){echo "Aguardando validação";}else{echo "Aprovado"; } ?></strong></td>

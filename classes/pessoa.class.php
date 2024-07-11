@@ -11,8 +11,8 @@ include_once('responsavel.class.php');
 class Pessoa 
 {
 
-    
-    
+
+
     private Responsavel $responsavel;
     private Documentos $laudo;
     private Documentos $foto;
@@ -39,7 +39,7 @@ class Pessoa
     private $vch_num_cartao_sus;
     private $bool_representante_legal;
 
-    
+
 
     public function setResponsavel($responsavel)
     {
@@ -291,7 +291,7 @@ class Pessoa
         return $this->bool_representante_legal;
     }
 
-    
+
     //public function inserirPessoa($laudo, $foto, $comprovante, $documento, $usuario)
     public function inserirPessoa($usuario)
     {
@@ -355,7 +355,7 @@ class Pessoa
         }
     }
 
-   
+
 
 
     public function inserirPessoaResponsavel($responsavel, $usuario)
@@ -364,7 +364,7 @@ class Pessoa
             $pdo = Database::conexao();
             // Iniciando a transação
             $pdo->beginTransaction();
-            
+
             //$responsavel = new Responsavel();
 
             // Inserindo os dados na tabela pessoa
@@ -392,7 +392,7 @@ class Pessoa
             // Obtendo o ID gerado pela inserção na tabela pessoa
             $codPessoa = $pdo->lastInsertId();
 
-            
+
             $this->setResponsavel($responsavel);
 
             $vch_nome_resp = $this->responsavel->getVchNomeResponsavel();
@@ -489,7 +489,7 @@ class Pessoa
             $consulta_usuario->execute();
 
             $cod_usuario = $pdo->lastInsertId();
-            
+
             $update_pessoa = $pdo->prepare("UPDATE ciptea.dados_pessoa 
             SET cod_usuario = :cod_usuario 
             WHERE cod_pessoa = :cod_pessoa");
@@ -508,13 +508,13 @@ class Pessoa
     }
 
     
-    public function atualizarPessoa($cod_pessoa){
+    public function atualizarPessoa($cod_usuario){
         try {
             $pdo = Database::conexao();
             // Iniciando a transação
             $pdo->beginTransaction();
-    
-            // Atualizando os dados na tabela pessoa
+            $data_atual = date('Y-m-d H:i:s');
+            // Inserindo os dados na tabela pessoa
             $update_pessoa = $pdo->prepare("UPDATE ciptea.dados_pessoa 
             SET vch_nome = :vch_nome,
                 vch_nome_social = :vch_nome_social,
@@ -555,7 +555,84 @@ class Pessoa
             $update_pessoa->bindParam(':bool_representante_legal', $this->bool_representante_legal);
             $update_pessoa->bindParam(':int_sexo', $this->int_sexo);
             $update_pessoa->execute();
-    
+            // Obtendo o ID gerado pela inserção na tabela pessoa
+            // $codPessoa = $pdo->lastInsertId();
+
+            // if($sl == 1){
+            //     $this->setLaudo($laudo);
+            //     $vch_documento_laudo = $this->laudo->getVchDocumento();
+            //     $status_laudo = $this->laudo->getStatus();
+            //     $update_documentos = $pdo->prepare("UPDATE ciptea.documentos 
+            //     SET vch_documento = :vch_documento,
+            //         status = :status, sdt_insercao = :sdt_insercao 
+            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 2");
+            //     $update_documentos->bindParam(':cod_pessoa', $cod_pessoa);
+            //     $update_documentos->bindParam(':vch_documento', $vch_documento_laudo);
+            //     $update_documentos->bindParam(':status', $status_laudo);
+            //     $update_documentos->bindParam(':sdt_insercao', $data_atual);
+            //     $update_documentos->execute();
+            // }
+            // if($sf == 1){
+            //     $this->setFoto($foto);
+            //     $vch_documento_foto = $this->foto->getVchDocumento();
+            //     $status_foto = $this->foto->getStatus();
+
+            //     $update_documentos2 = $pdo->prepare("UPDATE ciptea.documentos 
+            //     SET vch_documento = :vch_documento,
+            //         status = :status, sdt_insercao = :sdt_insercao 
+            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 1");
+            //     $update_documentos2->bindParam(':cod_pessoa', $cod_pessoa);
+            //     $update_documentos2->bindParam(':vch_documento', $vch_documento_foto);
+            //     $update_documentos2->bindParam(':status', $status_foto);
+            //     $update_documentos2->bindParam(':sdt_insercao', $data_atual);
+            //     $update_documentos2->execute();
+            // }
+            // if($sc == 1){
+            //     $this->setComprovante($comprovante);
+            //     $vch_documento_comprovante = $this->comprovante->getVchDocumento();
+            //     $status_comprovante = $this->comprovante->getStatus();
+
+            //     $update_documentos3 = $pdo->prepare("UPDATE ciptea.documentos 
+            //     SET vch_documento = :vch_documento,
+            //         status = :status, sdt_insercao = :sdt_insercao  
+            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 3");
+            //     $update_documentos3->bindParam(':cod_pessoa', $cod_pessoa);
+            //     $update_documentos3->bindParam(':vch_documento', $vch_documento_comprovante);
+            //     $update_documentos3->bindParam(':status', $status_comprovante);
+            //     $update_documentos3->bindParam(':sdt_insercao', $data_atual);
+            //     $update_documentos3->execute();    
+            // }
+            // if($sd == 1){
+            //     $this->setDocumento($documento);
+            //     $vch_documento_documento = $this->documento->getVchDocumento();
+            //     $status_documento = $this->documento->getStatus();
+
+            //     $update_documentos4 = $pdo->prepare("UPDATE ciptea.documentos 
+            //     SET vch_documento = :vch_documento,
+            //         status = :status, sdt_insercao = :sdt_insercao 
+            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 4");
+            //     $update_documentos4->bindParam(':cod_pessoa', $cod_pessoa);
+            //     $update_documentos4->bindParam(':vch_documento', $vch_documento_documento);
+            //     $update_documentos4->bindParam(':status', $status_documento);
+            //     $update_documentos4->bindParam(':sdt_insercao', $data_atual);
+            //     $update_documentos4->execute();    
+            // }
+
+            // if($sr == 1){
+            //     $this->setRequerimento($requerimento);
+            //     $vch_documento_requerimento = $this->requerimento->getVchDocumento();
+            //     $status_requerimento = $this->requerimento->getStatus();
+
+            //     $update_documentos5 = $pdo->prepare("UPDATE ciptea.documentos 
+            //     SET vch_documento = :vch_documento, 
+            //         status = :status, sdt_insercao = :sdt_insercao 
+            //     WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = 5");
+            //     $update_documentos5->bindParam(':cod_pessoa', $cod_pessoa);
+            //     $update_documentos5->bindParam(':vch_documento', $vch_documento_requerimento);
+            //     $update_documentos5->bindParam(':status', $status_requerimento);
+            //     $update_documentos5->bindParam(':sdt_insercao', $data_atual);
+            //     $update_documentos5->execute();    
+            // }
             // Comitando a transação
             $pdo->commit();
     
@@ -566,7 +643,6 @@ class Pessoa
             echo "Erro: " . $e->getMessage();
         }
     }
-    
 
     // public function atualizarPessoaResponsavel($sl, $sf, $sc, $sd, $sr, $laudo, $foto, $comprovante, $documento, $requerimento, $cod_usuario, $cod_pessoa){
     //     try {
@@ -715,16 +791,16 @@ class Pessoa
     //         echo "Erro: " . $e->getMessage();
     //     }        
     // }
-    
+
 
     public function atualizarPessoaResponsavel($cod_pessoa, $responsavel){
         try {
             $pdo = Database::conexao();
             // Iniciando a transação
             $pdo->beginTransaction();
-    
+
             $this->setResponsavel($responsavel);
-    
+
             // Inserindo os dados na tabela pessoa
             $update_pessoa = $pdo->prepare("UPDATE ciptea.dados_pessoa 
             SET vch_nome = :vch_nome,
@@ -766,9 +842,9 @@ class Pessoa
             $update_pessoa->bindParam(':bool_representante_legal', $this->bool_representante_legal);
             $update_pessoa->bindParam(':int_sexo', $this->int_sexo);
             $update_pessoa->execute();
-    
+
             $this->responsavel->setCodPessoa($cod_pessoa);
-    
+
             $cod_pessoa = $this->responsavel->getCodPessoa();
             $vch_nome_resp = $this->responsavel->getVchNomeResponsavel();
             $vch_telefone_resp = $this->responsavel->getVchTelefoneResponsavel();
@@ -778,7 +854,7 @@ class Pessoa
             $vch_cep = $this->responsavel->getVchCepResponsavel();
             $vch_cidade_resp = $this->responsavel->getVchCidadeResponsavel();
             $int_sexo_responsavel = $this->responsavel->getIntSexoResponsavel();
-    
+
             // Inserindo os dados na tabela responsavel usando o ID da pessoa
             $stmtResponsavel = $pdo->prepare("UPDATE ciptea.dados_responsavel_legal 
                                                 SET vch_nome_responsavel = :vch_nome_responsavel,
@@ -800,10 +876,10 @@ class Pessoa
             $stmtResponsavel->bindParam(':vch_cidade_responsavel', $vch_cidade_resp);
             $stmtResponsavel->bindParam(':int_sexo_responsavel', $int_sexo_responsavel);
             $stmtResponsavel->execute();
-    
+
             // Comitando a transação
             $pdo->commit();
-    
+
             header('Location: ../cadastro_inicialUP.php');
         } catch (PDOException $e) {
             // Se ocorrer algum erro, reverta a transação
@@ -811,7 +887,6 @@ class Pessoa
             echo "Erro: " . $e->getMessage();
         }        
     }
-    
     
     public function exibirPessoa()
     {
@@ -863,7 +938,7 @@ class Pessoa
     (SELECT status FROM ciptea.documentos AS d WHERE d.cod_tipo_documento = 5 AND d.cod_pessoa = dp.cod_pessoa) AS status_requerimento    
 */
 
-    
+
     public function exibirPessoaUsuario($cod_pessoa){
         $pdo = Database::conexao();
         $sql = "SELECT dp.*, dr.cod_responsavel_legal, dr.vch_nome_responsavel, dr.vch_telefone_responsavel, dr.vch_cpf_responsavel, dr.vch_endereco_responsavel, 

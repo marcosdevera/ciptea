@@ -81,6 +81,21 @@ class Documentos {
         return $consulta;
     }
 
+    public function buscarDocumentoAutorizadosPessoa($cod_pessoa, $cod_tipo_documento) {
+        $pdo = Database::conexao();
+        $sql = "SELECT *
+                FROM ciptea.documentos
+                WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = :cod_tipo_documento
+                and status = 1";
+        $consulta = $pdo->prepare($sql);
+        $consulta->bindParam(':cod_pessoa', $cod_pessoa);
+        $consulta->bindParam(':cod_tipo_documento', $cod_tipo_documento);
+        $consulta->execute();
+        return $consulta;
+    }
+
+
+
     // public function inserirDocumento() {
     //     $pdo = Database::conexao();
     //     $data_atual = date('Y-m-d H:i:s');

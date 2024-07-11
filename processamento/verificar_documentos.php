@@ -12,7 +12,7 @@ $documentos_necessarios = [1, 2, 3, 4, 5];
 $documentos_enviados = [];
 
 foreach ($documentos_necessarios as $tipo_documento) {
-    $resultado = $documentos->buscarDocumentoPessoa($cod_pessoa, $tipo_documento);
+    $resultado = $documentos->buscarDocumentoAutorizadosPessoa($cod_pessoa, $tipo_documento);
     if ($resultado && $resultado->rowCount() > 0) {
         $documentos_enviados[] = $tipo_documento;
     }

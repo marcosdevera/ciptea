@@ -3,9 +3,13 @@ include_once("classes/pessoa.class.php");
 include_once("sessao.php");
 
 $p = new Pessoa();
+
 $cod_pessoa = $_SESSION["cod_pessoa"];
+
 $result_p = $p->exibirPessoaUsuario($cod_pessoa);
+
 $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
+  
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -14,8 +18,11 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Pessoa</title>
     <link rel="icon" href="images/imagemtopo.png" type="image/png">
+    <!-- Bootstrap CSS para estilos prontos -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Fonte personalizada do Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -102,10 +109,6 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
         .buttons .prev:hover {
             background-color: #999;
         }
-        .error-message {
-            color: red;
-            font-size: 12px;
-        }
     </style>
 </head>
 <body>
@@ -116,7 +119,8 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
         <div class="progress-bar">
             <div class="progress"></div>
         </div>
-        <form name="form" action="processamento/processar_usuario.php" method="POST" enctype="multipart/form-data">
+        <form name="form" id="registrationForm" action="processamento/processar_usuario.php" method="POST"
+            enctype="multipart/form-data" onsubmit="return validarFormulario()">
 
             <input type="hidden" name="cod_pessoa" id="cod_pessoa" value="<?php echo $cod_pessoa; ?>" required>
 
@@ -128,8 +132,9 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                         value="<?php echo isset($row_p['vch_nome']) ? $row_p['vch_nome'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
-                    <label for="vch_nome_social">Nome Social:</label>
-                    <input type="text" class="form-control" name="vch_nome_social" id="vch_nome_social" value="<?php echo isset($row_p['vch_nome_social']) ? $row_p['vch_nome_social'] : ''; ?>">
+                    <label for="vch_nome_social">Nome Social (caso tenha):</label>
+                    <input type="text" class="form-control" name="vch_nome_social" id="vch_nome_social"
+                        value="<?php echo isset($row_p['vch_nome_social']) ? $row_p['vch_nome_social'] : ''; ?>">
                 </div>
                 <div class="form-group">
                     <label for="sexo">Sexo:</label>
@@ -149,6 +154,32 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 </div>
             </div>
             <div class="step" id="step2">
+                <h2>Endereço</h2>
+                <div class="form-group">
+                    <label for="cep">CEP:</label>
+                    <input type="text" class="form-control" name="cep" id="cep" oninput="aplicarMascaraCEP('cep')"
+                        maxlength="9" value="<?php echo isset($row_p['cep']) ? $row_p['cep'] : ''; ?>" required
+                        onblur="buscarEndereco('cep', 'endereco', 'bairro', 'cidade', 'cepError')">
+                    <div id="cepError" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <label for="endereco">Endereço:</label>
+                    <input type="text" class="form-control" name="endereco" id="endereco"
+                        placeholder="Exemplo: Avenida Alameda das Travessas, nº 111"
+                        value="<?php echo isset($row_p['endereco']) ? $row_p['endereco'] : ''; ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="bairro">Bairro:</label>
+                    <input type="text" class="form-control" name="bairro" id="bairro"
+                        value="<?php echo isset($row_p['bairro']) ? $row_p['bairro'] : ''; ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="cidade">Cidade:</label>
+                    <input type="text" class="form-control" name="cidade" id="cidade"
+                        value="<?php echo isset($row_p['cidade']) ? $row_p['cidade'] : ''; ?>" required>
+                </div>
+            </div>
+            <div class="step" id="step3">
                 <h2>Contato e Documento</h2>
                 <div class="form-group">
                     <label for="vch_telefone">Telefone:</label>
@@ -158,7 +189,8 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 </div>
                 <div class="form-group">
                     <label for="cid">CID:</label>
-                    <input type="text" class="form-control" name="cid" id="cid" value="<?php echo isset($row_p['cid']) ? $row_p['cid'] : ''; ?>" required>
+                    <input type="text" class="form-control" name="cid" id="cid" maxlength="6"
+                        value="<?php echo isset($row_p['cid']) ? $row_p['cid'] : ''; ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="vch_nome_pai">Nome do Pai:</label>
@@ -172,8 +204,10 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 </div>
                 <div class="form-group">
                     <label for="vch_cpf">CPF:</label>
-                    <input type="text" class="form-control" name="vch_cpf" id="vch_cpf" oninput="formatarCPF('vch_cpf')" onblur="validarCPFOnBlur('vch_cpf')" maxlength="14" value="<?php echo isset($row_p['vch_cpf']) ? $row_p['vch_cpf'] : ''; ?>" required>
-                    <span id="cpf-error" class="error-message"></span>
+                    <input type="text" class="form-control" name="vch_cpf" id="vch_cpf" oninput="formatarCPF('vch_cpf')"
+                        maxlength="14" value="<?php echo isset($row_p['vch_cpf']) ? $row_p['vch_cpf'] : ''; ?>"
+                        required>
+                    <div id="cpf-error" class="text-danger"></div>
                 </div>
                 <div class="form-group">
                     <label for="vch_rg">RG:</label>
@@ -189,7 +223,25 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 </div>
                 <div class="form-group">
                     <label for="vch_tipo_sanguineo">Tipo Sanguíneo:</label>
-                    <input type="text" class="form-control" name="vch_tipo_sanguineo" id="vch_tipo_sanguineo" maxlength="2" value="<?php echo isset($row_p['vch_tipo_sanguineo']) ? $row_p['vch_tipo_sanguineo'] : ''; ?>" required>
+                    <select class="form-control" name="vch_tipo_sanguineo" id="vch_tipo_sanguineo" required>
+                        <option value="">Selecione o tipo sanguíneo</option>
+                        <option value="A+" <?php echo isset($row_p['vch_tipo_sanguineo']) &&
+                            $row_p['vch_tipo_sanguineo']=='A+' ? 'selected' : '' ; ?>>A+</option>
+                        <option value="A-" <?php echo isset($row_p['vch_tipo_sanguineo']) &&
+                            $row_p['vch_tipo_sanguineo']=='A-' ? 'selected' : '' ; ?>>A-</option>
+                        <option value="B+" <?php echo isset($row_p['vch_tipo_sanguineo']) &&
+                            $row_p['vch_tipo_sanguineo']=='B+' ? 'selected' : '' ; ?>>B+</option>
+                        <option value="B-" <?php echo isset($row_p['vch_tipo_sanguineo']) &&
+                            $row_p['vch_tipo_sanguineo']=='B-' ? 'selected' : '' ; ?>>B-</option>
+                        <option value="AB+" <?php echo isset($row_p['vch_tipo_sanguineo']) &&
+                            $row_p['vch_tipo_sanguineo']=='AB+' ? 'selected' : '' ; ?>>AB+</option>
+                        <option value="AB-" <?php echo isset($row_p['vch_tipo_sanguineo']) &&
+                            $row_p['vch_tipo_sanguineo']=='AB-' ? 'selected' : '' ; ?>>AB-</option>
+                        <option value="O+" <?php echo isset($row_p['vch_tipo_sanguineo']) &&
+                            $row_p['vch_tipo_sanguineo']=='O+' ? 'selected' : '' ; ?>>O+</option>
+                        <option value="O-" <?php echo isset($row_p['vch_tipo_sanguineo']) &&
+                            $row_p['vch_tipo_sanguineo']=='O-' ? 'selected' : '' ; ?>>O-</option>
+                    </select>
                 </div>
             </div>
             <div class="step" id="step4">
@@ -232,13 +284,18 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                     </div>
                     <div class="form-group">
                         <label for="vch_cpf_responsavel">CPF do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_cpf_responsavel" id="vch_cpf_responsavel" oninput="formatarCPF('vch_cpf_responsavel')" onblur="validarCPFOnBlur('vch_cpf_responsavel')" maxlength="14" value="<?php echo isset($row_p['vch_cpf_responsavel']) ? $row_p['vch_cpf_responsavel'] : ''; ?>">
-                        <span id="cpf-responsavel-error" class="error-message"></span>
+                        <input type="text" class="form-control" name="vch_cpf_responsavel" id="vch_cpf_responsavel"
+                            oninput="formatarCPF('vch_cpf_responsavel')" maxlength="14"
+                            value="<?php echo isset($row_p['vch_cpf_responsavel']) ? $row_p['vch_cpf_responsavel'] : ''; ?>">
+                        <div id="cpfErrorResponsavel" class="error-message"></div>
                     </div>
                     <div class="form-group">
                         <label for="vch_cep_responsavel">CEP do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_cep_responsavel" id="vch_cep_responsavel" oninput="aplicarMascaraCEP('vch_cep_responsavel')" onblur="buscarEndereco('vch_cep_responsavel', 'vch_endereco_responsavel', 'vch_bairro_responsavel', 'vch_cidade_responsavel')" maxlength="9" value="<?php echo isset($row_p['vch_cep_responsavel']) ? $row_p['vch_cep_responsavel'] : ''; ?>">
-                        <span id="vch_cep_responsavel-error" class="error-message"></span>
+                        <input type="text" class="form-control" name="vch_cep_responsavel" id="vch_cep_responsavel"
+                            oninput="aplicarMascaraCEP('vch_cep_responsavel')" maxlength="9"
+                            onblur="buscarEndereco('vch_cep_responsavel', 'vch_endereco_responsavel', 'vch_bairro_responsavel', 'vch_cidade_responsavel', 'cepErrorResponsavel')"
+                            value="<?php echo isset($row_p['vch_cep_responsavel']) ? $row_p['vch_cep_responsavel'] : ''; ?>">
+                        <div id="cepErrorResponsavel" class="error-message"></div>
                     </div>
                     <div class="form-group">
                         <label for="vch_endereco_responsavel">Endereço do Responsável:</label>
@@ -263,17 +320,18 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             <div class="buttons">
                 <button type="button" class="prev btn btn-secondary" onclick="nextPrev(-1)">Anterior</button>
                 <button type="button" class="next btn btn-primary" onclick="nextPrev(1)">Próximo</button>
-                <input type="hidden" name="MM_action" class="MM_action" value="4">
-                <input type="submit" class="submit btn btn-primary" value="Alterar dados">
+                <button type="submit" class="submit btn btn-primary" style="display: none;">Enviar</button>
             </div>
         </form>
     </div>
-
+                
+            </div>
+        </form>
+    </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         var currentStep = 0;
         showStep(currentStep);
-
         function showStep(n) {
             var steps = document.getElementsByClassName("step");
             steps[n].style.display = "block";
@@ -291,15 +349,8 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 document.querySelector(".submit").style.display = "none";
             }
         }
-
         function nextPrev(n) {
             var steps = document.getElementsByClassName("step");
-
-            if (n == 1 && !validateStep(currentStep)) {
-                triggerButtonError();
-                return false;
-            }
-
             steps[currentStep].classList.remove('active');
             steps[currentStep].classList.add('finished');
             setTimeout(function() {
@@ -314,165 +365,60 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 showStep(currentStep);
             }, 500);
         }
-
-        function validateStep(n) {
-            var steps = document.getElementsByClassName("step");
-            var inputs = steps[n].getElementsByTagName("input");
-            var selects = steps[n].getElementsByTagName("select");
-            var valid = true;
-
-            for (var i = 0; i < inputs.length; i++) {
-                if (inputs[i].hasAttribute("required") && inputs[i].value === "") {
-                    inputs[i].classList.add("is-invalid");
-                    valid = false;
-                } else {
-                    inputs[i].classList.remove("is-invalid");
-                }
-            }
-
-            for (var i = 0; i < selects.length; i++) {
-                if (selects[i].hasAttribute("required") && selects[i].value === "") {
-                    selects[i].classList.add("is-invalid");
-                    valid = false;
-                } else {
-                    selects[i].classList.remove("is-invalid");
-                }
-            }
-
-            var radios = steps[n].querySelectorAll('input[type="radio"][name="sexo"]');
-            var radioChecked = Array.from(radios).some(radio => radio.checked);
-            if (radios.length > 0 && !radioChecked) {
-                radios.forEach(radio => radio.classList.add("is-invalid"));
-                valid = false;
-            } else {
-                radios.forEach(radio => radio.classList.remove("is-invalid"));
-            }
-
-            if (n == 1) {
-                var cepErrorDiv = document.getElementById("cepError");
-                if (cepErrorDiv.innerText !== "") {
-                    valid = false;
-                }
-            }
-
-            if (n == 3) {
-                var hasRepresentante = document.getElementById("tem_representante").value == "1";
-                var representanteInputs = document.getElementById("representante_legal").getElementsByTagName("input");
-                var representanteSelects = document.getElementById("representante_legal").getElementsByTagName("select");
-                var representanteRadios = document.querySelectorAll('input[type="radio"][name="int_sexo_responsavel"]');
-
-                if (hasRepresentante) {
-                    for (var i = 0; i < representanteInputs.length; i++) {
-                        if (representanteInputs[i].hasAttribute("required") && representanteInputs[i].value === "") {
-                            representanteInputs[i].classList.add("is-invalid");
-                            valid = false;
-                        } else {
-                            representanteInputs[i].classList.remove("is-invalid");
-                        }
-                    }
-
-                    for (var i = 0; i < representanteSelects.length; i++) {
-                        if (representanteSelects[i].hasAttribute("required") && representanteSelects[i].value === "") {
-                            representanteSelects[i].classList.add("is-invalid");
-                            valid = false;
-                        } else {
-                            representanteSelects[i].classList.remove("is-invalid");
-                        }
-                    }
-
-                    var representanteRadioChecked = Array.from(representanteRadios).some(radio => radio.checked);
-                    if (representanteRadios.length > 0 && !representanteRadioChecked) {
-                        representanteRadios.forEach(radio => radio.classList.add("is-invalid"));
-                        valid = false;
-                    } else {
-                        representanteRadios.forEach(radio => radio.classList.remove("is-invalid"));
-                    }
-                }
-            }
-
-            return valid;
-        }
-
         function updateProgressBar(n) {
             var progress = document.querySelector(".progress");
             var steps = document.getElementsByClassName("step");
             var percent = ((n + 1) / steps.length) * 100;
             progress.style.width = percent + "%";
         }
-
         $(document).ready(function() {
+            $('#showPassword').change(function() {
+                var passwordField = $('#vch_senha');
+                var confirmPasswordField = $('#vch_confirm_senha');
+                if ($(this).is(':checked')) {
+                    passwordField.attr('type', 'text');
+                    confirmPasswordField.attr('type', 'text');
+                } else {
+                    passwordField.attr('type', 'password');
+                    confirmPasswordField.attr('type', 'password');
+                }
+            });
+            $('#vch_login').blur(function() {
+                verificarLogin();
+            });
             $('#tem_representante').change(function() {
                 toggleRepresentanteLegal();
             });
             toggleRepresentanteLegal(); // Chamar para definir o estado inicial
-
-            const dataNascimentoInput = document.getElementById('sdt_nascimento');
-            const dataAtual = new Date();
-            const anoAtual = dataAtual.getFullYear();
-            const mesAtual = String(dataAtual.getMonth() + 1).padStart(2, '0');
-            const diaAtual = String(dataAtual.getDate()).padStart(2, '0');
-            const dataMaxima = `${anoAtual}-${mesAtual}-${diaAtual}`;
-            const anoMinimo = 1900;
-            const dataMinima = `${anoMinimo}-01-01`;
-
-            dataNascimentoInput.setAttribute('max', dataMaxima);
-            dataNascimentoInput.setAttribute('min', dataMinima);
         });
-
         function exibirAlerta() {
             var alertDiv = document.getElementById("alert-message");
             alertDiv.style.display = "block";
         }
-
-        function validarCPFOnBlur(inputId) {
-            var cpfInput = document.getElementById(inputId);
-            var cpf = cpfInput.value.replace(/\D/g, '');
-            var cpfErrorDiv = document.getElementById('cpf-error');
-
-            if (!validarCPF(cpf)) {
-                cpfErrorDiv.innerHTML = 'CPF inválido.';
-                cpfErrorDiv.style.display = 'block';
-                cpfInput.classList.add('is-invalid');
-                return;
-            }
-
-            cpfErrorDiv.innerHTML = '';
-            cpfErrorDiv.style.display = 'none';
-            cpfInput.classList.remove('is-invalid');
-        }
-
-        function validarCPFOnBlurResponsavel(inputId) {
-            var cpfInput = document.getElementById(inputId);
-            var cpf = cpfInput.value.replace(/\D/g, '');
-            var isValid = validarCPF(cpf);
-            if (!isValid) {
-                document.getElementById("cpfErrorResponsavel").innerText = 'CPF inválido.';
-            } else {
-                document.getElementById("cpfErrorResponsavel").innerText = '';
-            }
-        }
-
-        function triggerButtonError() {
-            var buttons = document.querySelectorAll(" .next, .submit");
-            buttons.forEach(button => {
-                button.classList.add("btn-error");
-                setTimeout(function() {
-                    button.classList.remove("btn-error");
-                }, 500);
-            });
-        }
-
-        function validarFormulario() {
-            var inputs = document.querySelectorAll("input[required]");
-            for (var i = 0; i < inputs.length; i++) {
-                if (inputs[i].value.trim() === "") {
-                    triggerButtonError();
-                    return false;
+        function verificarLogin() {
+            var login = document.getElementById('vch_login').value;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'processamento/verificar_login.php');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var response = xhr.responseText;
+                    if (response === '1') {
+                        alert('Este login já está vinculado a um CPF, por favor, tente a recuperação de senha, ou um outro email.');
+                    }
                 }
+            };
+            xhr.send('login=' + login);
+        }
+        function validarSenhas() {
+            var senha = document.getElementById("vch_senha").value;
+            var confirmacao = document.getElementById("vch_confirm_senha").value;
+            if (senha !== confirmacao) {
+                alert("As senhas digitadas não são iguais. Para realizar o cadastro, as senhas precisam ser iguais.");
+                return false;
             }
             return true;
         }
-
         function formatCPF(cpf) {
             cpf = cpf.replace(/\D/g, '');
             cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
@@ -480,27 +426,18 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
             return cpf;
         }
-
-        function formatarCPF(inputId) {
-            var cpfInput = document.getElementById(inputId);
-            cpfInput.value = formatCPF(cpfInput.value);
-        }
-
         function validarCPF(cpf) {
             cpf = cpf.replace(/\D/g, '');
             if (cpf.length !== 11) return false;
-
             var cpfArray = cpf.split('').map(Number);
             var sum = 0;
             var mod;
-
             for (var i = 0, j = 10; i < 9; i++, j--) {
                 sum += cpfArray[i] * j;
             }
             mod = sum % 11;
             var firstDigit = mod < 2 ? 0 : 11 - mod;
             if (cpfArray[9] !== firstDigit) return false;
-
             sum = 0;
             for (var i = 0, j = 11; i < 10; i++, j--) {
                 sum += cpfArray[i] * j;
@@ -521,7 +458,6 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 cpf === '99999999999') {
                 return false;
             }
-
             return true;
         }
         function formatarCPF(inputId) {
@@ -538,7 +474,9 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
                 if (xhr.status === 200) {
                     var response = xhr.responseText;
                     if (response === '1') {
-                        document.getElementById(inputId + '-error').textContent = 'CPF já cadastrado.';
+                        if (confirm('CPF já cadastrado. Para recuperar a senha, clique em "OK" para ser redirecionado para a Aba de recuperação de senha.')) {
+                            window.location.href = 'recuperar_senha.php';
+                        }
                         cpfInput.value = '';
                     }
                 }
@@ -546,16 +484,13 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             xhr.send('cpf=' + cpf);
             var isValid = validarCPF(cpf);
             if (!isValid) {
-                document.getElementById(inputId + '-error').textContent = 'CPF inválido';
+                alert('CPF inválido');
                 cpfInput.value = '';
-            } else {
-                document.getElementById(inputId + '-error').textContent = '';
             }
         }
         function formatarRG() {
             var rgInput = document.getElementById('vch_rg');
             var rg = rgInput.value.replace(/\D/g, '');
-
             if (rg.length > 2) {
                 rg = rg.substring(0, 2) + '.' + rg.substring(2);
             }
@@ -565,14 +500,11 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             if (rg.length > 10) {
                 rg = rg.substring(0, 10) + '-' + rg.substring(10);
             }
-
             rgInput.value = rg;
         }
-
         function formatarCNS() {
             var cnsInput = document.getElementById('vch_num_cartao_sus');
             var cns = cnsInput.value.replace(/\D/g, '');
-
             if (cns.length > 3) {
                 cns = cns.substring(0, 3) + ' ' + cns.substring(3);
             }
@@ -582,43 +514,17 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             if (cns.length > 13) {
                 cns = cns.substring(0, 13) + ' ' + cns.substring(13);
             }
-
             cnsInput.value = cns;
         }
-
         function formatarCEP(cep) {
             cep = cep.replace(/\D/g, '');
             cep = cep.replace(/^(\d{5})(\d{1})/, '$1-$2');
             return cep;
         }
-
         function aplicarMascaraCEP(inputId) {
             var inputCEP = document.getElementById(inputId);
             var cep = inputCEP.value;
             inputCEP.value = formatarCEP(cep);
-        }
-        function buscarEndereco(cepInputId, enderecoInputId, bairroInputId, cidadeInputId) {
-            var cep = document.getElementById(cepInputId).value.replace(/\D/g, '');
-            if (cep.length !== 8) {
-                document.getElementById(cepInputId + '-error').textContent = 'CEP inválido';
-                return;
-            }
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'https://viacep.com.br/ws/' + cep + '/json/');
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.erro) {
-                        document.getElementById(cepInputId + '-error').textContent = 'CEP não encontrado';
-                    } else {
-                        document.getElementById(enderecoInputId).value = response.logradouro;
-                        document.getElementById(bairroInputId).value = response.bairro;
-                        document.getElementById(cidadeInputId).value = response.localidade;
-                        document.getElementById(cepInputId + '-error').textContent = '';
-                    }
-                }
-            };
-            xhr.send();
         }
         function formatarTelefone(telefone) {
             telefone = telefone.replace(/\D/g, '');
@@ -633,43 +539,26 @@ $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
             }
             return telefone;
         }
-
         function aplicarMascaraTelefone(id) {
             var inputTelefone = document.getElementById(id);
             var telefone = inputTelefone.value;
             inputTelefone.value = formatarTelefone(telefone);
         }
-
         function toggleRepresentanteLegal() {
             const representanteLegal = document.getElementById('tem_representante').value;
             const representanteDiv = document.getElementById('representante_legal');
             if (representanteLegal == "1") {
                 representanteDiv.style.display = "block";
-                $('#vch_nome_responsavel').attr('required', 'required');
-                $('#vch_telefone_responsavel').attr('required', 'required');
-                $('#vch_cpf_responsavel').attr('required', 'required');
-                $('#vch_cep_responsavel').attr('required', 'required');
-                $('#vch_endereco_responsavel').attr('required', 'required');
-                $('#vch_bairro_responsavel').attr('required', 'required');
-                $('#vch_cidade_responsavel').attr('required', 'required');
             } else {
                 representanteDiv.style.display = "none";
-                $('#vch_nome_responsavel').removeAttr('required');
-                $('#vch_telefone_responsavel').removeAttr('required');
-                $('#vch_cpf_responsavel').removeAttr('required');
-                $('#vch_cep_responsavel').removeAttr('required');
-                $('#vch_endereco_responsavel').removeAttr('required');
-                $('#vch_bairro_responsavel').removeAttr('required');
-                $('#vch_cidade_responsavel').removeAttr('required');
             }
         }
-
-        $(document).ready(function() {
+        document.addEventListener('DOMContentLoaded', (event) => {
             const boolRepresentanteLegal = "<?php echo isset($row_p['bool_representante_legal']) ? $row_p['bool_representante_legal'] : ''; ?>";
             const sexoResponsavel = "<?php echo isset($row_p['int_sexo_responsavel']) ? $row_p['int_sexo_responsavel'] : ''; ?>";
             const selectElement = document.getElementById('tem_representante');
-            if (boolRepresentanteLegal !== '') {
-                selectElement.value = boolRepresentanteLegal;
+            if(boolRepresentanteLegal !== ''){
+                selectElement.value = boolRepresentanteLegal
             }
             toggleRepresentanteLegal();
             if (sexoResponsavel === "1") {

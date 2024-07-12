@@ -508,7 +508,7 @@ class Pessoa
     }
 
     
-    public function atualizarPessoa($cod_usuario){
+    public function atualizarPessoa($cod_pessoa){
         try {
             $pdo = Database::conexao();
             // Iniciando a transação
@@ -793,15 +793,15 @@ class Pessoa
     // }
 
 
-    public function atualizarPessoaResponsavel($cod_pessoa, $responsavel){
+    public function atualizarPessoaResponsavel($cod_pessoa, $responsavel) {
         try {
             $pdo = Database::conexao();
             // Iniciando a transação
             $pdo->beginTransaction();
-
+    
             $this->setResponsavel($responsavel);
-
-            // Inserindo os dados na tabela pessoa
+    
+            // Atualizando os dados na tabela pessoa
             $update_pessoa = $pdo->prepare("UPDATE ciptea.dados_pessoa 
             SET vch_nome = :vch_nome,
                 vch_nome_social = :vch_nome_social,
@@ -842,50 +842,80 @@ class Pessoa
             $update_pessoa->bindParam(':bool_representante_legal', $this->bool_representante_legal);
             $update_pessoa->bindParam(':int_sexo', $this->int_sexo);
             $update_pessoa->execute();
-
-            $this->responsavel->setCodPessoa($cod_pessoa);
-
-            $cod_pessoa = $this->responsavel->getCodPessoa();
-            $vch_nome_resp = $this->responsavel->getVchNomeResponsavel();
-            $vch_telefone_resp = $this->responsavel->getVchTelefoneResponsavel();
-            $vch_cpf_resp = $this->responsavel->getVchCpfResponsavel();
-            $vch_endereco_resp = $this->responsavel->getVchEnderecoResponsavel();
-            $vch_bairro_resp = $this->responsavel->getVchBairroResponsavel();
-            $vch_cep = $this->responsavel->getVchCepResponsavel();
-            $vch_cidade_resp = $this->responsavel->getVchCidadeResponsavel();
-            $int_sexo_responsavel = $this->responsavel->getIntSexoResponsavel();
-
-            // Inserindo os dados na tabela responsavel usando o ID da pessoa
-            $stmtResponsavel = $pdo->prepare("UPDATE ciptea.dados_responsavel_legal 
-                                                SET vch_nome_responsavel = :vch_nome_responsavel,
-                                                    vch_telefone_responsavel = :vch_telefone_responsavel,
-                                                    vch_cpf_responsavel = :vch_cpf_responsavel,
-                                                    vch_endereco_responsavel = :vch_endereco_responsavel,
-                                                    vch_bairro_responsavel = :vch_bairro_responsavel,
-                                                    vch_cep_responsavel = :vch_cep_responsavel,
-                                                    vch_cidade_responsavel = :vch_cidade_responsavel,
-                                                    int_sexo_responsavel = :int_sexo_responsavel
-                                                WHERE cod_pessoa = :cod_pessoa");
-            $stmtResponsavel->bindParam(':cod_pessoa', $cod_pessoa);
-            $stmtResponsavel->bindParam(':vch_nome_responsavel', $vch_nome_resp);
-            $stmtResponsavel->bindParam(':vch_telefone_responsavel', $vch_telefone_resp);
-            $stmtResponsavel->bindParam(':vch_cpf_responsavel', $vch_cpf_resp);
-            $stmtResponsavel->bindParam(':vch_endereco_responsavel', $vch_endereco_resp);
-            $stmtResponsavel->bindParam(':vch_bairro_responsavel', $vch_bairro_resp);
-            $stmtResponsavel->bindParam(':vch_cep_responsavel', $vch_cep);
-            $stmtResponsavel->bindParam(':vch_cidade_responsavel', $vch_cidade_resp);
-            $stmtResponsavel->bindParam(':int_sexo_responsavel', $int_sexo_responsavel);
-            $stmtResponsavel->execute();
-
+    
+            // Verificando se já existem dados do responsável para o cod_pessoa
+            $checkResponsavel = $pdo->prepare("SELECT COUNT(*) FROM ciptea.dados_responsavel_legal WHERE cod_pessoa = :cod_pessoa");
+            $checkResponsavel->bindParam(':cod_pessoa', $cod_pessoa);
+            $checkResponsavel->execute();
+            $exists = $checkResponsavel->fetchColumn();
+    
+            if ($exists) {
+                // Atualizando os dados na tabela responsavel
+                $updateResponsavel = $pdo->prepare("UPDATE ciptea.dados_responsavel_legal 
+                                                    SET vch_nome_responsavel = :vch_nome_responsavel,
+                                                        vch_telefone_responsavel = :vch_telefone_responsavel,
+                                                        vch_cpf_responsavel = :vch_cpf_responsavel,
+                                                        vch_endereco_responsavel = :vch_endereco_responsavel,
+                                                        vch_bairro_responsavel = :vch_bairro_responsavel,
+                                                        vch_cep_responsavel = :vch_cep_responsavel,
+                                                        vch_cidade_responsavel = :vch_cidade_responsavel,
+                                                        int_sexo_responsavel = :int_sexo_responsavel
+                                                    WHERE cod_pessoa = :cod_pessoa");
+                $updateResponsavel->bindParam(':cod_pessoa', $cod_pessoa);
+                $updateResponsavel->bindParam(':vch_nome_responsavel', $this->responsavel->getVchNomeResponsavel());
+                $updateResponsavel->bindParam(':vch_telefone_responsavel', $this->responsavel->getVchTelefoneResponsavel());
+                $updateResponsavel->bindParam(':vch_cpf_responsavel', $this->responsavel->getVchCpfResponsavel());
+                $updateResponsavel->bindParam(':vch_endereco_responsavel', $this->responsavel->getVchEnderecoResponsavel());
+                $updateResponsavel->bindParam(':vch_bairro_responsavel', $this->responsavel->getVchBairroResponsavel());
+                $updateResponsavel->bindParam(':vch_cep_responsavel', $this->responsavel->getVchCepResponsavel());
+                $updateResponsavel->bindParam(':vch_cidade_responsavel', $this->responsavel->getVchCidadeResponsavel());
+                $updateResponsavel->bindParam(':int_sexo_responsavel', $this->responsavel->getIntSexoResponsavel());
+                $updateResponsavel->execute();
+            } else {
+                if ($this->bool_representante_legal == 1) {
+                    // Inserindo os dados na tabela responsavel
+                    $insertResponsavel = $pdo->prepare("INSERT INTO ciptea.dados_responsavel_legal (
+                                                            cod_pessoa,
+                                                            vch_nome_responsavel,
+                                                            vch_telefone_responsavel,
+                                                            vch_cpf_responsavel,
+                                                            vch_endereco_responsavel,
+                                                            vch_bairro_responsavel,
+                                                            vch_cep_responsavel,
+                                                            vch_cidade_responsavel,
+                                                            int_sexo_responsavel)
+                                                        VALUES (
+                                                            :cod_pessoa,
+                                                            :vch_nome_responsavel,
+                                                            :vch_telefone_responsavel,
+                                                            :vch_cpf_responsavel,
+                                                            :vch_endereco_responsavel,
+                                                            :vch_bairro_responsavel,
+                                                            :vch_cep_responsavel,
+                                                            :vch_cidade_responsavel,
+                                                            :int_sexo_responsavel)");
+                    $insertResponsavel->bindParam(':cod_pessoa', $cod_pessoa);
+                    $insertResponsavel->bindParam(':vch_nome_responsavel', $this->responsavel->getVchNomeResponsavel());
+                    $insertResponsavel->bindParam(':vch_telefone_responsavel', $this->responsavel->getVchTelefoneResponsavel());
+                    $insertResponsavel->bindParam(':vch_cpf_responsavel', $this->responsavel->getVchCpfResponsavel());
+                    $insertResponsavel->bindParam(':vch_endereco_responsavel', $this->responsavel->getVchEnderecoResponsavel());
+                    $insertResponsavel->bindParam(':vch_bairro_responsavel', $this->responsavel->getVchBairroResponsavel());
+                    $insertResponsavel->bindParam(':vch_cep_responsavel', $this->responsavel->getVchCepResponsavel());
+                    $insertResponsavel->bindParam(':vch_cidade_responsavel', $this->responsavel->getVchCidadeResponsavel());
+                    $insertResponsavel->bindParam(':int_sexo_responsavel', $this->responsavel->getIntSexoResponsavel());
+                    $insertResponsavel->execute();
+                }
+            }
+    
             // Comitando a transação
             $pdo->commit();
-
+    
             header('Location: ../cadastro_inicialUP.php');
         } catch (PDOException $e) {
             // Se ocorrer algum erro, reverta a transação
             $pdo->rollBack();
             echo "Erro: " . $e->getMessage();
-        }        
+        }
     }
     
     public function exibirPessoa()

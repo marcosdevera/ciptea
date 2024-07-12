@@ -5,6 +5,7 @@ class Obs {
     private $cod_pessoa;
     private $obs;
     private $sdt_criacao;
+    private $cod_tipo_documento;
 
     public function setCodObs($cod_obs) {
         $this->cod_obs = $cod_obs;
@@ -38,13 +39,21 @@ class Obs {
         return $this->sdt_criacao;
     }
 
+    public function setCodTipoDocumento($cod_tipo_documento) {
+        $this->cod_tipo_documento = $cod_tipo_documento;
+    }
+
+    public function getCodTipoDocumento() {
+        return $this->cod_tipo_documento;
+    }
+
     public function inserirObs(){
         try {
             $pdo = Database::conexao();            
             $data_atual = date('Y-m-d H:i:s');            
-            // Inserindo os dados na tabela pessoa
-            $consulta = $pdo->prepare("INSERT INTO ciptea.observacao(cod_pessoa, obs, sdt_criacao) values (:cod_pessoa, :obs, :sdt_criacao)");
+            $consulta = $pdo->prepare("INSERT INTO ciptea.observacao(cod_pessoa, cod_tipo_documento, obs, sdt_criacao) values (:cod_pessoa, :cod_tipo_documento, :obs, :sdt_criacao)");
             $consulta->bindParam(':cod_pessoa', $this->cod_pessoa);
+            $consulta->bindParam(':cod_tipo_documento', $this->cod_tipo_documento);
             $consulta->bindParam(':obs', $this->obs);
             $consulta->bindParam(':sdt_criacao', $data_atual);
             $consulta->execute();
@@ -52,13 +61,12 @@ class Obs {
             $cod_pessoa = urlencode($cod_pessoa_encode);
             header('Location: ../avaliacao_documento.php?cod='. $cod_pessoa);
         } catch (PDOException $e) {
-            // Se ocorrer algum erro, reverta a transação
             echo "Erro: " . $e->getMessage();
         }
     }
 
     public function exibirobs($cod_pessoa){
-        try{
+        try {
             $pdo = Database::conexao();
             $consulta = $pdo->prepare("SELECT * 
                                        FROM ciptea.observacao 
@@ -66,22 +74,24 @@ class Obs {
             $consulta->bindParam(':cod_pessoa', $cod_pessoa);
             $consulta->execute();
             return $consulta;
-        }catch (PDOException $e){
+        } catch (PDOException $e) {
+            echo "Erro: " . $e->getMessage(); 
+        }
+    }
+
+    public function exibirobsPorDocumento($cod_pessoa, $cod_tipo_documento) {
+        try {
+            $pdo = Database::conexao();
+            $consulta = $pdo->prepare("SELECT * 
+                                       FROM ciptea.observacao 
+                                       WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = :cod_tipo_documento");
+            $consulta->bindParam(':cod_pessoa', $cod_pessoa);
+            $consulta->bindParam(':cod_tipo_documento', $cod_tipo_documento);
+            $consulta->execute();
+            return $consulta;
+        } catch (PDOException $e) {
             echo "Erro: " . $e->getMessage(); 
         }
     }
 }
-
-// Exemplo de uso:
-// $obs = new Obs();
-// $obs->setCodObs(1);
-// $obs->setCodPessoa(1);
-// $obs->setObs("Observação XYZ");
-// $obs->setSdtCriacao("2024-02-19");
-
-// echo $obs->getCodObs(); // Saída: 1
-// echo $obs->getCodPessoa(); // Saída: 1
-// echo $obs->getObs(); // Saída: Observação XYZ
-// echo $obs->getSdtCriacao(); // Saída: 2024-02-19
-
 ?>

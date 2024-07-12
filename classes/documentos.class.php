@@ -43,17 +43,17 @@ class Documentos {
     public function exibirDocumentos($cod_pessoa) {
         $pdo = Database::conexao();
         $sql = "SELECT d.*, dp.vch_nome, dp.vch_cpf
-        FROM ciptea.documentos AS d
-        INNER JOIN ciptea.dados_pessoa AS dp 
-        ON d.cod_pessoa = dp.cod_pessoa
-        WHERE d.cod_pessoa = :cod_pessoa";
+                FROM ciptea.documentos AS d
+                INNER JOIN ciptea.dados_pessoa AS dp 
+                ON d.cod_pessoa = dp.cod_pessoa
+                WHERE d.cod_pessoa = :cod_pessoa";
         $consulta = $pdo->prepare($sql);
         $consulta->bindParam(':cod_pessoa', $cod_pessoa);
         $consulta->execute();
         return $consulta;
     }
 
-    public function validarDocumento() {
+    public function validarDocumento($status) {
         $pdo = Database::conexao();
         $sql = "UPDATE ciptea.documentos
                 SET status = :status
@@ -61,7 +61,7 @@ class Documentos {
         $consulta = $pdo->prepare($sql);
         $consulta->bindParam(':cod_pessoa', $this->cod_pessoa);
         $consulta->bindParam(':cod_tipo_documento', $this->cod_tipo_documento);
-        $consulta->bindParam(':status', $this->status);
+        $consulta->bindParam(':status', $status);
         $consulta->execute();
         $cod_pessoa_encode = base64_encode($this->cod_pessoa);
         $cod_pessoa = urlencode($cod_pessoa_encode);
@@ -86,7 +86,7 @@ class Documentos {
         $sql = "SELECT *
                 FROM ciptea.documentos
                 WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = :cod_tipo_documento
-                and status = 1";
+                AND status = 1";
         $consulta = $pdo->prepare($sql);
         $consulta->bindParam(':cod_pessoa', $cod_pessoa);
         $consulta->bindParam(':cod_tipo_documento', $cod_tipo_documento);
@@ -94,24 +94,7 @@ class Documentos {
         return $consulta;
     }
 
-
-
-    // public function inserirDocumento() {
-    //     $pdo = Database::conexao();
-    //     $data_atual = date('Y-m-d H:i:s');
-    //     $sql = "INSERT INTO ciptea.documentos (cod_pessoa, cod_tipo_documento, vch_documento, sdt_insercao, status)
-    //             VALUES (:cod_pessoa, :cod_tipo_documento, :vch_documento, :sdt_insercao, :status)";
-    //     $consulta = $pdo->prepare($sql);
-    //     $consulta->bindParam(':cod_pessoa', $this->cod_pessoa);
-    //     $consulta->bindParam(':cod_tipo_documento', $this->cod_tipo_documento);
-    //     $consulta->bindParam(':vch_documento', $this->vch_documento);
-    //     $consulta->bindParam(':sdt_insercao', $data_atual);
-    //     $consulta->bindParam(':status', 'pendente');
-    //     return $consulta->execute();
-    // }
-
-    public function inserirDocumento($cod_pessoa, $cod_tipo_documento) { //$cod_pessoa, $cod_tipo_documento
-        // Verificação de valores obrigatórios
+    public function inserirDocumento($cod_pessoa, $cod_tipo_documento) {
         if ($this->cod_pessoa === null) {
             throw new Exception("cod_pessoa não pode ser nulo");
         }
@@ -138,9 +121,7 @@ class Documentos {
         return $consulta->execute();
     }
 
-
-    public function atualizarDocumento(){ //$cod_pessoa, $cod_tipo_documento
-        // Verificação de valores obrigatórios
+    public function atualizarDocumento() {
         if ($this->cod_pessoa === null) {
             throw new Exception("cod_pessoa não pode ser nulo");
         }
@@ -167,7 +148,5 @@ class Documentos {
         $consulta->bindParam(':cod_tipo_documento', $this->cod_tipo_documento);
         return $consulta->execute();
     }
-    
 }
 ?>
-

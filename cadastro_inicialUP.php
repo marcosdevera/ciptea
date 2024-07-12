@@ -2,6 +2,7 @@
 include_once('sessao.php');
 include_once('classes/documentos.class.php');
 include_once('classes/pessoa.class.php');
+include_once('classes/obs.class.php');
 
 if (!isset($_SESSION)) {
     session_start();
@@ -14,7 +15,6 @@ if (!isset($_SESSION['cod_pessoa'])) {
 
 $cod_pessoa = $_SESSION['cod_pessoa'];
 
-// Função para buscar documentos e verificar resultados
 function buscarDocumento($cod_pessoa, $cod_tipo_documento) {
     $documento = new Documentos();
     $resultado = $documento->buscarDocumentoPessoa($cod_pessoa, $cod_tipo_documento);
@@ -26,11 +26,25 @@ function buscarDocumento($cod_pessoa, $cod_tipo_documento) {
     return null;
 }
 
+function buscarObservacao($cod_pessoa, $cod_tipo_documento) {
+    $obs = new Obs();
+    $resultado = $obs->exibirobsPorDocumento($cod_pessoa, $cod_tipo_documento);
+
+    if ($resultado && $resultado->rowCount() > 0) {
+        return $resultado->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    return null;
+}
+
 $result_d1 = buscarDocumento($cod_pessoa, 1); // Foto 3x4
 $result_d2 = buscarDocumento($cod_pessoa, 2); // Laudo Médico
 $result_d3 = buscarDocumento($cod_pessoa, 3); // Comprovante de Residência
 $result_d4 = buscarDocumento($cod_pessoa, 4); // Documento de Identidade
 $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
+
+
+$d = new Documentos;
 ?>
 
 <!DOCTYPE html>
@@ -306,7 +320,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
 
         <form name="requerimento">
             <div class="step" id="step-2">
-                <div class="step-icon unlocked" id="requerimento-icon"><i class="fas fa-id-card"></i></div>
+                <div class="step-icon <?php echo $d->getStatus($result_d5); ?>" id="requerimento-icon"><i class="fas fa-id-card"></i></div>
                 <div>
                     <h4>2. Requerimento</h4>
                     <p>Para obter a carteira faça download do requerimento, imprima, assine e envie.</p>
@@ -319,13 +333,14 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                     </div>
                     <button type="button" id="uploadButtonRequerimento" class="btn btn-primary">Enviar Requerimento</button>
                     <div class="message" id="requerimento-message"></div>
+                    <?php echo displayObservacoes($cod_pessoa, 5); ?>
                 </div>
             </div>
         </form>
 
         <form id="uploadFormFoto">
             <div class="step" id="step-3">
-                <div class="step-icon unlocked" id="foto-icon"><i class="fas fa-camera"></i></div>
+                <div class="step-icon <?php echo $d->getStatus($result_d1); ?>" id="foto-icon"><i class="fas fa-camera"></i></div>
                 <div>
                     <h4>3. Foto 3x4</h4>
                     <p>Envie uma foto 3x4 para o seu documento.</p>
@@ -342,13 +357,14 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                     <button type="button" id="uploadButtonFoto" class="btn btn-primary">Enviar Foto 3x4</button>
                     <button type="button" class="view-button <?php echo $result_d1 ? '' : 'disabled'; ?>" <?php echo $result_d1 ? 'onclick="window.open(\'uploads/' . $result_d1['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Foto Enviada</button>
                     <div class="message" id="foto-message"></div>
+                    <?php echo displayObservacoes($cod_pessoa, 1); ?>
                 </div>
             </div>
         </form>
 
         <form id="uploadFormIdentidade">
             <div class="step" id="step-4">
-                <div class="step-icon unlocked" id="identidade-icon"><i class="fas fa-id-card-alt"></i></div>
+                <div class="step-icon <?php echo $d->getStatus($result_d4); ?>" id="identidade-icon"><i class="fas fa-id-card-alt"></i></div>
                 <div>
                     <h4>4. Documento de Identidade</h4>
                     <p>Envie a imagem de um documento de identificação com foto (RG, CNH, etc).</p>
@@ -365,13 +381,14 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                     <button type="button" id="uploadButtonIdentidade" class="btn btn-primary">Enviar Documento de Identidade</button>
                     <button type="button" class="view-button <?php echo $result_d4 ? '' : 'disabled'; ?>" <?php echo $result_d4 ? 'onclick="window.open(\'uploads/' . $result_d4['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Documento de Identidade Enviado</button>
                     <div class="message" id="identidade-message"></div>
+                    <?php echo displayObservacoes($cod_pessoa, 4); ?>
                 </div>
             </div>
         </form>
 
         <form id="uploadFormResidencia">
             <div class="step" id="step-5">
-                <div class="step-icon unlocked" id="residencia-icon"><i class="fas fa-home"></i></div>
+                <div class="step-icon <?php echo $d->getStatus($result_d3); ?>" id="residencia-icon"><i class="fas fa-home"></i></div>
                 <div>
                     <h4>5. Comprovante de Residência</h4>
                     <p>Envie uma foto visível de um comprovante de residência.</p>
@@ -388,13 +405,14 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                     <button type="button" id="uploadButtonResidencia" class="btn btn-primary">Enviar Comprovante de Residência</button>
                     <button type="button" class="view-button <?php echo $result_d3 ? '' : 'disabled'; ?>" <?php echo $result_d3 ? 'onclick="window.open(\'uploads/' . $result_d3['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Comprovante de Residência Enviado</button>
                     <div class="message" id="residencia-message"></div>
+                    <?php echo displayObservacoes($cod_pessoa, 3); ?>
                 </div>
             </div>
         </form>
 
         <form id="uploadFormLaudo">
             <div class="step" id="step-6">
-                <div class="step-icon unlocked" id="laudo-icon"><i class="fas fa-file-medical"></i></div>
+                <div class="step-icon <?php echo  getStatus($result_d2); ?>" id="laudo-icon"><i class="fas fa-file-medical"></i></div>
                 <div>
                     <h4>6. Laudo Médico</h4>
                     <p>Envie o laudo médico da pessoa que vai usar a carteira.</p>
@@ -409,6 +427,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                     <button type="button" id="uploadButtonLaudo" class="btn btn-primary">Enviar Laudo Médico</button>
                     <button type="button" class="view-button <?php echo $result_d2 ? '' : 'disabled'; ?>" <?php echo $result_d2 ? 'onclick="window.open(\'uploads/' . $result_d2['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Laudo Médico Enviado</button>
                     <div class="message" id="laudo-message"></div>
+                    <?php echo displayObservacoes($cod_pessoa, 2); ?>
                 </div>
             </div>
         </form>
@@ -426,6 +445,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
         </form>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 var uploadSections = document.querySelectorAll('.upload-section');
@@ -457,14 +477,18 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                     viewButton.setAttribute('onclick', 'window.open("uploads/' + fileName + '", "_blank")');
                 }
 
-                // Função para atualizar o ícone
-                function updateIcon(iconId) {
+                function updateIcon(iconId, status) {
                     var icon = document.getElementById(iconId);
-                    icon.classList.remove('unlocked');
-                    icon.classList.add('completed');
+                    icon.className = 'step-icon';
+                    if (status == 0) {
+                        icon.classList.add('pending');
+                    } else if (status == 1) {
+                        icon.classList.add('completed');
+                    } else if (status == 2) {
+                        icon.classList.add('locked');
+                    }
                 }
 
-                // Função para mostrar mensagem de sucesso ou erro
                 function showMessage(elementId, message, isError = false) {
                     var element = document.getElementById(elementId);
                     element.textContent = message;
@@ -496,7 +520,7 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                         success: function (response) {
                             var res = JSON.parse(response);
                             $('#requerimento-uploaded').html('<p>Arquivo enviado: ' + res.fileName + '</p>');
-                            updateIcon('requerimento-icon');
+                            updateIcon('requerimento-icon', res.status);
                             updateViewButton('step-2', res.fileName);
                             showMessage('requerimento-message', res.message);
                         },
@@ -531,8 +555,8 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                         success: function (response) {
                             var res = JSON.parse(response);
                             $('#foto-34-uploaded').html('<p>Arquivo enviado: ' + res.fileName + '</p>');
-                            $('#foto-34').siblings('img').attr('src', 'uploads/' + res.fileName); // Atualiza a imagem exibida
-                            updateIcon('foto-icon');
+                            $('#foto-34').siblings('img').attr('src', 'uploads/' + res.fileName);
+                            updateIcon('foto-icon', res.status);
                             updateViewButton('step-3', res.fileName);
                             showMessage('foto-message', res.message);
                         },
@@ -567,8 +591,8 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                         success: function (response) {
                             var res = JSON.parse(response);
                             $('#documento-identidade-uploaded').html('<p>Arquivo enviado: ' + res.fileName + '</p>');
-                            $('#documento-identidade').siblings('img').attr('src', 'uploads/' + res.fileName); // Atualiza a imagem exibida
-                            updateIcon('identidade-icon');
+                            $('#documento-identidade').siblings('img').attr('src', 'uploads/' + res.fileName);
+                            updateIcon('identidade-icon', res.status);
                             updateViewButton('step-4', res.fileName);
                             showMessage('identidade-message', res.message);
                         },
@@ -603,8 +627,8 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                         success: function (response) {
                             var res = JSON.parse(response);
                             $('#comprovante-residencia-uploaded').html('<p>Arquivo enviado: ' + res.fileName + '</p>');
-                            $('#comprovante-residencia').siblings('img').attr('src', 'uploads/' + res.fileName); // Atualiza a imagem exibida
-                            updateIcon('residencia-icon');
+                            $('#comprovante-residencia').siblings('img').attr('src', 'uploads/' + res.fileName);
+                            updateIcon('residencia-icon', res.status);
                             updateViewButton('step-5', res.fileName);
                             showMessage('residencia-message', res.message);
                         },
@@ -639,8 +663,8 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                         success: function (response) {
                             var res = JSON.parse(response);
                             $('#laudo-medico-uploaded').html('<p>Arquivo enviado: ' + res.fileName + '</p>');
-                            $('#laudo-medico').siblings('img').attr('src', 'uploads/' + res.fileName); // Atualiza a imagem exibida
-                            updateIcon('laudo-icon');
+                            $('#laudo-medico').siblings('img').attr('src', 'uploads/' + res.fileName);
+                            updateIcon('laudo-icon', res.status);
                             updateViewButton('step-6', res.fileName);
                             showMessage('laudo-message', res.message);
                         },
@@ -672,7 +696,6 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                 });
 
                 $('#generateCardButton').click(function () {
-                    // Verifica se todos os documentos foram enviados
                     $.ajax({
                         url: 'processamento/verificar_documentos.php',
                         type: 'POST',
@@ -680,7 +703,6 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                         success: function (response) {
                             var res = JSON.parse(response);
                             if (res.allDocuments) {
-                                // Todos os documentos foram enviados, gera a carteira
                                 $.ajax({
                                     url: 'processamento/gerar_carteira.php',
                                     type: 'POST',
@@ -689,7 +711,6 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                                         var res = JSON.parse(response);
                                         if (res.success) {
                                             showMessage('generate-card-message', "Carteira gerada com sucesso!");
-                                            // Redireciona para a página de carteirinha
                                             window.open('carteirinha.php?cod_pessoa=<?php echo $cod_pessoa; ?>', '_blank');
                                         } else {
                                             showMessage('generate-card-message', "Erro ao gerar a carteira: " + res.message, true);
@@ -709,21 +730,20 @@ $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
                     });
                 });
 
-                // Verifica se os documentos já existem para atualizar os ícones
                 <?php if ($result_d5): ?>
-                    updateIcon('requerimento-icon');
+                    updateIcon('requerimento-icon', <?php echo $result_d5['status']; ?>);
                 <?php endif; ?>
                 <?php if ($result_d1): ?>
-                    updateIcon('foto-icon');
+                    updateIcon('foto-icon', <?php echo $result_d1['status']; ?>);
                 <?php endif; ?>
                 <?php if ($result_d4): ?>
-                    updateIcon('identidade-icon');
+                    updateIcon('identidade-icon', <?php echo $result_d4['status']; ?>);
                 <?php endif; ?>
                 <?php if ($result_d3): ?>
-                    updateIcon('residencia-icon');
+                    updateIcon('residencia-icon', <?php echo $result_d3['status']; ?>);
                 <?php endif; ?>
                 <?php if ($result_d2): ?>
-                    updateIcon('laudo-icon');
+                    updateIcon('laudo-icon', <?php echo $result_d2['status']; ?>);
                 <?php endif; ?>
             });
         </script>

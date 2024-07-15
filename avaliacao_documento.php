@@ -1,5 +1,5 @@
 <?php
-include_once ("classes/documentos.class.php");
+include_once("classes/documentos.class.php");
 include_once('classes/obs.class.php');
 include_once("sessao.php");
 
@@ -52,7 +52,7 @@ $obs = new Obs();
             <tbody>
                 <?php
                 while ($row_documento = $doc->fetch(PDO::FETCH_ASSOC)) {
-                    $result_obs = $obs->exibirobs($cod_pessoa, $row_documento['cod_tipo_documento']);
+                    $result_obs = $obs->exibirobsPorDocumento($cod_pessoa, $row_documento['cod_tipo_documento']);
                     $num_linha = $result_obs->rowCount();
                 ?>
                 <tr>

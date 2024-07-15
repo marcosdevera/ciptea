@@ -39,6 +39,16 @@ class Documentos {
     public function getStatus() {
         return $this->status;
     }
+    
+    public function verificarDocumentos($cod_pessoa) {
+        $pdo = Database::conexao();
+        $sql = "SELECT status FROM ciptea.documentos WHERE cod_pessoa = :cod_pessoa AND status != 1";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':cod_pessoa', $cod_pessoa);
+        $stmt->execute();
+        return $stmt->rowCount() == 0;
+    }
+    
 
     public function exibirDocumentos($cod_pessoa) {
         $pdo = Database::conexao();

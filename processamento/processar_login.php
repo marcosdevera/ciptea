@@ -7,10 +7,11 @@ if (!isset($_SESSION)) {
 
 $email = $_POST['login'];
 $senha = $_POST['senha'];
- 
-$login = new Login();
 
-if ($login->login($email, $senha)) {
+$login = new Login();
+$loginSuccess = $login->login($email, $senha);
+
+if ($loginSuccess) {
     if (isset($_SESSION["user_session"])) {
         if ($_SESSION["nivel"] == 2) {
             header('Location: ../pessoa_cadastrada.php');
@@ -18,9 +19,13 @@ if ($login->login($email, $senha)) {
             header('Location: ../cadastro_inicialUP.php');
         }
     } else {
-        header('Location: ../index.php?error=1');
+        // Depuração: Verificar se a sessão está configurada corretamente
+        error_log("Sessão 'user_session' não está definida após login bem-sucedido.");
+        header('Location: ../index.php?error=session_not_set');
     }
 } else {
-    header('Location: ../index.php?error=1');
+    // Depuração: Login falhou
+    error_log("Login falhou para o email: $email");
+    header('Location: ../index.php?error=invalid_credentials');
 }
 ?>

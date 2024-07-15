@@ -4,12 +4,15 @@ include_once("sessao.php");
 
 $p = new Pessoa();
 
-$cod_pessoa = $_SESSION["cod_pessoa"];
+$cod_pessoa = $_SESSION["cod_pessoa"] ?? null;
 
-$result_p = $p->exibirPessoaUsuario($cod_pessoa);
-
-$row_p = $result_p->fetch(PDO::FETCH_ASSOC);
-  
+if ($cod_pessoa) {
+    $result_p = $p->exibirPessoaUsuario($cod_pessoa);
+    $row_p = $result_p->fetch(PDO::FETCH_ASSOC);
+} else {
+    error_log("cod_pessoa está vazio na sessão.");
+    $row_p = null;
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">

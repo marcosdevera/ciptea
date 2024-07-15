@@ -1,10 +1,14 @@
 <?php
 include_once('../classes/pessoa.class.php');
 include_once('../classes/documentos.class.php');
-include_once('../sessao.php');
 
 if (!isset($_SESSION)) {
     session_start();
+}
+
+if (!isset($_POST['cod_pessoa'])) {
+    echo json_encode(['success' => false, 'message' => 'Código da pessoa não fornecido.']);
+    exit;
 }
 
 $cod_pessoa = $_POST['cod_pessoa'];
@@ -12,6 +16,11 @@ $p = new Pessoa();
 $d = new Documentos();
 $result_pessoa = $p->exibirPessoaUsuario($cod_pessoa);
 $row_p = $result_pessoa->fetch(PDO::FETCH_ASSOC);
+
+if (!$row_p) {
+    echo json_encode(['success' => false, 'message' => 'Pessoa não encontrada.']);
+    exit;
+}
 
 // Buscar a foto 3x4
 $result_foto = $d->buscarDocumentoPessoa($cod_pessoa, 1); // 1 é o código do tipo de documento para a foto 3x4
@@ -21,25 +30,28 @@ if ($result_foto && $result_foto->rowCount() > 0) {
     $foto_path = '../uploads/' . $row_foto['vch_documento'];
 }
 
-// Verificação de documentos (simplificada)
+// Verificação de documentos obrigatórios
 $documentos_obrigatorios = [1, 2, 3, 4, 5]; // IDs dos tipos de documentos obrigatórios
 $documentos_enviados = [];
 
 foreach ($documentos_obrigatorios as $cod_tipo_documento) {
     $resultado = $d->buscarDocumentoPessoa($cod_pessoa, $cod_tipo_documento);
     if ($resultado && $resultado->rowCount() > 0) {
-        $documentos_enviados[] = $cod_tipo_documento;
+        $status = $resultado->fetch(PDO::FETCH_ASSOC)['status'];
+        if ($status == 1) { // Documento aprovado
+            $documentos_enviados[] = $cod_tipo_documento;
+        }
     }
 }
 
 if (count($documentos_enviados) == count($documentos_obrigatorios)) {
-    
+    // Gerar carteira
     $nome = $row_p['vch_nome'];
     $nomePai = $row_p['vch_nome_pai'];
     $nomeMae = $row_p['vch_nome_mae'];
     $dataNascimento = date("d/m/Y", strtotime($row_p['sdt_nascimento']));
     $endereco = $row_p['endereco'];
-    $bairro = $row_p['bairro'];                
+    $bairro = $row_p['bairro'];
     $telefone = $row_p['vch_telefone_contato'];
     $tipoSanguineo = $row_p['vch_tipo_sanguineo'];
     $cid = $row_p['cid'];

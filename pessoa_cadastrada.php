@@ -1,9 +1,9 @@
 <?php 
-  include('classes/pessoa.class.php');
-  
-  //Cria o Objeto
-  $p = new Pessoa();
-  $result = $p->exibirPessoa();
+include('classes/pessoa.class.php');
+
+// Cria o Objeto
+$p = new Pessoa();
+$result = $p->exibirPessoa();
 ?>
 <!doctype html>
 <html lang="pt-br">
@@ -153,27 +153,23 @@
             <td><?php echo date("d/m/Y", strtotime($row_pessoa["sdt_nascimento"])); ?></td>
             <td><?php echo $row_pessoa["cep"]; ?></td>
             <td align="center">
-              <?php 
-                $cod_pessoa_encode = base64_encode($row_pessoa["cod_pessoa"]);
-                $cod_usuario_encode = base64_encode($row_pessoa["cod_usuario"]);
-              ?>
-              <a href="avaliacao_documento.php?cod=<?php echo urlencode($cod_pessoa_encode) ?>">
-              <?php 
-                if($row_pessoa["status_foto"] == 1 && $row_pessoa["status_laudo"] == 1 && $row_pessoa["status_comprovante"] == 1 && $row_pessoa["status_documento"] == 1 && $row_pessoa["status_requerimento"] == 1){ ?>
-                  <button class="btn btn-success">Avaliar documentos</button>
-              <?php } else { ?>
-                  <button class="btn btn-primary">Avaliar documentos</button>
-              <?php } ?>
-              </a>
-              <?php 
-                if($row_pessoa["status_foto"] == 1 && $row_pessoa["status_laudo"] == 1 && $row_pessoa["status_comprovante"] == 1 && $row_pessoa["status_documento"] == 1 && $row_pessoa["status_requerimento"] == 1){ ?>
-                  <a href="carteirinha.php?cod_user=<?php echo urlencode($cod_usuario_encode) ?>">
-                    <button class="btn btn-primary" style="margin-top: 5px;">Gerar Carteirinha</button>
-                  </a>
-              <?php } else { ?>
-                  <button class="btn btn-danger" style="margin-top: 5px;">Gerar Carteirinha</button>
-              <?php } ?>
-            </td>
+  <?php 
+    $cod_pessoa_encode = base64_encode($row_pessoa["cod_pessoa"]);
+    $cod_usuario_encode = base64_encode($row_pessoa["cod_usuario"]);
+  ?>
+  <a href="avaliacao_documento.php?cod=<?php echo urlencode($cod_pessoa_encode) ?>">
+  <?php 
+    if($row_pessoa["status_foto"] == 1 && $row_pessoa["status_laudo"] == 1 && $row_pessoa["status_comprovante"] == 1 && $row_pessoa["status_documento"] == 1 && $row_pessoa["status_requerimento"] == 1){ ?>
+      <button class="btn btn-success">Avaliar documentos</button>
+  <?php } else { ?>
+      <button class="btn btn-primary">Avaliar documentos</button>
+  <?php } ?>
+  </a>
+  <form action="processamento/processar_status_carteira.php" method="post" style="display:inline;">
+    <input type="hidden" name="cod_pessoa" value="<?php echo $row_pessoa['cod_pessoa']; ?>">
+    <button type="submit" class="btn btn-primary" style="margin-top: 5px;">Gerar Carteirinha</button>
+  </form>
+</td>
           </tr>
         <?php 
         } ?>

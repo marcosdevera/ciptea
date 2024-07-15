@@ -47,7 +47,7 @@ class Obs {
         return $this->cod_tipo_documento;
     }
 
-    public function inserirObs(){
+    public function inserirObs() {
         try {
             $pdo = Database::conexao();            
             $data_atual = date('Y-m-d H:i:s');            
@@ -57,9 +57,18 @@ class Obs {
             $consulta->bindParam(':obs', $this->obs);
             $consulta->bindParam(':sdt_criacao', $data_atual);
             $consulta->execute();
-            $cod_pessoa_encode = base64_encode($this->cod_pessoa);
-            $cod_pessoa = urlencode($cod_pessoa_encode);
-            header('Location: ../avaliacao_documento.php?cod='. $cod_pessoa);
+        } catch (PDOException $e) {
+            echo "Erro: " . $e->getMessage();
+        }
+    }
+
+    public function removerObsAntigas($cod_pessoa, $cod_tipo_documento) {
+        try {
+            $pdo = Database::conexao();
+            $consulta = $pdo->prepare("DELETE FROM ciptea.observacao WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = :cod_tipo_documento");
+            $consulta->bindParam(':cod_pessoa', $cod_pessoa);
+            $consulta->bindParam(':cod_tipo_documento', $cod_tipo_documento);
+            $consulta->execute();
         } catch (PDOException $e) {
             echo "Erro: " . $e->getMessage();
         }

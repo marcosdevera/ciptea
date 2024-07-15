@@ -43,10 +43,27 @@ $result_d3 = buscarDocumento($cod_pessoa, 3); // Comprovante de Residência
 $result_d4 = buscarDocumento($cod_pessoa, 4); // Documento de Identidade
 $result_d5 = buscarDocumento($cod_pessoa, 5); // Requerimento
 
+function getStatusIcon($status) {
+    if ($status === null) {
+        return 'locked';
+    } elseif ($status == 0) {
+        return 'pending';
+    } elseif ($status == 1) {
+        return 'completed';
+    } elseif ($status == 2) {
+        return 'error';
+    }
+    return 'locked';
+}
 
-$d = new Documentos;
+// Verifica se todos os documentos estão completos
+$allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 1 &&
+                         isset($result_d2['status']) && $result_d2['status'] == 1 &&
+                         isset($result_d3['status']) && $result_d3['status'] == 1 &&
+                         isset($result_d4['status']) && $result_d4['status'] == 1 &&
+                         isset($result_d5['status']) && $result_d5['status'] == 1;
+
 ?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -106,16 +123,16 @@ $d = new Documentos;
             background-color: #b0b0b0;
         }
 
-        .step-icon.unlocked {
-            background-color: #808080;
+        .step-icon.pending {
+            background-color: #ffc107;
         }
 
         .step-icon.completed {
             background-color: #28a745;
         }
 
-        .step-icon.pending {
-            background-color: #ffc107;
+        .step-icon.error {
+            background-color: #dc3545;
         }
 
         .upload-section {
@@ -320,7 +337,7 @@ $d = new Documentos;
 
         <form name="requerimento">
             <div class="step" id="step-2">
-                <div class="step-icon <?php echo $d->getStatus($result_d5); ?>" id="requerimento-icon"><i class="fas fa-id-card"></i></div>
+                <div class="step-icon <?php echo getStatusIcon($result_d5['status'] ?? null); ?>" id="requerimento-icon"><i class="fas fa-id-card"></i></div>
                 <div>
                     <h4>2. Requerimento</h4>
                     <p>Para obter a carteira faça download do requerimento, imprima, assine e envie.</p>
@@ -333,14 +350,14 @@ $d = new Documentos;
                     </div>
                     <button type="button" id="uploadButtonRequerimento" class="btn btn-primary">Enviar Requerimento</button>
                     <div class="message" id="requerimento-message"></div>
-                    <?php echo displayObservacoes($cod_pessoa, 5); ?>
+                    <?php if ($observacoes = buscarObservacao($cod_pessoa, 5)) { foreach ($observacoes as $obs) { echo '<p class="message error">'.$obs['obs'].'</p>'; } } ?>
                 </div>
             </div>
         </form>
 
         <form id="uploadFormFoto">
             <div class="step" id="step-3">
-                <div class="step-icon <?php echo $d->getStatus($result_d1); ?>" id="foto-icon"><i class="fas fa-camera"></i></div>
+                <div class="step-icon <?php echo getStatusIcon($result_d1['status'] ?? null); ?>" id="foto-icon"><i class="fas fa-camera"></i></div>
                 <div>
                     <h4>3. Foto 3x4</h4>
                     <p>Envie uma foto 3x4 para o seu documento.</p>
@@ -357,14 +374,14 @@ $d = new Documentos;
                     <button type="button" id="uploadButtonFoto" class="btn btn-primary">Enviar Foto 3x4</button>
                     <button type="button" class="view-button <?php echo $result_d1 ? '' : 'disabled'; ?>" <?php echo $result_d1 ? 'onclick="window.open(\'uploads/' . $result_d1['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Foto Enviada</button>
                     <div class="message" id="foto-message"></div>
-                    <?php echo displayObservacoes($cod_pessoa, 1); ?>
+                    <?php if ($observacoes = buscarObservacao($cod_pessoa, 1)) { foreach ($observacoes as $obs) { echo '<p class="message error">'.$obs['obs'].'</p>'; } } ?>
                 </div>
             </div>
         </form>
 
         <form id="uploadFormIdentidade">
             <div class="step" id="step-4">
-                <div class="step-icon <?php echo $d->getStatus($result_d4); ?>" id="identidade-icon"><i class="fas fa-id-card-alt"></i></div>
+                <div class="step-icon <?php echo getStatusIcon($result_d4['status'] ?? null); ?>" id="identidade-icon"><i class="fas fa-id-card-alt"></i></div>
                 <div>
                     <h4>4. Documento de Identidade</h4>
                     <p>Envie a imagem de um documento de identificação com foto (RG, CNH, etc).</p>
@@ -381,14 +398,14 @@ $d = new Documentos;
                     <button type="button" id="uploadButtonIdentidade" class="btn btn-primary">Enviar Documento de Identidade</button>
                     <button type="button" class="view-button <?php echo $result_d4 ? '' : 'disabled'; ?>" <?php echo $result_d4 ? 'onclick="window.open(\'uploads/' . $result_d4['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Documento de Identidade Enviado</button>
                     <div class="message" id="identidade-message"></div>
-                    <?php echo displayObservacoes($cod_pessoa, 4); ?>
+                    <?php if ($observacoes = buscarObservacao($cod_pessoa, 4)) { foreach ($observacoes as $obs) { echo '<p class="message error">'.$obs['obs'].'</p>'; } } ?>
                 </div>
             </div>
         </form>
 
         <form id="uploadFormResidencia">
             <div class="step" id="step-5">
-                <div class="step-icon <?php echo $d->getStatus($result_d3); ?>" id="residencia-icon"><i class="fas fa-home"></i></div>
+                <div class="step-icon <?php echo getStatusIcon($result_d3['status'] ?? null); ?>" id="residencia-icon"><i class="fas fa-home"></i></div>
                 <div>
                     <h4>5. Comprovante de Residência</h4>
                     <p>Envie uma foto visível de um comprovante de residência.</p>
@@ -405,14 +422,14 @@ $d = new Documentos;
                     <button type="button" id="uploadButtonResidencia" class="btn btn-primary">Enviar Comprovante de Residência</button>
                     <button type="button" class="view-button <?php echo $result_d3 ? '' : 'disabled'; ?>" <?php echo $result_d3 ? 'onclick="window.open(\'uploads/' . $result_d3['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Comprovante de Residência Enviado</button>
                     <div class="message" id="residencia-message"></div>
-                    <?php echo displayObservacoes($cod_pessoa, 3); ?>
+                    <?php if ($observacoes = buscarObservacao($cod_pessoa, 3)) { foreach ($observacoes as $obs) { echo '<p class="message error">'.$obs['obs'].'</p>'; } } ?>
                 </div>
             </div>
         </form>
 
         <form id="uploadFormLaudo">
             <div class="step" id="step-6">
-                <div class="step-icon <?php echo  getStatus($result_d2); ?>" id="laudo-icon"><i class="fas fa-file-medical"></i></div>
+                <div class="step-icon <?php echo getStatusIcon($result_d2['status'] ?? null); ?>" id="laudo-icon"><i class="fas fa-file-medical"></i></div>
                 <div>
                     <h4>6. Laudo Médico</h4>
                     <p>Envie o laudo médico da pessoa que vai usar a carteira.</p>
@@ -427,7 +444,7 @@ $d = new Documentos;
                     <button type="button" id="uploadButtonLaudo" class="btn btn-primary">Enviar Laudo Médico</button>
                     <button type="button" class="view-button <?php echo $result_d2 ? '' : 'disabled'; ?>" <?php echo $result_d2 ? 'onclick="window.open(\'uploads/' . $result_d2['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Laudo Médico Enviado</button>
                     <div class="message" id="laudo-message"></div>
-                    <?php echo displayObservacoes($cod_pessoa, 2); ?>
+                    <?php if ($observacoes = buscarObservacao($cod_pessoa, 2)) { foreach ($observacoes as $obs) { echo '<p class="message error">'.$obs['obs'].'</p>'; } } ?>
                 </div>
             </div>
         </form>
@@ -435,10 +452,10 @@ $d = new Documentos;
         <h2>Validação da Carteira</h2>
         <form id="generateCardForm">
             <div class="step">
-                <div class="step-icon pending" id="generate-card-icon"><i class="fas fa-id-badge"></i></div>
+                <div class="step-icon <?php echo $allDocumentsCompleted ? 'completed' : 'pending'; ?>" id="generate-card-icon"><i class="fas fa-id-badge"></i></div>
                 <div>
                     <h4>Gerar Carteira</h4>
-                    <button type="button" id="generateCardButton" class="btn btn-success">Gerar Carteira</button>
+                    <button type="button" id="generateCardButton" class="btn btn-success" <?php echo $allDocumentsCompleted ? '' : 'disabled'; ?>>Gerar Carteira</button>
                     <div class="message" id="generate-card-message"></div>
                 </div>
             </div>
@@ -447,28 +464,6 @@ $d = new Documentos;
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                var uploadSections = document.querySelectorAll('.upload-section');
-                uploadSections.forEach(function (section) {
-                    section.addEventListener('dragover', function (event) {
-                        event.preventDefault();
-                        section.classList.add('dragover');
-                    });
-
-                    section.addEventListener('dragleave', function (event) {
-                        section.classList.remove('dragover');
-                    });
-
-                    section.addEventListener('drop', function (event) {
-                        event.preventDefault();
-                        section.classList.remove('dragover');
-                        var input = section.querySelector('input[type="file"]');
-                        input.files = event.dataTransfer.files;
-                        handleFileUpload(input);
-                    });
-                });
-            });
-
             $(document).ready(function () {
                 function updateViewButton(stepId, fileName) {
                     var step = document.getElementById(stepId);
@@ -479,14 +474,20 @@ $d = new Documentos;
 
                 function updateIcon(iconId, status) {
                     var icon = document.getElementById(iconId);
-                    icon.className = 'step-icon';
-                    if (status == 0) {
-                        icon.classList.add('pending');
+                    icon.className = 'step-icon ' + getStatusIcon(status);
+                }
+
+                function getStatusIcon(status) {
+                    if (status === null) {
+                        return 'locked';
+                    } else if (status == 0) {
+                        return 'pending';
                     } else if (status == 1) {
-                        icon.classList.add('completed');
+                        return 'completed';
                     } else if (status == 2) {
-                        icon.classList.add('locked');
+                        return 'error';
                     }
+                    return 'locked';
                 }
 
                 function showMessage(elementId, message, isError = false) {
@@ -520,7 +521,7 @@ $d = new Documentos;
                         success: function (response) {
                             var res = JSON.parse(response);
                             $('#requerimento-uploaded').html('<p>Arquivo enviado: ' + res.fileName + '</p>');
-                            updateIcon('requerimento-icon', res.status);
+                            updateIcon('requerimento-icon', 0); // Amarelo após o envio
                             updateViewButton('step-2', res.fileName);
                             showMessage('requerimento-message', res.message);
                         },
@@ -555,8 +556,8 @@ $d = new Documentos;
                         success: function (response) {
                             var res = JSON.parse(response);
                             $('#foto-34-uploaded').html('<p>Arquivo enviado: ' + res.fileName + '</p>');
-                            $('#foto-34').siblings('img').attr('src', 'uploads/' + res.fileName);
-                            updateIcon('foto-icon', res.status);
+                            $('#foto-34').siblings('img').attr('src', 'uploads/' + res.fileName); // Atualiza a imagem exibida
+                            updateIcon('foto-icon', 0); // Amarelo após o envio
                             updateViewButton('step-3', res.fileName);
                             showMessage('foto-message', res.message);
                         },
@@ -591,8 +592,8 @@ $d = new Documentos;
                         success: function (response) {
                             var res = JSON.parse(response);
                             $('#documento-identidade-uploaded').html('<p>Arquivo enviado: ' + res.fileName + '</p>');
-                            $('#documento-identidade').siblings('img').attr('src', 'uploads/' + res.fileName);
-                            updateIcon('identidade-icon', res.status);
+                            $('#documento-identidade').siblings('img').attr('src', 'uploads/' + res.fileName); // Atualiza a imagem exibida
+                            updateIcon('identidade-icon', 0); // Amarelo após o envio
                             updateViewButton('step-4', res.fileName);
                             showMessage('identidade-message', res.message);
                         },
@@ -627,8 +628,8 @@ $d = new Documentos;
                         success: function (response) {
                             var res = JSON.parse(response);
                             $('#comprovante-residencia-uploaded').html('<p>Arquivo enviado: ' + res.fileName + '</p>');
-                            $('#comprovante-residencia').siblings('img').attr('src', 'uploads/' + res.fileName);
-                            updateIcon('residencia-icon', res.status);
+                            $('#comprovante-residencia').siblings('img').attr('src', 'uploads/' + res.fileName); // Atualiza a imagem exibida
+                            updateIcon('residencia-icon', 0); // Amarelo após o envio
                             updateViewButton('step-5', res.fileName);
                             showMessage('residencia-message', res.message);
                         },
@@ -663,8 +664,8 @@ $d = new Documentos;
                         success: function (response) {
                             var res = JSON.parse(response);
                             $('#laudo-medico-uploaded').html('<p>Arquivo enviado: ' + res.fileName + '</p>');
-                            $('#laudo-medico').siblings('img').attr('src', 'uploads/' + res.fileName);
-                            updateIcon('laudo-icon', res.status);
+                            $('#laudo-medico').siblings('img').attr('src', 'uploads/' + res.fileName); // Atualiza a imagem exibida
+                            updateIcon('laudo-icon', 0); // Amarelo após o envio
                             updateViewButton('step-6', res.fileName);
                             showMessage('laudo-message', res.message);
                         },
@@ -696,39 +697,46 @@ $d = new Documentos;
                 });
 
                 $('#generateCardButton').click(function () {
-                    $.ajax({
-                        url: 'processamento/verificar_documentos.php',
-                        type: 'POST',
-                        data: { cod_pessoa: '<?php echo $cod_pessoa; ?>' },
-                        success: function (response) {
-                            var res = JSON.parse(response);
-                            if (res.allDocuments) {
-                                $.ajax({
-                                    url: 'processamento/gerar_carteira.php',
-                                    type: 'POST',
-                                    data: { cod_pessoa: '<?php echo $cod_pessoa; ?>' },
-                                    success: function (response) {
-                                        var res = JSON.parse(response);
-                                        if (res.success) {
-                                            showMessage('generate-card-message', "Carteira gerada com sucesso!");
-                                            window.open('carteirinha.php?cod_pessoa=<?php echo $cod_pessoa; ?>', '_blank');
-                                        } else {
-                                            showMessage('generate-card-message', "Erro ao gerar a carteira: " + res.message, true);
-                                        }
-                                    },
-                                    error: function (jqXHR, textStatus, errorThrown) {
-                                        showMessage('generate-card-message', "Erro ao gerar a carteira: " + textStatus, true);
-                                    }
-                                });
-                            } else {
-                                showMessage('generate-card-message', "Por favor, envie todos os documentos obrigatórios antes de gerar a carteira.", true);
-                            }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            showMessage('generate-card-message', "Erro ao verificar documentos: " + textStatus, true);
+    $.ajax({
+        url: 'processamento/verificar_documentos.php',
+        type: 'POST',
+        data: { action: 'verify_documents', cod_pessoa: '<?php echo $cod_pessoa; ?>' },
+        success: function (response) {
+            var res = JSON.parse(response);
+            if (res.allDocuments) {
+                $.ajax({
+                    url: 'processamento/gerar_carteira.php',
+                    type: 'POST',
+                    data: { cod_pessoa: '<?php echo $cod_pessoa; ?>' },
+                    success: function (response) {
+                        var res = JSON.parse(response);
+                        if (res.success) {
+                            showMessage('generate-card-message', "Carteira gerada com sucesso!");
+                            window.open('carteirinha.php?cod_pessoa=<?php echo $cod_pessoa; ?>', '_blank');
+                        } else {
+                            showMessage('generate-card-message', "Erro ao gerar a carteira: " + res.message, true);
                         }
-                    });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        showMessage('generate-card-message', "Erro ao gerar a carteira: " + textStatus, true);
+                    }
                 });
+            } else {
+                showMessage('generate-card-message', "Por favor, envie todos os documentos obrigatórios antes de gerar a carteira.", true);
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            showMessage('generate-card-message', "Erro ao verificar documentos: " + textStatus, true);
+        }
+    });
+});
+
+function showMessage(elementId, message, isError = false) {
+    var element = document.getElementById(elementId);
+    element.textContent = message;
+    element.classList.toggle('error', isError);
+}
+
 
                 <?php if ($result_d5): ?>
                     updateIcon('requerimento-icon', <?php echo $result_d5['status']; ?>);

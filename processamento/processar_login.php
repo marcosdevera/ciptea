@@ -9,24 +9,22 @@ $email = $_POST['login'] ?? '';
 $senha = $_POST['senha'] ?? '';
 
 $login = new Login();
+$loginSuccess = $login->login($email, $senha);
 
-if ($login->login($email, $senha)) {
-    // Obter informações adicionais do usuário, se necessário
-    $user = $login->getUser($email);
-    if ($user) {
-        // Exemplo de verificação adicional baseada no perfil do usuário
-        if ($user['perfil'] == 'admin') {
-            header('Location: ../admin_dashboard.php');
+if ($loginSuccess) {
+    if (isset($_SESSION["user_session"])) {
+        if ($_SESSION["nivel"] == 2) {
+            header('Location: ../pessoa_cadastrada.php');
         } else {
             header('Location: ../cadastro_inicialUP.php');
         }
         exit(); // Garantir que o script pare após o redirecionamento
     } else {
-        header('Location: ../index.php?error=1');
+        header('Location: ../index.php?error=session_not_set');
         exit();
     }
 } else {
-    header('Location: ../index.php?error=1');
+    header('Location: ../index.php?error=invalid_credentials');
     exit();
 }
 ?>

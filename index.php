@@ -140,8 +140,12 @@
         </div>
         <!-- Se houver um erro, exibe a mensagem -->
         <?php
-        if (isset($_GET['error']) && $_GET['error'] == 1) {
-            echo '<div class="alert">Email ou senha incorretos.</div>';
+        if (isset($_GET['error'])) {
+            if ($_GET['error'] == 'invalid_credentials') {
+                echo '<div class="alert">Email ou senha incorretos.</div>';
+            } elseif ($_GET['error'] == 'session_not_set') {
+                echo '<div class="alert">Erro na sessão. Por favor, tente novamente.</div>';
+            }
         }
         ?>
     </div>

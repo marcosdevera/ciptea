@@ -120,7 +120,7 @@ $obs = new Obs();
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="obsForm" action="processamento/processar_usuario.php" method="POST">
+                    <form id="obsForm" action="processamento/processar_documentos.php" method="POST">
                         <input type="hidden" name="MM_action" value="3">
                         <input type="hidden" name="cod_pessoa" id="modal_cod_pessoa">
                         <input type="hidden" name="cod_tipo_documento" id="modal_cod_tipo_documento">

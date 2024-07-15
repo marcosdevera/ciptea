@@ -35,6 +35,11 @@ try {
         $documentos->setCodTipoDocumento($_POST['cod_tipo_documento']);
         $documentos->setStatus($_POST['status']);
         $documentos->validarDocumento($_POST['status']);
+        
+        // Só mostrar mensagem de observação se o status não for "aprovado"
+        if ($_POST['status'] != 1) { // Assumindo que 1 é o status "aprovado"
+            echo "Observação adicionada.";
+        }
     }
 
 } catch (Exception $e) {

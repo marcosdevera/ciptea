@@ -94,7 +94,7 @@ $obs = new Obs();
                     </td>
                     <td class="text-center">
                         <h4>Ação</h4>
-                        <form action="processamento/processar_usuario.php" method="POST" style="display:inline;">
+                        <form action="processamento/processar_documentos.php" method="POST" style="display:inline;">
                             <input type="hidden" name="MM_action" value="2">
                             <input type="hidden" name="cod_pessoa" value="<?php echo $row_documento['cod_pessoa']; ?>">
                             <input type="hidden" name="cod_tipo_documento" value="<?php echo $row_documento['cod_tipo_documento']; ?>">

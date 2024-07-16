@@ -306,7 +306,7 @@
                 <h2>Informações de Acesso</h2>
                 <div class="form-group">
                     <label for="vch_login">Email (Será utilizado para acessar o sistema):</label>
-                    <input type="text" class="form-control" name="vch_login" id="vch_login" onblur="verificarLogin()" required>
+                    <input type="email" class="form-control" name="vch_login" id="vch_login" onblur="verificarLogin()" required>
                     <div id="loginError" class="error-message"></div>
                 </div>
                 <div class="form-group">

@@ -1,9 +1,16 @@
 <?php 
-include('classes/pessoa.class.php');
+include_once('classes/pessoa.class.php');
 
 // Cria o Objeto
 $p = new Pessoa();
-$result = $p->exibirPessoa();
+$localizar = isset($_GET['localizar']) ? $_GET['localizar'] : '';
+$cpf = isset($_GET['cpf']) ? $_GET['cpf'] : '';
+
+if ($localizar || $cpf) {
+    $result = $p->pesquisarPessoa($localizar, $cpf);
+} else {
+    $result = $p->exibirPessoa();
+}
 ?>
 <!doctype html>
 <html lang="pt-br">
@@ -103,10 +110,14 @@ $result = $p->exibirPessoa();
   <div class="container">
     <h3>Localizar</h3>
 
-    <form role="form" name="form2" action="<?php echo $_SERVER['PHP_SELF']; ?>" data-toggle="validator">
+    <form role="form" name="form2" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET" data-toggle="validator">
       <div class="input-group">
         <span class="input-group-addon"><i class="fas fa-search"></i></span>
-        <input id="localizar" type="text" maxlength="7" class="form-control" name="localizar" style="text-transform:uppercase;" placeholder="Nome">
+        <input id="localizar" type="text" class="form-control" name="localizar" style="text-transform:uppercase;" placeholder="Nome">
+        <input id="cpf" type="text" class="form-control" name="cpf" placeholder="CPF">
+        <span class="input-group-btn">
+            <button class="btn btn-primary" type="submit">Pesquisar</button>
+        </span>
       </div>
     </form>
 
@@ -141,8 +152,7 @@ $result = $p->exibirPessoa();
       </thead>
       <tbody>
       <?php 
-        while($row_pessoa = $result->fetch(PDO::FETCH_ASSOC))
-        { ?>
+        while($row_pessoa = $result->fetch(PDO::FETCH_ASSOC)) { ?>
           <tr>
             <td><?php echo $row_pessoa["vch_nome"]; ?></td>
             <td><?php echo $row_pessoa["vch_rg"]; ?></td>
@@ -153,42 +163,58 @@ $result = $p->exibirPessoa();
             <td><?php echo date("d/m/Y", strtotime($row_pessoa["sdt_nascimento"])); ?></td>
             <td><?php echo $row_pessoa["cep"]; ?></td>
             <td align="center">
-  <?php 
-    $cod_pessoa_encode = base64_encode($row_pessoa["cod_pessoa"]);
-    $cod_usuario_encode = base64_encode($row_pessoa["cod_usuario"]);
-  ?>
-  <a href="avaliacao_documento.php?cod=<?php echo urlencode($cod_pessoa_encode) ?>">
-  <?php 
-    if($row_pessoa["status_foto"] == 1 && $row_pessoa["status_laudo"] == 1 && $row_pessoa["status_comprovante"] == 1 && $row_pessoa["status_documento"] == 1 && $row_pessoa["status_requerimento"] == 1){ ?>
-      <button class="btn btn-success">Avaliar documentos</button>
-  <?php } else { ?>
-      <button class="btn btn-primary">Avaliar documentos</button>
-  <?php } ?>
-  </a>
-  <form action="processamento/processar_status_carteira.php" method="post" style="display:inline;">
-    <input type="hidden" name="cod_pessoa" value="<?php echo $row_pessoa['cod_pessoa']; ?>">
-    <button type="submit" class="btn btn-primary" style="margin-top: 5px;">Gerar Carteirinha</button>
-  </form>
-</td>
+              <?php 
+                $cod_pessoa_encode = base64_encode($row_pessoa["cod_pessoa"]);
+                $cod_usuario_encode = base64_encode($row_pessoa["cod_usuario"]);
+              ?>
+              <a href="avaliacao_documento.php?cod=<?php echo urlencode($cod_pessoa_encode) ?>">
+                <?php if($row_pessoa["status_foto"] == 1 && $row_pessoa["status_laudo"] == 1 && $row_pessoa["status_comprovante"] == 1 && $row_pessoa["status_documento"] == 1 && $row_pessoa["status_requerimento"] == 1){ ?>
+                  <button class="btn btn-success">Avaliar documentos</button>
+                <?php } else { ?>
+                  <button class="btn btn-primary">Avaliar documentos</button>
+                <?php } ?>
+              </a>
+              <button class="btn btn-danger" data-toggle="modal" data-target="#confirmModal" data-cod_pessoa="<?php echo $row_pessoa['cod_pessoa']; ?>">Apagar</button>
+            </td>
           </tr>
-        <?php 
-        } ?>
+      <?php } ?>
       </tbody>
     </table>
   </div>
-</div>
 
-<!-- Modal  -->
-<div id="myModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-    <!-- Modal content-->
-    <div class="modal-content">
+  <!-- Modal para confirmação de exclusão -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel">Confirmar Exclusão</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Você tem certeza que deseja apagar esta pessoa?
+        </div>
+        <div class="modal-footer">
+          <form action="processamento/apagar_cadastro.php" method="post">
+            <input type="hidden" name="cod_pessoa" id="deleteCodPessoa">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-danger">Apagar</button>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-<!-- Final Modal inserir--> 
 
-<!-- Scripts Extras -->
-<?php include("scripts.php"); ?>
+  <!-- Scripts Extras -->
+  <?php include("scripts.php"); ?>
+  <script>
+    $('#confirmModal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget);
+      var codPessoa = button.data('cod_pessoa');
+      var modal = $(this);
+      modal.find('#deleteCodPessoa').val(codPessoa);
+    });
+  </script>
 </body>
 </html>

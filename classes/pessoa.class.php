@@ -7,6 +7,12 @@ include_once('usuario.class.php');
 
 class Pessoa {
 
+    private $conn;
+
+    public function __construct() {
+        $this->conn = Database::conexao();
+    }
+
     private Responsavel $responsavel;
     private Documentos $laudo;
     private Documentos $foto;
@@ -506,7 +512,6 @@ class Pessoa {
     }
 
     public function exibirPessoa() {
-        $pdo = Database::conexao();
         $sql = "SELECT dp.*, 
                     dr.vch_nome_responsavel, 
                     status_foto.status AS status_foto,
@@ -535,8 +540,8 @@ class Pessoa {
                         WHEN status_foto.status = 0 AND status_laudo.status = 0 AND status_comprovante.status = 0 AND status_documento.status = 0 AND status_requerimento.status is NULL THEN 1
                         WHEN status_foto.status = 1 AND status_laudo.status = 1 AND status_comprovante.status = 1 AND status_documento.status = 1 AND status_requerimento.status = 1 THEN 3
                         ELSE 2
-                    END; ";
-        $consulta = $pdo->prepare($sql);
+                    END;";
+        $consulta = $this->conn->prepare($sql);
         $consulta->execute();
         return $consulta;
     }
@@ -602,6 +607,55 @@ class Pessoa {
         } catch (PDOException $e) {
             echo "Erro: " . $e->getMessage();
         }
+    }
+
+     public function pesquisarPessoa($localizar, $cpf) {
+        $pdo = Database::conexao(); // Certifique-se de que há uma conexão com o banco de dados
+        $sql = "SELECT dp.*, 
+                    dr.vch_nome_responsavel, 
+                    status_foto.status AS status_foto,
+                    status_laudo.status AS status_laudo,
+                    status_comprovante.status AS status_comprovante,
+                    status_documento.status AS status_documento,
+                    status_requerimento.status AS status_requerimento
+                FROM 
+                    ciptea.dados_pessoa AS dp
+                LEFT JOIN 
+                    ciptea.dados_responsavel_legal AS dr ON dp.cod_pessoa = dr.cod_pessoa
+                LEFT JOIN 
+                    (SELECT cod_pessoa, status FROM ciptea.documentos WHERE cod_tipo_documento = 1) AS status_foto ON dp.cod_pessoa = status_foto.cod_pessoa
+                LEFT JOIN 
+                    (SELECT cod_pessoa, status FROM ciptea.documentos WHERE cod_tipo_documento = 2) AS status_laudo ON dp.cod_pessoa = status_laudo.cod_pessoa
+                LEFT JOIN 
+                    (SELECT cod_pessoa, status FROM ciptea.documentos WHERE cod_tipo_documento = 3) AS status_comprovante ON dp.cod_pessoa = status_comprovante.cod_pessoa
+                LEFT JOIN 
+                    (SELECT cod_pessoa, status FROM ciptea.documentos WHERE cod_tipo_documento = 4) AS status_documento ON dp.cod_pessoa = status_documento.cod_pessoa
+                LEFT JOIN 
+                    (SELECT cod_pessoa, status FROM ciptea.documentos WHERE cod_tipo_documento = 5) AS status_requerimento ON dp.cod_pessoa = status_requerimento.cod_pessoa    
+                WHERE dp.vch_nome LIKE :localizar OR dp.vch_cpf LIKE :cpf
+                GROUP BY dp.cod_pessoa, dr.vch_nome_responsavel, status_foto, status_laudo, status_comprovante, status_documento, status_requerimento
+                ORDER BY 
+                    CASE    
+                        WHEN status_foto.status = 0 AND status_laudo.status = 0 AND status_comprovante.status = 0 AND status_documento.status = 0 AND status_requerimento.status = 0 THEN 0
+                        WHEN status_foto.status = 0 AND status_laudo.status = 0 AND status_comprovante.status = 0 AND status_documento.status = 0 AND status_requerimento.status is NULL THEN 1
+                        WHEN status_foto.status = 1 AND status_laudo.status = 1 AND status_comprovante.status = 1 AND status_documento.status = 1 AND status_requerimento.status = 1 THEN 3
+                        ELSE 2
+                    END;";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':localizar', '%' . $localizar . '%');
+        $stmt->bindValue(':cpf', '%' . $cpf . '%');
+        $stmt->execute();
+        return $stmt;
+    }
+
+
+    // Função para apagar pessoa
+    public function apagarPessoa($cod_pessoa) {
+        $sql = "DELETE FROM ciptea.dados_pessoa WHERE cod_pessoa = :cod_pessoa";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':cod_pessoa', $cod_pessoa);
+        return $stmt->execute();
+    }
 }
-}
+
 ?>

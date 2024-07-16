@@ -30,19 +30,20 @@ function buscarObservacao($cod_pessoa, $cod_tipo_documento) {
     $obs = new Obs();
     $documento = new Documentos();
     $documentoResultado = $documento->buscarDocumentoPessoa($cod_pessoa, $cod_tipo_documento);
-    
+
     if ($documentoResultado && $documentoResultado->rowCount() > 0) {
         $documentoData = $documentoResultado->fetch(PDO::FETCH_ASSOC);
         if ($documentoData['status'] == 2) { // Se o documento estiver recusado
             $resultado = $obs->exibirobsPorDocumento($cod_pessoa, $cod_tipo_documento);
             if ($resultado && $resultado->rowCount() > 0) {
-                return $resultado->fetchAll(PDO::FETCH_ASSOC);
+                return ['type' => 'recusado', 'observacoes' => $resultado->fetchAll(PDO::FETCH_ASSOC)];
             }
+        } elseif ($documentoData['status'] == 0) { // Se o documento estiver pendente
+            return ['type' => 'pendente', 'observacoes' => [['obs' => 'Documento Para Ser Avaliado']]];
         }
     }
     return null;
 }
-
 
 $result_d1 = buscarDocumento($cod_pessoa, 1); // Foto 3x4
 $result_d2 = buscarDocumento($cod_pessoa, 2); // Laudo Médico
@@ -262,6 +263,11 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
         .observation-message::before {
             content: "Documento Recusado: ";
         }
+        .pending-message {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffc107;
+        }
 
         @media (max-width: 767px) {
             .step {
@@ -367,7 +373,20 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                     </div>
                     <button type="button" id="uploadButtonRequerimento" class="btn btn-primary">Enviar Requerimento</button>
                     <div class="message" id="requerimento-message"></div>
-                    <?php if ($observacoes = buscarObservacao($cod_pessoa, 5)) { foreach ($observacoes as $obs) { echo '<p class="observation-message">'.$obs['obs'].'</p>'; } } ?>
+                    <?php 
+                    $observacoes_d5 = buscarObservacao($cod_pessoa, 5);
+                    if ($observacoes_d5) {
+                        if ($observacoes_d5['type'] == 'recusado') {
+                            foreach ($observacoes_d5['observacoes'] as $obs) {
+                                echo '<p class="observation-message">'.$obs['obs'].'</p>';
+                            }
+                        } elseif ($observacoes_d5['type'] == 'pendente') {
+                            foreach ($observacoes_d5['observacoes'] as $obs) {
+                                echo '<p class="pending-message">'.$obs['obs'].'</p>';
+                            }
+                        }
+                    }
+                    ?>
                 </div>
             </div>
         </form>
@@ -391,7 +410,20 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                     <button type="button" id="uploadButtonFoto" class="btn btn-primary">Enviar Foto 3x4</button>
                     <button type="button" class="view-button <?php echo $result_d1 ? '' : 'disabled'; ?>" <?php echo $result_d1 ? 'onclick="window.open(\'uploads/' . $result_d1['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Foto Enviada</button>
                     <div class="message" id="foto-message"></div>
-                    <?php if ($observacoes = buscarObservacao($cod_pessoa, 1)) { foreach ($observacoes as $obs) { echo '<p class="observation-message">'.$obs['obs'].'</p>'; } } ?>
+                    <?php 
+                    $observacoes_d1 = buscarObservacao($cod_pessoa, 1);
+                    if ($observacoes_d1) {
+                        if ($observacoes_d1['type'] == 'recusado') {
+                            foreach ($observacoes_d1['observacoes'] as $obs) {
+                                echo '<p class="observation-message">'.$obs['obs'].'</p>';
+                            }
+                        } elseif ($observacoes_d1['type'] == 'pendente') {
+                            foreach ($observacoes_d1['observacoes'] as $obs) {
+                                echo '<p class="pending-message">'.$obs['obs'].'</p>';
+                            }
+                        }
+                    }
+                    ?>
                 </div>
             </div>
         </form>
@@ -415,7 +447,20 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                     <button type="button" id="uploadButtonIdentidade" class="btn btn-primary">Enviar Documento de Identidade</button>
                     <button type="button" class="view-button <?php echo $result_d4 ? '' : 'disabled'; ?>" <?php echo $result_d4 ? 'onclick="window.open(\'uploads/' . $result_d4['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Documento de Identidade Enviado</button>
                     <div class="message" id="identidade-message"></div>
-                    <?php if ($observacoes = buscarObservacao($cod_pessoa, 4)) { foreach ($observacoes as $obs) { echo '<p class="observation-message">'.$obs['obs'].'</p>'; } } ?>
+                    <?php 
+                    $observacoes_d4 = buscarObservacao($cod_pessoa, 4);
+                    if ($observacoes_d4) {
+                        if ($observacoes_d4['type'] == 'recusado') {
+                            foreach ($observacoes_d4['observacoes'] as $obs) {
+                                echo '<p class="observation-message">'.$obs['obs'].'</p>';
+                            }
+                        } elseif ($observacoes_d4['type'] == 'pendente') {
+                            foreach ($observacoes_d4['observacoes'] as $obs) {
+                                echo '<p class="pending-message">'.$obs['obs'].'</p>';
+                            }
+                        }
+                    }
+                    ?>
                 </div>
             </div>
         </form>
@@ -439,7 +484,20 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                     <button type="button" id="uploadButtonResidencia" class="btn btn-primary">Enviar Comprovante de Residência</button>
                     <button type="button" class="view-button <?php echo $result_d3 ? '' : 'disabled'; ?>" <?php echo $result_d3 ? 'onclick="window.open(\'uploads/' . $result_d3['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Comprovante de Residência Enviado</button>
                     <div class="message" id="residencia-message"></div>
-                    <?php if ($observacoes = buscarObservacao($cod_pessoa, 3)) { foreach ($observacoes as $obs) { echo '<p class="observation-message">'.$obs['obs'].'</p>'; } } ?>
+                    <?php 
+                    $observacoes_d3 = buscarObservacao($cod_pessoa, 3);
+                    if ($observacoes_d3) {
+                        if ($observacoes_d3['type'] == 'recusado') {
+                            foreach ($observacoes_d3['observacoes'] as $obs) {
+                                echo '<p class="observation-message">'.$obs['obs'].'</p>';
+                            }
+                        } elseif ($observacoes_d3['type'] == 'pendente') {
+                            foreach ($observacoes_d3['observacoes'] as $obs) {
+                                echo '<p class="pending-message">'.$obs['obs'].'</p>';
+                            }
+                        }
+                    }
+                    ?>
                 </div>
             </div>
         </form>
@@ -461,7 +519,20 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                     <button type="button" id="uploadButtonLaudo" class="btn btn-primary">Enviar Laudo Médico</button>
                     <button type="button" class="view-button <?php echo $result_d2 ? '' : 'disabled'; ?>" <?php echo $result_d2 ? 'onclick="window.open(\'uploads/' . $result_d2['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Laudo Médico Enviado</button>
                     <div class="message" id="laudo-message"></div>
-                    <?php if ($observacoes = buscarObservacao($cod_pessoa, 2)) { foreach ($observacoes as $obs) { echo '<p class="observation-message">'.$obs['obs'].'</p>'; } } ?>
+                    <?php 
+                    $observacoes_d2 = buscarObservacao($cod_pessoa, 2);
+                    if ($observacoes_d2) {
+                        if ($observacoes_d2['type'] == 'recusado') {
+                            foreach ($observacoes_d2['observacoes'] as $obs) {
+                                echo '<p class="observation-message">'.$obs['obs'].'</p>';
+                            }
+                        } elseif ($observacoes_d2['type'] == 'pendente') {
+                            foreach ($observacoes_d2['observacoes'] as $obs) {
+                                echo '<p class="pending-message">'.$obs['obs'].'</p>';
+                            }
+                        }
+                    }
+                    ?>
                 </div>
             </div>
         </form>

@@ -23,15 +23,64 @@ $obs = new Obs();
     <meta charset="utf-8">
     <title>Avaliação de documentos</title>
     <!-- Bootstrap e dependências -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/formValidation.css">
-    <link rel="stylesheet" href="css/loading.css">
-    <link rel="stylesheet" href="css/bootstrap-combobox.css">
-    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url('images/background_login2.webp') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        .btn-primary, .btn-success, .btn-warning {
+            border-radius: 20px;
+            margin: 5px;
+        }
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        .document-preview {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: cover;
+        }
+        .navbar {
+            background-color: #343a40;
+            color: white;
+        }
+        .navbar .navbar-brand, .navbar-nav .nav-link {
+            color: white;
+        }
+        .navbar .nav-link:hover {
+            color: #007bff;
+        }
+    </style>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#"><i class="fas fa-home"></i> Início</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-cog"></i> Configurações</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="processamento/logout.php"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
     <div class="container">
         <div class="row">
             <div class="col-sm-10">
@@ -48,7 +97,7 @@ $obs = new Obs();
                 <a href="pessoa_cadastrada.php" class="btn btn-primary pull-right">Voltar</a>
             </div>
         </div>
-        <table class="table">
+        <table class="table table-striped">
             <tbody>
                 <?php
                 while ($row_documento = $doc->fetch(PDO::FETCH_ASSOC)) {
@@ -57,7 +106,7 @@ $obs = new Obs();
                 ?>
                 <tr>
                     <td style="vertical-align: middle">
-                        <?php echo "<a target='_blank' href='uploads/".$row_documento["vch_documento"]."'><img src='images/document.png' alt='Abrir Documento'></a>"?>
+                        <?php echo "<a target='_blank' href='uploads/".$row_documento["vch_documento"]."'><img src='uploads/".$row_documento["vch_documento"]."' alt='Abrir Documento' class='document-preview'></a>"?>
                     </td>
                     <td>
                         <h4>Tipo da documentação</h4>
@@ -99,9 +148,9 @@ $obs = new Obs();
                             <input type="hidden" name="cod_pessoa" value="<?php echo $row_documento['cod_pessoa']; ?>">
                             <input type="hidden" name="cod_tipo_documento" value="<?php echo $row_documento['cod_tipo_documento']; ?>">
                             <input type="hidden" name="status" value="<?php echo $row_documento['status'] == 0 || $row_documento['status'] == 2 ? '1' : '0'; ?>">
-                            <input type="submit" class="btn <?php echo $row_documento['status'] == 0 || $row_documento['status'] == 2 ? 'btn-success' : 'btn-warning'; ?>" value="<?php echo $row_documento['status'] == 0 || $row_documento['status'] == 2 ? 'Aprovar' : 'Desaprovar'; ?>">
+                            <input type="submit" class="btn btn-block <?php echo $row_documento['status'] == 0 || $row_documento['status'] == 2 ? 'btn-success' : 'btn-warning'; ?>" value="<?php echo $row_documento['status'] == 0 || $row_documento['status'] == 2 ? 'Aprovar' : 'Desaprovar'; ?>">
                         </form>
-                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#obsModal" data-cod_pessoa="<?php echo $cod_pessoa ?>" data-cod_tipo_documento="<?php echo $row_documento['cod_tipo_documento']; ?>">Escrever Observação</button>
+                        <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#obsModal" data-cod_pessoa="<?php echo $cod_pessoa ?>" data-cod_tipo_documento="<?php echo $row_documento['cod_tipo_documento']; ?>">Escrever Observação</button>
                     </td>
                 </tr>
                 <?php } ?>
@@ -126,7 +175,7 @@ $obs = new Obs();
                         <input type="hidden" name="cod_tipo_documento" id="modal_cod_tipo_documento">
                         <label for="obs">Nova observação:</label>
                         <textarea name="obs" id="obs" cols="30" rows="4" class="form-control mb-2"></textarea>
-                        <button type="submit" class="btn btn-primary">Enviar observação</button>
+                        <button type="submit" class="btn btn-primary btn-block">Enviar observação</button>
                     </form>
                 </div>
             </div>
@@ -134,7 +183,8 @@ $obs = new Obs();
     </div>
 
     <!-- Scripts Extras -->
-    <?php include("scripts.php"); ?>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script>
         $('#obsModal').on('show.bs.modal', function (event) {

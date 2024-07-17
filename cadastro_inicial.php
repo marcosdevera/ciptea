@@ -226,8 +226,8 @@
                 </div>
                 <div class="form-group">
                     <label for="vch_cpf">CPF:</label>
-                    <input type="text" class="form-control" name="vch_cpf" id="vch_cpf" oninput="formatarCPF('vch_cpf')" onblur="validarCPFOnBlur('vch_cpf')" maxlength="14" required>
-                    <div id="cpf-error" class="text-danger"></div>
+                        <input type="text" class="form-control" name="vch_cpf" id="vch_cpf" oninput="formatarCPF('vch_cpf'); limparCPFError();" onblur="validarCPFOnBlur('vch_cpf')" maxlength="14" required>
+                        <div id="cpf-error" class="text-danger"></div>
                 </div>
                 <div class="form-group">
                     <label for="vch_rg">RG:</label>
@@ -524,46 +524,108 @@
             alertDiv.style.display = "block";
         }
 
-        function validarCPFOnBlur(inputId) {
-            var cpfInput = document.getElementById(inputId);
-            var cpf = cpfInput.value.replace(/\D/g, '');
-            var cpfErrorDiv = document.getElementById('cpf-error');
 
-            if (!validarCPF(cpf)) {
-                cpfErrorDiv.innerHTML = 'CPF inválido.';
+        function validarCPFOnBlur(inputId) {
+    var cpfInput = document.getElementById(inputId);
+    var cpf = cpfInput.value.replace(/\D/g, '');
+    var cpfErrorDiv = document.getElementById('cpf-error');
+
+    if (!validarCPF(cpf)) {
+        cpfErrorDiv.innerHTML = 'CPF inválido.';
+        cpfErrorDiv.style.display = 'block';
+        cpfInput.classList.add('is-invalid');
+        cpfValido = false;
+        cpfInput.value = ''; // Limpa o campo de CPF em caso de erro
+        return;
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'processamento/verificar_cpf.php');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var response = JSON.parse(xhr.responseText);
+            if (response.status === 'error') {
+                cpfErrorDiv.innerHTML = response.message + ' <a href="recuperar_senha.php">Recuperar senha</a>';
                 cpfErrorDiv.style.display = 'block';
                 cpfInput.classList.add('is-invalid');
-                cpfInput.value = '';
                 cpfValido = false;
-                return;
+                cpfInput.value = ''; // Limpa o campo de CPF em caso de erro
+            } else {
+                cpfErrorDiv.innerHTML = '';
+                cpfErrorDiv.style.display = 'none';
+                cpfInput.classList.remove('is-invalid');
+                cpfValido = true;
             }
-
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'processamento/verificar_cpf.php');
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.status === 'error') {
-                        cpfErrorDiv.innerHTML = response.message;
-                        cpfErrorDiv.style.display = 'block';
-                        cpfInput.classList.add('is-invalid');
-                        cpfValido = false;
-                    } else {
-                        cpfErrorDiv.innerHTML = '';
-                        cpfErrorDiv.style.display = 'none';
-                        cpfInput.classList.remove('is-invalid');
-                        cpfValido = true;
-                    }
-                } else {
-                    cpfErrorDiv.innerHTML = 'Erro ao verificar o CPF.';
-                    cpfErrorDiv.style.display = 'block';
-                    cpfInput.classList.add('is-invalid');
-                    cpfValido = false;
-                }
-            };
-            xhr.send('cpf=' + cpf);
+        } else {
+            cpfErrorDiv.innerHTML = 'Erro ao verificar o CPF.';
+            cpfErrorDiv.style.display = 'block';
+            cpfInput.classList.add('is-invalid');
+            cpfValido = false;
+            cpfInput.value = ''; // Limpa o campo de CPF em caso de erro
         }
+    };
+    xhr.send('cpf=' + cpf);
+}
+
+function limparCPFError() {
+    var cpfErrorDiv = document.getElementById('cpf-error');
+    cpfErrorDiv.innerHTML = '';
+    cpfErrorDiv.style.display = 'none';
+    cpfValido = true; // Reseta a validação do CPF
+}
+
+function formatCPF(cpf) {
+    cpf = cpf.replace(/\D/g, '');
+    cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+    cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+    cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    return cpf;
+}
+
+function formatarCPF(inputId) {
+    var cpfInput = document.getElementById(inputId);
+    cpfInput.value = formatCPF(cpfInput.value);
+}
+
+function validarCPF(cpf) {
+    cpf = cpf.replace(/\D/g, '');
+    if (cpf.length !== 11) return false;
+
+    var cpfArray = cpf.split('').map(Number);
+    var sum = 0;
+    var mod;
+
+    for (var i = 0, j = 10; i < 9; i++, j--) {
+        sum += cpfArray[i] * j;
+    }
+    mod = sum % 11;
+    var firstDigit = mod < 2 ? 0 : 11 - mod;
+    if (cpfArray[9] !== firstDigit) return false;
+
+    sum = 0;
+    for (var i = 0, j = 11; i < 10; i++, j--) {
+        sum += cpfArray[i] * j;
+    }
+    mod = sum % 11;
+    var secondDigit = mod < 2 ? 0 : 11 - mod;
+    if (cpfArray[10] !== secondDigit) return false;
+    if (cpf.length !== 11 ||
+        cpf === '00000000000' ||
+        cpf === '11111111111' ||
+        cpf === '22222222222' ||
+        cpf === '33333333333' ||
+        cpf === '44444444444' ||
+        cpf === '55555555555' ||
+        cpf === '66666666666' ||
+        cpf === '77777777777' ||
+        cpf === '88888888888' ||
+        cpf === '99999999999') {
+        return false;
+    }
+
+    return true;
+}
 
         function validarCPFOnBlurResponsavel(inputId) {
             var cpfInput = document.getElementById(inputId);
@@ -596,57 +658,6 @@
             return true;
         }
 
-        function formatCPF(cpf) {
-            cpf = cpf.replace(/\D/g, '');
-            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
-            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
-            cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-            return cpf;
-        }
-
-        function formatarCPF(inputId) {
-            var cpfInput = document.getElementById(inputId);
-            cpfInput.value = formatCPF(cpfInput.value);
-        }
-
-        function validarCPF(cpf) {
-            cpf = cpf.replace(/\D/g, '');
-            if (cpf.length !== 11) return false;
-
-            var cpfArray = cpf.split('').map(Number);
-            var sum = 0;
-            var mod;
-
-            for (var i = 0, j = 10; i < 9; i++, j--) {
-                sum += cpfArray[i] * j;
-            }
-            mod = sum % 11;
-            var firstDigit = mod < 2 ? 0 : 11 - mod;
-            if (cpfArray[9] !== firstDigit) return false;
-
-            sum = 0;
-            for (var i = 0, j = 11; i < 10; i++, j--) {
-                sum += cpfArray[i] * j;
-            }
-            mod = sum % 11;
-            var secondDigit = mod < 2 ? 0 : 11 - mod;
-            if (cpfArray[10] !== secondDigit) return false;
-            if (cpf.length !== 11 ||
-                cpf === '00000000000' ||
-                cpf === '11111111111' ||
-                cpf === '22222222222' ||
-                cpf === '33333333333' ||
-                cpf === '44444444444' ||
-                cpf === '55555555555' ||
-                cpf === '66666666666' ||
-                cpf === '77777777777' ||
-                cpf === '88888888888' ||
-                cpf === '99999999999') {
-                return false;
-            }
-
-            return true;
-        }
 
         function formatarRG() {
             var rgInput = document.getElementById('vch_rg');

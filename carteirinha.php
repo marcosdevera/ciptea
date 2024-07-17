@@ -1,13 +1,10 @@
 <?php
-ob_start(); // Inicia o buffer de saída
-
 require 'vendor/autoload.php'; // Inclui o autoload do Composer
 include_once('classes/pessoa.class.php');
 include_once('sessao.php');
 include_once('classes/documentos.class.php');
 
-use setasign\Fpdi\Tcpdf\Fpdi;
-use Intervention\Image\ImageManagerStatic as Image;
+use TCPDF;
 
 // Verifica se a sessão está iniciada
 if (!isset($_SESSION)) {
@@ -51,29 +48,27 @@ $row_p = $result_pessoa->fetch(PDO::FETCH_ASSOC) ?: [];
 $result_foto = $d->buscarDocumentoPessoa($cod_pessoa, 1);
 $foto_path = $result_foto && $result_foto->rowCount() > 0 ? 'uploads/' . $result_foto->fetch(PDO::FETCH_ASSOC)['vch_documento'] : 'uploads/default_photo.png';
 
-// Ajustar a imagem para o tamanho 3x4 (300x400 pixels)
-$image = Image::make($foto_path);
-$image->fit(300, 400, function ($constraint) {
-    $constraint->upsize();
-});
-$adjusted_photo_path = 'uploads/adjusted_photo.png';
-$image->save($adjusted_photo_path);
+class MYPDF extends TCPDF {
+    // Página inicial do PDF
+    public function Header() {
+        $this->Image('images/1_front.jpg', 0, 0, 72, 114);
+    }
 
-$front_pdf = 'images/1.pdf';
-$back_pdf = 'images/2.pdf';
+    // Página de fundo do PDF
+    public function AddBackground() {
+        $this->AddPage();
+        $this->Image('images/2_back.jpg', 0, 0, 72, 114);
+    }
+}
 
-$pdf = new Fpdi();
-$pdf->AddPage('P', [72, 114]);
-$pdf->setSourceFile($front_pdf);
-$tplIdx = $pdf->importPage(1);
-$pdf->useTemplate($tplIdx, 0, 0, 72, 114);
-
-// Remover margens e desativar quebra automática de página
+$pdf = new MYPDF('P', 'mm', [72, 114], true, 'UTF-8', false);
 $pdf->SetMargins(0, 0, 0);
-$pdf->SetAutoPageBreak(false);
+$pdf->SetAutoPageBreak(false, 0);
+$pdf->AddPage();
 
-// Adicionar a imagem da pessoa
-$pdf->Image($adjusted_photo_path, 24.5, 25.3, 22.7, 31);
+// Adicionar a imagem da pessoa cortada ao tamanho 3x4 (300x400 pixels)
+// Posicionar a imagem para que ela fique centrada no espaço desejado
+$pdf->Image($foto_path, 24.5, 25.3, 22.7, 30.5, '', '', '', false, 300, '', false, false, 0, false, false, true);
 
 // Definir a fonte e a cor do texto
 $pdf->SetFont('helvetica', 'B', 12); // Negrito e tamanho maior para o nome
@@ -98,11 +93,7 @@ $pdf->SetXY(0, 104); // Ajuste Y para uma posição próxima ao fundo
 $pdf->Cell(72, 10, 'ATENDIMENTO PRIORITÁRIO LEI Nº 13.977/2020', 0, 1, 'C');
 
 // Verso do crachá
-$pdf->AddPage('P', [72, 114]);
-$pdf->setSourceFile($back_pdf);
-$tplIdx = $pdf->importPage(1);
-$pdf->useTemplate($tplIdx, 0, 0, 72, 114);
-
+$pdf->AddBackground();
 $pdf->SetFont('helvetica', '', 8);
 $pdf->SetTextColor(0, 0, 0);
 $pdf->SetXY(5, 60);
@@ -123,4 +114,4 @@ ob_end_clean(); // Limpa o buffer de saída
 
 // Saída do PDF
 $pdf->Output('identificacao.pdf', 'I');
-?>
+?> e aqui só com tcpdf

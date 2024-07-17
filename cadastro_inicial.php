@@ -533,6 +533,7 @@
                 cpfErrorDiv.innerHTML = 'CPF inválido.';
                 cpfErrorDiv.style.display = 'block';
                 cpfInput.classList.add('is-invalid');
+                cpfInput.value = '';
                 cpfValido = false;
                 return;
             }
@@ -722,6 +723,8 @@
                     var response = xhr.responseText;
                     if (response === '1') {
                         document.getElementById('loginError').innerText = 'Este login já está vinculado a um CPF, por favor, tente a recuperação de senha, ou um outro email.';
+
+                        login.value = '';
                         emailValido = false;
                     } else {
                         document.getElementById('loginError').innerText = '';

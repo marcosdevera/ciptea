@@ -546,7 +546,7 @@
         if (xhr.status === 200) {
             var response = JSON.parse(xhr.responseText);
             if (response.status === 'error') {
-                cpfErrorDiv.innerHTML = response.message + ' <a href="recuperar_senha.php">Recuperar senha</a>';
+                cpfErrorDiv.innerHTML = 'CPF inválido ou já cadastrado. <a href="recuperar_senha.php">Recuperar senha</a>';
                 cpfErrorDiv.style.display = 'block';
                 cpfInput.classList.add('is-invalid');
                 cpfValido = false;

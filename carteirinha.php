@@ -1,42 +1,31 @@
 <?php
 require 'vendor/autoload.php'; // Inclui o autoload do Composer
+require_once('vendor/tecnickcom/tcpdf/tcpdf.php'); // Inclui a biblioteca TCPDF
 include_once('classes/pessoa.class.php');
 include_once('sessao.php');
 include_once('classes/documentos.class.php');
 
-use TCPDF;
-
-// Verifica se a sessão está iniciada
 if (!isset($_SESSION)) {
     session_start();
 }
 
-// Verifica se 'cod_pessoa' está definido
 if (!isset($_POST['cod_pessoa']) && !isset($_GET['cod_pessoa'])) {
     echo 'cod_pessoa não fornecido.';
     exit;
 }
 
 function formatarTelefone($numero) {
-    // Remove qualquer caractere não numérico
     $numero = preg_replace('/\D/', '', $numero);
-    
-    // Verifica o comprimento do número para determinar o formato
     $tamanho = strlen($numero);
-    
     if ($tamanho === 10) {
-        // Formato: (XX) XXXX-XXXX
         return preg_replace('/(\d{2})(\d{4})(\d{4})/', '($1) $2-$3', $numero);
     } elseif ($tamanho === 11) {
-        // Formato: (XX) XXXXX-XXXX
         return preg_replace('/(\d{2})(\d{5})(\d{4})/', '($1) $2-$3', $numero);
     } else {
-        // Retorna o número sem formatação se não tiver 10 ou 11 dígitos
         return $numero;
     }
 }
 
-// Obter 'cod_pessoa' da URL ou POST
 $cod_pessoa = isset($_POST['cod_pessoa']) ? $_POST['cod_pessoa'] : $_GET['cod_pessoa'];
 
 $p = new Pessoa();
@@ -48,13 +37,56 @@ $row_p = $result_pessoa->fetch(PDO::FETCH_ASSOC) ?: [];
 $result_foto = $d->buscarDocumentoPessoa($cod_pessoa, 1);
 $foto_path = $result_foto && $result_foto->rowCount() > 0 ? 'uploads/' . $result_foto->fetch(PDO::FETCH_ASSOC)['vch_documento'] : 'uploads/default_photo.png';
 
+// Redimensionar e cortar a imagem para 3x4 cm (300x400 px)
+$largura = 300;
+$altura = 400;
+$salvar_em = 'uploads/adjusted_photo.jpg';
+
+
+function redimensionarECortarImagem($caminho, $largura_alvo, $altura_alvo, $salvar_em) {
+    $imagem = imagecreatefromjpeg($caminho);
+    $largura_original = imagesx($imagem);
+    $altura_original = imagesy($imagem);
+
+    // Calcula a proporção para ajustar a imagem sem distorcê-la
+    $proporcao_original = $largura_original / $altura_original;
+    $proporcao_alvo = $largura_alvo / $altura_alvo;
+
+    if ($proporcao_original > $proporcao_alvo) {
+        // A imagem é mais larga do que precisamos, cortar a largura
+        $nova_altura = $altura_alvo;
+        $nova_largura = intval($altura_alvo * $proporcao_original);
+    } else {
+        // A imagem é mais alta do que precisamos, cortar a altura
+        $nova_largura = $largura_alvo;
+        $nova_altura = intval($largura_alvo / $proporcao_original);
+    }
+
+    // Criar nova imagem redimensionada
+    $imagem_redimensionada = imagecreatetruecolor($largura_alvo, $altura_alvo);
+
+    // Copia com ajuste de tamanho
+    imagecopyresampled($imagem_redimensionada, $imagem, 
+        0 - intval(($nova_largura - $largura_alvo) / 2), // centro a imagem no eixo X
+        0 - intval(($nova_altura - $altura_alvo) / 2),   // centro a imagem no eixo Y
+        0, 0, 
+        $nova_largura, $nova_altura, 
+        $largura_original, $altura_original
+    );
+
+    // Salvar a imagem redimensionada
+    imagejpeg($imagem_redimensionada, $salvar_em);
+    imagedestroy($imagem);
+    imagedestroy($imagem_redimensionada);
+}
+
+redimensionarECortarImagem($foto_path, $largura, $altura, $salvar_em);
+
 class MYPDF extends TCPDF {
-    // Página inicial do PDF
     public function Header() {
         $this->Image('images/1_front.jpg', 0, 0, 72, 114);
     }
 
-    // Página de fundo do PDF
     public function AddBackground() {
         $this->AddPage();
         $this->Image('images/2_back.jpg', 0, 0, 72, 114);
@@ -66,12 +98,11 @@ $pdf->SetMargins(0, 0, 0);
 $pdf->SetAutoPageBreak(false, 0);
 $pdf->AddPage();
 
-// Adicionar a imagem da pessoa cortada ao tamanho 3x4 (300x400 pixels)
-// Posicionar a imagem para que ela fique centrada no espaço desejado
-$pdf->Image($foto_path, 24.5, 25.3, 22.7, 30.5, '', '', '', false, 300, '', false, false, 0, false, false, true);
+// Adicionar a imagem da pessoa redimensionada
+$pdf->Image($salvar_em, 24.5, 25.3, 22.7, 31);
 
 // Definir a fonte e a cor do texto
-$pdf->SetFont('helvetica', 'B', 12); // Negrito e tamanho maior para o nome
+$pdf->SetFont('helvetica', 'B', 12);
 $pdf->SetTextColor(0, 0, 0);
 $pdf->SetXY(5, 60);
 $pdf->Cell(62, 10, strtoupper($row_p['vch_nome']), 0, 1, 'C');
@@ -89,10 +120,10 @@ $pdf->MultiCell(62, 4,
 // Posicionar o texto na parte inferior da primeira página
 $pdf->SetTextColor(255, 255, 0);
 $pdf->SetFont('helvetica', 'B', 8);
-$pdf->SetXY(0, 104); // Ajuste Y para uma posição próxima ao fundo
+$pdf->SetXY(0, 104);
 $pdf->Cell(72, 10, 'ATENDIMENTO PRIORITÁRIO LEI Nº 13.977/2020', 0, 1, 'C');
 
-// Verso do crachá
+// Adicionar o verso do crachá
 $pdf->AddBackground();
 $pdf->SetFont('helvetica', '', 8);
 $pdf->SetTextColor(0, 0, 0);
@@ -107,11 +138,9 @@ $pdf->MultiCell(62, 4,
 // Posicionar o texto na parte inferior da segunda página
 $pdf->SetTextColor(255, 255, 0);
 $pdf->SetFont('helvetica', 'B', 8);
-$pdf->SetXY(0, 104); // Ajuste Y para uma posição próxima ao fundo
+$pdf->SetXY(0, 104);
 $pdf->Cell(72, 10, 'ATENDIMENTO PRIORITÁRIO LEI Nº 13.977/2020', 0, 1, 'C');
 
-ob_end_clean(); // Limpa o buffer de saída
-
-// Saída do PDF
+ob_end_clean();
 $pdf->Output('identificacao.pdf', 'I');
-?> e aqui só com tcpdf
+?>

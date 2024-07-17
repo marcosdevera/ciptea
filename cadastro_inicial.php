@@ -713,27 +713,45 @@
             var telefone = inputTelefone.value;
             inputTelefone.value = formatarTelefone(telefone);
         }
+        
         function verificarLogin() {
-            var login = document.getElementById('vch_login').value;
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'processamento/verificar_login.php');
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    var response = xhr.responseText;
-                    if (response === '1') {
-                        document.getElementById('loginError').innerText = 'Este login já está vinculado a um CPF, por favor, tente a recuperação de senha, ou um outro email.';
+    var loginInput = document.getElementById('vch_login');
+    var login = loginInput.value;
+    var xhr = new XMLHttpRequest();
+    
+    // Verificar se o campo de login está vazio antes de fazer a solicitação
+    if (login === '') {
+        document.getElementById('loginError').innerText = 'O campo de e-mail não pode estar vazio.';
+        return;
+    }
 
-                        login.value = '';
-                        emailValido = false;
-                    } else {
-                        document.getElementById('loginError').innerText = '';
-                        emailValido = true;
-                    }
-                }
-            };
-            xhr.send('login=' + login);
+    xhr.open('POST', 'processamento/verificar_login.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var response = xhr.responseText;
+            if (response === '1') {
+                loginInput.value = ''; // Apaga o campo quando o login é inválido
+                document.getElementById('loginError').innerText = 'Este login já está vinculado a um CPF, por favor, tente a recuperação de senha, ou um outro email.';
+                emailValido = false;
+            } else {
+                document.getElementById('loginError').innerText = '';
+                emailValido = true;
+            }
+        } else {
+            // Tratamento de erro para outros status HTTP
+            document.getElementById('loginError').innerText = 'Erro ao verificar o login. Tente novamente mais tarde.';
         }
+    };
+
+    xhr.onerror = function() {
+        // Tratamento de erro para falha na requisição
+        document.getElementById('loginError').innerText = 'Erro de rede. Verifique sua conexão e tente novamente.';
+    };
+
+    xhr.send('login=' + encodeURIComponent(login));
+}
 
         function buscarEndereco(cepId, enderecoId, bairroId, cidadeId, errorId) {
             var cep = document.getElementById(cepId).value.replace(/\D/g, '');

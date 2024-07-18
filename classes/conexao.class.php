@@ -17,37 +17,20 @@ class Database
     private function __construct()
     {
         # Informações sobre o banco de dados:
-       // $db_host = "10.0.1.56";
        $db_host = "10.0.1.56";
-       //$db_host = "127.0.0.1";
        $db_nome = "sedes";
        $db_usuario = "postgres";
        $db_senha = "postgresteste";
+       $db_driver = "pgsql"; 
+
+/*       $db_host = "10.0.1.7";
+       //$db_host = "127.0.0.1";
+       $db_nome = "sedes";
+       $db_usuario = "sistemas";
+       $db_senha = "geprosistemas";
        $db_driver = "pgsql";
+*/
 
-        // $db_host = "10.0.1.56";
-        // //$db_host = "127.0.0.1";
-        // $db_nome = "sedes";
-        // $db_usuario = "postgres";
-        // $db_senha = "postgresteste";
-        // $db_driver = "pgsql";
-
-        // $db_host = "localhost";
-        // //$db_host = "127.0.0.1";
-        // $db_nome = "ciptea";
-        // $db_usuario = "root";
-        // $db_senha = "";
-        // $db_driver = "mysql";
-
-        // $db_usuario = "root";
-        // $db_senha = ""; 
-        // $db_driver = "mysql";
-        # Informações sobre o sistema:
-        // $sistema_titulo = "pascoa";
-        // $sistema_email = "alguem@gmail.com";
-        //$db_nome2 = "siscomb_balanca";
-        //dbcompras
-        # Informações sobre o banco de dados:
 
         try {
             # Atribui o objeto PDO à variável $db.

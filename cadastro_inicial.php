@@ -6,9 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Pessoa</title>
     <link rel="icon" href="images/imagemtopo.png" type="image/png">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -190,12 +191,12 @@
                 <h2>Endereço</h2>
                 <div class="form-group">
                     <label for="cep">CEP:</label>
-                    <input type="text" class="form-control" name="cep" id="cep" oninput="aplicarMascaraCEP('cep')" maxlength="9" required onblur="buscarEndereco('cep', 'endereco', 'bairro', 'cidade', 'cepError')">
+                    <input type="text" class="form-control" name="cep" id="cep" oninput="aplicarMascaraCEP('cep')" maxlength="9" onblur="buscarEndereco('cep', 'endereco', 'bairro', 'cidade', 'cepError')">
                     <div id="cepError" class="error-message"></div>
                 </div>
                 <div class="form-group">
                     <label for="endereco">Endereço:</label>
-                    <input type="text" class="form-control" name="endereco" id="endereco" placeholder="Exemplo: Avenida Alameda das Travessas, nº 111"  required>
+                    <input type="text" class="form-control" name="endereco" id="endereco" placeholder="Exemplo: Avenida Alameda das Travessas, nº 111" required>
                 </div>
                 <div class="form-group">
                     <label for="bairro">Bairro:</label>
@@ -290,7 +291,7 @@
                     </div>
                     <div class="form-group">
                         <label for="vch_endereco_responsavel">Endereço do Responsável:</label>
-                        <input type="text" class="form-control" name="vch_endereco_responsavel" id="vch_endereco_responsavel" placeholder="Exemplo: Avenida Alameda das Travessas, nº 111" >
+                        <input type="text" class="form-control" name="vch_endereco_responsavel" id="vch_endereco_responsavel" placeholder="Exemplo: Avenida Alameda das Travessas, nº 111">
                     </div>
                     <div class="form-group">
                         <label for="vch_bairro_responsavel">Bairro do Responsável:</label>
@@ -330,7 +331,6 @@
         </form>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         var currentStep = 0;
         var cpfValido = false;
@@ -422,8 +422,14 @@
             }
 
             if (n == 1 && !cepValido) {
-                document.getElementById("cepError").innerText = "CEP inválido.";
-                valid = false;
+                document.getElementById("cepError").innerText = "";
+                // Validar que pelo menos um dos campos de endereço está preenchido
+                var endereco = document.getElementById('endereco').value;
+                var bairro = document.getElementById('bairro').value;
+                var cidade = document.getElementById('cidade').value;
+                if (endereco === "" || bairro === "" || cidade === "") {
+                    valid = false;
+                }
             }
 
             if (n == 3) {
@@ -568,12 +574,36 @@
     xhr.send('cpf=' + cpf);
 }
 
-function limparCPFError() {
-    var cpfErrorDiv = document.getElementById('cpf-error');
-    cpfErrorDiv.innerHTML = '';
-    cpfErrorDiv.style.display = 'none';
-    cpfValido = true; // Reseta a validação do CPF
-}
+        function validarCPFOnBlurResponsavel(inputId) {
+            var cpfInput = document.getElementById(inputId);
+            var cpf = cpfInput.value.replace(/\D/g, '');
+            var isValid = validarCPF(cpf);
+            if (!isValid) {
+                document.getElementById("cpfErrorResponsavel").innerText = 'CPF inválido.';
+                cpfValido = false;
+            } else {
+                document.getElementById("cpfErrorResponsavel").innerText = '';
+                cpfValido = true;
+            }
+        }
+
+        function triggerButtonError() {
+            var buttons = document.querySelectorAll(" .next, .submit");
+            buttons.forEach(button => {
+                button.classList.add("btn-error");
+                setTimeout(function() {
+                    button.classList.remove("btn-error");
+                }, 500);
+            });
+        }
+
+        function validarFormulario() {
+            if (!cpfValido || !emailValido) {
+                triggerButtonError();
+                return false;
+            }
+            return true;
+        }
 
 function formatCPF(cpf) {
     cpf = cpf.replace(/\D/g, '');
@@ -724,7 +754,7 @@ function validarCPF(cpf) {
             var telefone = inputTelefone.value;
             inputTelefone.value = formatarTelefone(telefone);
         }
-        
+
         function verificarLogin() {
     var loginInput = document.getElementById('vch_login');
     var login = loginInput.value;

@@ -1,7 +1,10 @@
 <?php 
 include_once('classes/pessoa.class.php');
 
-// Cria o Objeto
+if (!isset($_SESSION)) {
+    session_start();
+}
+
 $p = new Pessoa();
 $localizar = isset($_GET['localizar']) ? $_GET['localizar'] : '';
 $cpf = isset($_GET['cpf']) ? $_GET['cpf'] : '';
@@ -15,28 +18,11 @@ if ($localizar || $cpf) {
 <!doctype html>
 <html lang="pt-br">
 <head>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
   <title>Confirmação de Pessoa</title>
-
-  <!-- Custom styles for this template -->
-  <link href="css/menu-lateral.css" rel="stylesheet">
-
-  <!-- Bootstrap e dependências -->
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/formValidation.css">
-  <link rel="stylesheet" href="css/loading.css">
-  <link rel="stylesheet" href="css/bootstrap-combobox.css">
-  <link rel="stylesheet" href="css/custom.css">
-
-  <!-- Font Awesome -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-  <!-- Bootstrap core CSS -->
-  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-
   <style>
     body {
       font-family: 'Poppins', sans-serif;
@@ -48,9 +34,9 @@ if ($localizar || $cpf) {
     .container {
       margin-top: 30px;
       padding: 20px;
-      background-color: rgba(255, 255, 255, 0.9);
+      background-color: rgba(255, 255, 255, 0.8);
       border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     }
     .navbar {
       background-color: #343a40;
@@ -66,28 +52,8 @@ if ($localizar || $cpf) {
       background-color: #007bff;
       color: white;
     }
-    .table .btn {
-      margin: 0 2px;
-    }
     .btn-primary, .btn-success, .btn-danger {
       border-radius: 20px;
-    }
-    .form-group label {
-      font-weight: bold;
-    }
-    .input-group {
-      margin-bottom: 15px;
-    }
-    .input-group-addon {
-      display: flex;
-      align-items: center;
-      padding: 10px;
-      background-color: #e9ecef;
-      border: 1px solid #ced4da;
-      border-radius: 4px;
-    }
-    .alert {
-      margin-top: 15px;
     }
   </style>
 </head>
@@ -110,33 +76,25 @@ if ($localizar || $cpf) {
   <div class="container">
     <h3>Localizar</h3>
 
-    <form role="form" name="form2" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET" data-toggle="validator">
-      <div class="input-group">
-        <span class="input-group-addon"><i class="fas fa-search"></i></span>
-        <input id="localizar" type="text" class="form-control" name="localizar" style="text-transform:uppercase;" placeholder="Nome">
-        <input id="cpf" type="text" class="form-control" name="cpf" placeholder="CPF">
-        <span class="input-group-btn">
+    <?php
+    if (isset($_SESSION['mensagem'])) {
+        echo '<div class="alert alert-' . $_SESSION['tipo_mensagem'] . '">' . $_SESSION['mensagem'] . '</div>';
+        unset($_SESSION['mensagem']);
+        unset($_SESSION['tipo_mensagem']);
+    }
+    ?>
+
+    <form role="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET">
+      <div class="input-group mb-3">
+        <input id="localizar" type="text" class="form-control" name="localizar" placeholder="Nome" value="<?php echo $localizar; ?>">
+        <input id="cpf" type="text" class="form-control" name="cpf" placeholder="CPF" value="<?php echo $cpf; ?>">
+        <div class="input-group-append">
             <button class="btn btn-primary" type="submit">Pesquisar</button>
-        </span>
+        </div>
       </div>
     </form>
 
-    <?php 
-      if(isset($_GET['msg'])) {
-        $msg = $_GET['msg']; 
-        if($msg == 1) { ?>
-          <div class="alert alert-success">
-            <strong>Sucesso!</strong> Operação concluída.
-          </div> 
-    <?php } 
-        if($msg == 2) { ?>
-          <div class="alert alert-danger">
-            <strong>Erro!</strong> Operação não pode ser concluída.
-          </div>
-    <?php } 
-      } ?>
-    
-    <table class="table table-striped table-bordered" style="margin-top:10px;">
+    <table class="table table-striped table-bordered">
       <thead>
         <tr>
           <th>Nome</th>
@@ -206,8 +164,9 @@ if ($localizar || $cpf) {
     </div>
   </div>
 
-  <!-- Scripts Extras -->
-  <?php include("scripts.php"); ?>
+  <!-- Inclui jQuery e Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
   <script>
     $('#confirmModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget);

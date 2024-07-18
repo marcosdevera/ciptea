@@ -3,6 +3,31 @@ include_once("classes/documentos.class.php");
 include_once('classes/obs.class.php');
 include_once("sessao.php");
 
+session_start();
+
+// Função para validar o token
+function validar_token($token) {
+    $tokens = json_decode(file_get_contents('tokens.json'), true);
+    if (isset($tokens[$token]) && !$tokens[$token]['used']) {
+        // Marca o token como usado
+        $tokens[$token]['used'] = true;
+        file_put_contents('tokens.json', json_encode($tokens, JSON_PRETTY_PRINT));
+        return true;
+    }
+    return false;
+}
+
+// Verifica se o token foi enviado
+if (isset($_POST['token'])) {
+    $token = $_POST['token'];
+    if (validar_token($token)) {
+        $_SESSION['authorized'] = true;
+        header('Location: pagina_autorizada.php');
+        exit();
+    } else {
+        $erro = 'Token inválido ou já utilizado.';
+    }
+}
 $d = new Documentos();
 
 $cod_pessoa_decode = urldecode($_GET['cod']);

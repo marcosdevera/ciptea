@@ -1,10 +1,18 @@
 <?php
-include_once ("classes/avaliador.class.php");
+session_start();
+
+if (!isset($_SESSION['authorized']) || !$_SESSION['authorized']) {
+    header('Location: login_registro_avaliador.php');
+    exit();
+}
+
+include_once("classes/avaliador.class.php");
 
 $a = new Avaliador();
 $result_avaliador = $a->exibirAvaliadores();
-$count_avaliador = $result_avaliador->rowCount(); 
+$count_avaliador = $result_avaliador->rowCount();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -72,6 +80,11 @@ $count_avaliador = $result_avaliador->rowCount();
         .alert {
             margin-top: 20px;
         }
+        .logout-btn {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
     </style>
 
     <script>
@@ -132,6 +145,12 @@ $count_avaliador = $result_avaliador->rowCount();
               </tbody>
             </table>
         <?php } ?>
+
+        <div class="logout-btn">
+            <form action="processamento/logout.php" method="POST">
+                <button type="submit" class="btn btn-danger">Logout</button>
+            </form>
+        </div>
     </div>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

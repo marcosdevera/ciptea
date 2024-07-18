@@ -39,7 +39,7 @@ function buscarObservacao($cod_pessoa, $cod_tipo_documento) {
                 return ['type' => 'recusado', 'observacoes' => $resultado->fetchAll(PDO::FETCH_ASSOC)];
             }
         } elseif ($documentoData['status'] == 0) { // Se o documento estiver pendente
-            return ['type' => 'pendente', 'observacoes' => [['obs' => 'Documento Para Ser Avaliado']]];
+            return ['type' => 'pendente', 'observacoes' => [['obs' => 'Pendente de avaliação']]];
         }
     }
     return null;

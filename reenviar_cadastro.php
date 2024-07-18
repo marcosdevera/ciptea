@@ -161,7 +161,7 @@ if ($cod_pessoa) {
                 <div class="form-group">
                     <label for="cep">CEP:</label>
                     <input type="text" class="form-control" name="cep" id="cep" oninput="aplicarMascaraCEP('cep')"
-                        maxlength="9" value="<?php echo isset($row_p['cep']) ? $row_p['cep'] : ''; ?>" required
+                        maxlength="9" value="<?php echo isset($row_p['cep']) ? $row_p['cep'] : ''; ?>" 
                         onblur="buscarEndereco('cep', 'endereco', 'bairro', 'cidade', 'cepError')">
                     <div id="cepError" class="error-message"></div>
                 </div>
@@ -209,7 +209,7 @@ if ($cod_pessoa) {
                     <label for="vch_cpf">CPF:</label>
                     <input type="text" class="form-control" name="vch_cpf" id="vch_cpf" 
                         maxlength="14" value="<?php echo isset($row_p['vch_cpf']) ? $row_p['vch_cpf'] : ''; ?>"
-                        required oninput="formatarCPF('vch_cpf')" onblur="validarCPFOnBlur('vch_cpf')">
+                        required oninput="formatarCPF('vch_cpf')" onblur="validarCPFOnBlur('vch_cpf', '<?php echo isset($row_p['vch_cpf']) ? $row_p['vch_cpf'] : ''; ?>')">
                     <div id="cpf-error" class="text-danger"></div>
                 </div>
                 <div class="form-group">
@@ -252,14 +252,14 @@ if ($cod_pessoa) {
                 <div class="form-group">
                     <label for="tem_representante">Possui Representante Legal?</label>
                     <select class="form-control" name="bool_representante_legal" id="tem_representante"
-                        onchange="toggleRepresentanteLegal()">
+                        onchange="toggleRepresentanteLegal()" required>
                         <option value="0" <?php echo isset($row_p['bool_representante_legal']) &&
                             $row_p['bool_representante_legal']==0 ? 'selected' : '' ; ?>>Não</option>
                         <option value="1" <?php echo isset($row_p['bool_representante_legal']) &&
                             $row_p['bool_representante_legal']==1 ? 'selected' : '' ; ?>>Sim</option>
                     </select>
                 </div>
-                <div id="representante_legal" style="display: none;">
+                <div id="representante_legal" style="display: <?php echo isset($row_p['bool_representante_legal']) && $row_p['bool_representante_legal'] == 1 ? 'block' : 'none'; ?>;">
                     <div class="form-group">
                         <label for="vch_nome_responsavel">Nome do Representante:</label>
                         <input type="text" class="form-control" name="vch_nome_responsavel" id="vch_nome_responsavel"
@@ -333,8 +333,8 @@ if ($cod_pessoa) {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         var currentStep = 0;
-        var cpfValido = false;
-        var cepValido = false;
+        var cpfValido = true;  // Definido como true por padrão
+        var cepValido = true;  // Definido como true por padrão
 
         showStep(currentStep);
 
@@ -584,6 +584,7 @@ if ($cod_pessoa) {
             var telefone = inputTelefone.value;
             inputTelefone.value = formatarTelefone(telefone);
         }
+
         function verificarLogin() {
             var login = document.getElementById('vch_login').value;
             var xhr = new XMLHttpRequest();
@@ -632,92 +633,91 @@ if ($cod_pessoa) {
             }
         }
 
-        function validarCPFOnBlur(inputId) {
-    var cpfInput = document.getElementById(inputId);
-    var cpf = cpfInput.value.replace(/\D/g, '');
-    var cpfErrorDiv = document.getElementById('cpf-error');
-    var currentCpf = "<?php echo isset($row_p['vch_cpf']) ? $row_p['vch_cpf'] : ''; ?>".replace(/\D/g, '');
+        function validarCPFOnBlur(inputId, currentCpf) {
+            var cpfInput = document.getElementById(inputId);
+            var cpf = cpfInput.value.replace(/\D/g, '');
+            var cpfErrorDiv = document.getElementById('cpf-error');
 
-    if (!validarCPF(cpf)) {
-        cpfErrorDiv.innerHTML = 'CPF inválido.';
-        cpfErrorDiv.style.display = 'block';
-        cpfInput.classList.add('is-invalid');
-        cpfValido = false;
-        return;
-    }
-
-    if (cpf !== currentCpf) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'processamento/verificar_cpf.php');
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                var response = JSON.parse(xhr.responseText);
-                if (response.status === 'error') {
-                    cpfErrorDiv.innerHTML = response.message;
-                    cpfErrorDiv.style.display = 'block';
-                    cpfInput.classList.add('is-invalid');
-                    cpfValido = false;
-                } else {
-                    cpfErrorDiv.innerHTML = '';
-                    cpfErrorDiv.style.display = 'none';
-                    cpfInput.classList.remove('is-invalid');
-                    cpfValido = true;
-                }
-            } else {
-                cpfErrorDiv.innerHTML = 'Erro ao verificar o CPF.';
+            if (!validarCPF(cpf)) {
+                cpfErrorDiv.innerHTML = 'CPF inválido.';
                 cpfErrorDiv.style.display = 'block';
                 cpfInput.classList.add('is-invalid');
                 cpfValido = false;
+                return;
             }
-        };
-        xhr.send('cpf=' + cpf);
-    } else {
-        cpfErrorDiv.innerHTML = '';
-        cpfErrorDiv.style.display = 'none';
-        cpfInput.classList.remove('is-invalid');
-        cpfValido = true;
-    }
-}
 
-function validarCPF(cpf) {
-    cpf = cpf.replace(/\D/g, '');
-    if (cpf.length !== 11) return false;
+            if (cpf !== currentCpf.replace(/\D/g, '')) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'processamento/verificar_cpf.php');
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.status === 'error') {
+                            cpfErrorDiv.innerHTML = response.message;
+                            cpfErrorDiv.style.display = 'block';
+                            cpfInput.classList.add('is-invalid');
+                            cpfValido = false;
+                        } else {
+                            cpfErrorDiv.innerHTML = '';
+                            cpfErrorDiv.style.display = 'none';
+                            cpfInput.classList.remove('is-invalid');
+                            cpfValido = true;
+                        }
+                    } else {
+                        cpfErrorDiv.innerHTML = 'Erro ao verificar o CPF.';
+                        cpfErrorDiv.style.display = 'block';
+                        cpfInput.classList.add('is-invalid');
+                        cpfValido = false;
+                    }
+                };
+                xhr.send('cpf=' + cpf);
+            } else {
+                cpfErrorDiv.innerHTML = '';
+                cpfErrorDiv.style.display = 'none';
+                cpfInput.classList.remove('is-invalid');
+                cpfValido = true;
+            }
+        }
 
-    var cpfArray = cpf.split('').map(Number);
-    var sum = 0;
-    var mod;
+        function validarCPF(cpf) {
+            cpf = cpf.replace(/\D/g, '');
+            if (cpf.length !== 11) return false;
 
-    for (var i = 0, j = 10; i < 9; i++, j--) {
-        sum += cpfArray[i] * j;
-    }
-    mod = sum % 11;
-    var firstDigit = mod < 2 ? 0 : 11 - mod;
-    if (cpfArray[9] !== firstDigit) return false;
+            var cpfArray = cpf.split('').map(Number);
+            var sum = 0;
+            var mod;
 
-    sum = 0;
-    for (var i = 0, j = 11; i < 10; i++, j--) {
-        sum += cpfArray[i] * j;
-    }
-    mod = sum % 11;
-    var secondDigit = mod < 2 ? 0 : 11 - mod;
-    if (cpfArray[10] !== secondDigit) return false;
-    if (cpf.length !== 11 ||
-        cpf === '00000000000' ||
-        cpf === '11111111111' ||
-        cpf === '22222222222' ||
-        cpf === '33333333333' ||
-        cpf === '44444444444' ||
-        cpf === '55555555555' ||
-        cpf === '66666666666' ||
-        cpf === '77777777777' ||
-        cpf === '88888888888' ||
-        cpf === '99999999999') {
-        return false;
-    }
+            for (var i = 0, j = 10; i < 9; i++, j--) {
+                sum += cpfArray[i] * j;
+            }
+            mod = sum % 11;
+            var firstDigit = mod < 2 ? 0 : 11 - mod;
+            if (cpfArray[9] !== firstDigit) return false;
 
-    return true;
-}
+            sum = 0;
+            for (var i = 0, j = 11; i < 10; i++, j--) {
+                sum += cpfArray[i] * j;
+            }
+            mod = sum % 11;
+            var secondDigit = mod < 2 ? 0 : 11 - mod;
+            if (cpfArray[10] !== secondDigit) return false;
+            if (cpf.length !== 11 ||
+                cpf === '00000000000' ||
+                cpf === '11111111111' ||
+                cpf === '22222222222' ||
+                cpf === '33333333333' ||
+                cpf === '44444444444' ||
+                cpf === '55555555555' ||
+                cpf === '66666666666' ||
+                cpf === '77777777777' ||
+                cpf === '88888888888' ||
+                cpf === '99999999999') {
+                return false;
+            }
+
+            return true;
+        }
 
     </script>
 </body>

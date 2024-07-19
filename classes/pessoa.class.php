@@ -576,38 +576,7 @@ class Pessoa {
             echo "Erro: ". $e;
         }    
     }
-    public function inserirDocumento() {
-        try {
-            $pdo = Database::conexao();
-            $sql = "INSERT INTO ciptea.documentos (cod_pessoa, cod_tipo_documento, vch_documento, status, sdt_insercao) VALUES (:cod_pessoa, :cod_tipo_documento, :vch_documento, :status, :sdt_insercao)";
-            $consulta = $pdo->prepare($sql);
-            $consulta->bindParam(':cod_pessoa', $this->cod_pessoa);
-            $consulta->bindParam(':cod_tipo_documento', $this->cod_tipo_documento);
-            $consulta->bindParam(':vch_documento', $this->vch_documento);
-            $consulta->bindParam(':status', $this->status);
-            $consulta->bindParam(':sdt_insercao', $this->sdt_insercao);
-            $consulta->execute();
-        } catch (PDOException $e) {
-            echo "Erro: " . $e->getMessage();
-        }
-    }
-
-    // Função para atualizar um documento
-    public function atualizarDocumento() {
-        try {
-            $pdo = Database::conexao();
-            $sql = "UPDATE ciptea.documentos SET vch_documento = :vch_documento, status = :status, sdt_insercao = :sdt_insercao WHERE cod_pessoa = :cod_pessoa AND cod_tipo_documento = :cod_tipo_documento";
-            $consulta = $pdo->prepare($sql);
-            $consulta->bindParam(':vch_documento', $this->vch_documento);
-            $consulta->bindParam(':status', $this->status);
-            $consulta->bindParam(':sdt_insercao', $this->sdt_insercao);
-            $consulta->bindParam(':cod_pessoa', $this->cod_pessoa);
-            $consulta->bindParam(':cod_tipo_documento', $this->cod_tipo_documento);
-            $consulta->execute();
-        } catch (PDOException $e) {
-            echo "Erro: " . $e->getMessage();
-        }
-    }
+  
 
      public function pesquisarPessoa($localizar, $cpf) {
         $pdo = Database::conexao(); // Certifique-se de que há uma conexão com o banco de dados

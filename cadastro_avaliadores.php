@@ -13,7 +13,6 @@ $result_avaliador = $a->exibirAvaliadores();
 $count_avaliador = $result_avaliador->rowCount();
 ?>
 
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>

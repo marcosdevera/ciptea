@@ -1,34 +1,27 @@
 <?php
 session_start();
+include_once('classes/conexao.class.php');
 
-function decrypt_key($encrypted_key, $encryption_key) {
-    return openssl_decrypt($encrypted_key, 'AES-128-ECB', $encryption_key);
-}
-
-// Chave de criptografia (deve ser a mesma usada na geração)
-$encryption_key = '762f7aac76768bca9d5edc200565f214f24b0c6070e0f304b333de2b092f909b';
-
-// Função para validar a chave de acesso
-function validar_chave($chave, $encryption_key) {
-    $keys = json_decode(file_get_contents('keys.json'), true);
-    $encrypted_key = $keys['access_key'];
-    $decrypted_key = decrypt_key($encrypted_key, $encryption_key);
-    return $chave === $decrypted_key;
-}
-
-// Verifica se a chave de acesso foi enviada
-if (isset($_POST['access_key'])) {
+// Verifica se o formulário foi enviado
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['access_key'])) {
     $access_key = $_POST['access_key'];
-    if (validar_chave($access_key, $encryption_key)) {
+
+    // Conexão com o banco de dados
+    $pdo = Database::conexao();
+    $sql = "SELECT senha_hash FROM ciptea.dados_avaliador WHERE cod_avaliador = 5"; // Usando o cod_avaliador 5 para armazenar a senha
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($result && password_verify($access_key, $result['senha_hash'])) {
         $_SESSION['authorized'] = true;
         header('Location: cadastro_avaliadores.php');
         exit();
     } else {
-        $erro = 'Chave de acesso inválida.';
+        $erro = 'Senha inválida.';
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -74,7 +74,7 @@ if ($localizar || $cpf) {
   </nav>
 
   <div class="container">
-    <h3>Localizar</h3>
+    <h3>Localizar por CPF</h3>
 
     <?php
     if (isset($_SESSION['mensagem'])) {
@@ -86,7 +86,6 @@ if ($localizar || $cpf) {
 
     <form role="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET">
       <div class="input-group mb-3">
-        <input id="localizar" type="text" class="form-control" name="localizar" placeholder="Nome" value="<?php echo $localizar; ?>">
         <input id="cpf" type="text" class="form-control" name="cpf" placeholder="CPF" value="<?php echo $cpf; ?>">
         <div class="input-group-append">
             <button class="btn btn-primary" type="submit">Pesquisar</button>

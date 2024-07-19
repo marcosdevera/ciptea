@@ -601,7 +601,7 @@ class Pessoa {
                     (SELECT cod_pessoa, status FROM ciptea.documentos WHERE cod_tipo_documento = 4) AS status_documento ON dp.cod_pessoa = status_documento.cod_pessoa
                 LEFT JOIN 
                     (SELECT cod_pessoa, status FROM ciptea.documentos WHERE cod_tipo_documento = 5) AS status_requerimento ON dp.cod_pessoa = status_requerimento.cod_pessoa    
-                WHERE dp.vch_nome LIKE :localizar OR dp.vch_cpf LIKE :cpf
+                WHERE  dp.vch_cpf ilike :cpf
                 GROUP BY dp.cod_pessoa, dr.vch_nome_responsavel, status_foto, status_laudo, status_comprovante, status_documento, status_requerimento
                 ORDER BY 
                     CASE    
@@ -611,7 +611,7 @@ class Pessoa {
                         ELSE 2
                     END;";
         $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':localizar', '%' . $localizar . '%');
+//        $stmt->bindValue(':localizar', '%' . $localizar . '%');  dp.vch_nome ilike :localizar OR
         $stmt->bindValue(':cpf', '%' . $cpf . '%');
         $stmt->execute();
         return $stmt;

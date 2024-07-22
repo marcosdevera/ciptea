@@ -3,7 +3,6 @@ include_once("classes/documentos.class.php");
 include_once('classes/obs.class.php');
 include_once("sessao.php");
 
-session_start();
 
 // Função para validar o token
 function validar_token($token) {
@@ -28,6 +27,7 @@ if (isset($_POST['token'])) {
         $erro = 'Token inválido ou já utilizado.';
     }
 }
+
 $d = new Documentos();
 
 $cod_pessoa_decode = urldecode($_GET['cod']);

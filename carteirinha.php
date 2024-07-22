@@ -42,9 +42,13 @@ $largura = 300;
 $altura = 400;
 $salvar_em = 'uploads/adjusted_photo.jpg';
 
-
 function redimensionarECortarImagem($caminho, $largura_alvo, $altura_alvo, $salvar_em) {
-    $imagem = imagecreatefromjpeg($caminho);
+    $imagem = @imagecreatefromstring(file_get_contents($caminho));
+    if (!$imagem) {
+        echo 'Falha ao criar a imagem.';
+        return;
+    }
+
     $largura_original = imagesx($imagem);
     $altura_original = imagesy($imagem);
 

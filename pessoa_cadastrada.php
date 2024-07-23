@@ -52,8 +52,14 @@ if ($localizar || $cpf) {
       background-color: #007bff;
       color: white;
     }
-    .btn-primary, .btn-success, .btn-danger {
+    .btn-primary, .btn-success, .btn-danger, .btn-warning {
       border-radius: 20px;
+      margin-bottom: 5px;
+    }
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
     }
   </style>
 </head>
@@ -124,14 +130,22 @@ if ($localizar || $cpf) {
                 $cod_pessoa_encode = base64_encode($row_pessoa["cod_pessoa"]);
                 $cod_usuario_encode = base64_encode($row_pessoa["cod_usuario"]);
               ?>
-              <a href="avaliacao_documento.php?cod=<?php echo urlencode($cod_pessoa_encode) ?>">
+              <div class="btn-group">
+                <a href="avaliacao_documento.php?cod=<?php echo urlencode($cod_pessoa_encode) ?>">
+                  <?php if($row_pessoa["status_foto"] == 1 && $row_pessoa["status_laudo"] == 1 && $row_pessoa["status_comprovante"] == 1 && $row_pessoa["status_documento"] == 1 && $row_pessoa["status_requerimento"] == 1){ ?>
+                    <button class="btn btn-success">Avaliar documentos</button>
+                  <?php } else { ?>
+                    <button class="btn btn-primary">Avaliar documentos</button>
+                  <?php } ?>
+                </a>
                 <?php if($row_pessoa["status_foto"] == 1 && $row_pessoa["status_laudo"] == 1 && $row_pessoa["status_comprovante"] == 1 && $row_pessoa["status_documento"] == 1 && $row_pessoa["status_requerimento"] == 1){ ?>
-                  <button class="btn btn-success">Avaliar documentos</button>
-                <?php } else { ?>
-                  <button class="btn btn-primary">Avaliar documentos</button>
+                  <form action="carteirinha.php" method="POST" style="display:inline;">
+                    <input type="hidden" name="cod_pessoa" value="<?php echo $row_pessoa["cod_pessoa"]; ?>">
+                    <button type="submit" class="btn btn-warning">Gerar Carteira</button>
+                  </form>
                 <?php } ?>
-              </a>
-              <button class="btn btn-danger" data-toggle="modal" data-target="#confirmModal" data-cod_pessoa="<?php echo $row_pessoa['cod_pessoa']; ?>">Apagar</button>
+                <button class="btn btn-danger" data-toggle="modal" data-target="#confirmModal" data-cod_pessoa="<?php echo $row_pessoa['cod_pessoa']; ?>" data-nome_pessoa="<?php echo $row_pessoa['vch_nome']; ?>">Apagar</button>
+              </div>
             </td>
           </tr>
       <?php } ?>
@@ -150,7 +164,7 @@ if ($localizar || $cpf) {
           </button>
         </div>
         <div class="modal-body">
-          Você tem certeza que deseja apagar esta pessoa?
+          Você tem certeza que deseja apagar a pessoa <span id="nomePessoa"></span>?
         </div>
         <div class="modal-footer">
           <form action="processamento/apagar_cadastro.php" method="post">
@@ -170,8 +184,10 @@ if ($localizar || $cpf) {
     $('#confirmModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget);
       var codPessoa = button.data('cod_pessoa');
+      var nomePessoa = button.data('nome_pessoa');
       var modal = $(this);
       modal.find('#deleteCodPessoa').val(codPessoa);
+      modal.find('#nomePessoa').text(nomePessoa);
     });
   </script>
 </body>

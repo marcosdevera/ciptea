@@ -781,6 +781,43 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                     });
                 });
 
+                
+                $('#generateCardButton').click(function () {
+                    $.ajax({
+                        url: 'processamento/verificar_documentos.php',
+                        type: 'POST',
+                        data: { action: 'verify_documents', cod_pessoa: '<?php echo $cod_pessoa; ?>' },
+                        success: function (response) {
+                            var res = JSON.parse(response);
+                            if (res.allDocuments) {
+                                $.ajax({
+                                    url: 'processamento/gerar_carteira.php',
+                                    type: 'POST',
+                                    data: { cod_pessoa: '<?php echo $cod_pessoa; ?>' },
+                                    success: function (response) {
+                                        var res = JSON.parse(response);
+                                        if (res.success) {
+                                            showMessage('generate-card-message', "Carteira gerada com sucesso!");
+                                            window.open('carteirinha.php?cod_pessoa=<?php echo $cod_pessoa; ?>', '_blank');
+                                        } else {
+                                            showMessage('generate-card-message', "Erro ao gerar a carteira: " + res.message, true);
+                                        }
+                                    },
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                        showMessage('generate-card-message', "Erro ao gerar a carteira: " + textStatus, true);
+                                    }
+                                });
+                            } else {
+                                showMessage('generate-card-message', "Por favor, envie todos os documentos obrigatórios antes de gerar a carteira.", true);
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            showMessage('generate-card-message', "Erro ao verificar documentos: " + textStatus, true);
+                        }
+                    });
+                });
+
+
                 <?php if ($result_d5): ?>
                     updateIcon('requerimento-icon', <?php echo $result_d5['status']; ?>);
                 <?php endif; ?>

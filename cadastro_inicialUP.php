@@ -249,7 +249,7 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
             font-size: 18px;
             margin-top: 10px;
             padding: 10px;
-            border: 2px solid #28a745;
+     
             background-color: #e6ffe6;
             border-radius: 5px;
         }
@@ -592,34 +592,34 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                     return 'locked';
                 }
 
-                function showMessage(elementId, message, isError = false) {
-                    var element = document.getElementById(elementId);
-                    element.textContent = message;
-                    element.classList.toggle('error', isError);
-                    element.style.display = 'block';
-                }
-
                 function validateAndEnableButton(fileInputId, buttonId, messageElementId, validFileTypes) {
-                    var fileInput = document.getElementById(fileInputId);
-                    var button = document.getElementById(buttonId);
-                    var messageElement = document.getElementById(messageElementId);
+    var fileInput = document.getElementById(fileInputId);
+    var button = document.getElementById(buttonId);
+    var messageElement = document.getElementById(messageElementId);
 
-                    fileInput.addEventListener('change', function () {
-                        var file = fileInput.files[0];
-                        if (file) {
-                            if (!validFileTypes.includes(file.type)) {
-                                showMessage(messageElementId, 'Por favor, selecione um arquivo válido.', true);
-                                button.disabled = true;
-                            } else {
-                                showMessage(messageElementId, 'Arquivo selecionado: ' + file.name + '. Por favor, clique em "Enviar" para fazer o upload.');
-                                button.disabled = false;
-                            }
-                        } else {
-                            showMessage(messageElementId, 'Por favor, selecione um arquivo.', true);
-                            button.disabled = true;
-                        }
-                    });
-                }
+    fileInput.addEventListener('change', function () {
+        var file = fileInput.files[0];
+        if (file) {
+            if (!validFileTypes.includes(file.type)) {
+                showMessage(messageElementId, 'Por favor, selecione um arquivo válido.', true);
+                button.disabled = true;
+            } else {
+                showMessage(messageElementId, 'Arquivo selecionado: ' + file.name + '.<br>Por favor, clique no botão azul "Enviar" para fazer o upload.');
+                button.disabled = false;
+            }
+        } else {
+            showMessage(messageElementId, 'Por favor, selecione um arquivo.', true);
+            button.disabled = true;
+        }
+    });
+}
+
+function showMessage(elementId, message, isError = false) {
+    var element = document.getElementById(elementId);
+    element.innerHTML = message;
+    element.classList.toggle('error', isError);
+    element.style.display = 'block';
+}
 
                 validateAndEnableButton('requerimento_upload', 'uploadButtonRequerimento', 'requerimento-upload-message', ['image/jpeg', 'image/png', 'application/pdf']);
                 validateAndEnableButton('foto-34', 'uploadButtonFoto', 'foto-upload-message', ['image/jpeg', 'image/png']);

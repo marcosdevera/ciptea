@@ -109,17 +109,36 @@ $pdf->Image($salvar_em, 24.5, 25.3, 22.7, 31);
 $pdf->SetFont('helvetica', 'B', 12);
 $pdf->SetTextColor(0, 0, 0);
 $pdf->SetXY(5, 60);
-$pdf->Cell(62, 10, strtoupper($row_p['vch_nome']), 0, 1, 'C');
+$pdf->MultiCell(62, 6, strtoupper($row_p['vch_nome']), 0, 'C');
 
-$pdf->SetFont('helvetica', '', 8);
-$pdf->SetXY(5, 69);
-$pdf->MultiCell(62, 4, 
-    "Nome Pai: " . $row_p['vch_nome_pai'] . "\n" .
-    "Nome Mãe: " . $row_p['vch_nome_mae'] . "\n" .
-    "Data Nascimento: " . date("d/m/Y", strtotime($row_p['sdt_nascimento'])) . "\n" .
-    "Endereço: " . $row_p['endereco'] . " " . $row_p['bairro'] . "\n" .
-    "Telefone: " . formatarTelefone($row_p['vch_telefone'])  . "\n" .
-    "Tipo Sanguíneo: " . $row_p['vch_tipo_sanguineo'], 0, 'L');
+// Calcular a nova posição para as informações adicionais se o nome for longo
+$yPos = $pdf->GetY() + 2;
+$maxY = 90; // Limite inferior da área azul
+
+if ($yPos < $maxY) {
+    $pdf->SetFont('helvetica', '', 8);
+    $pdf->SetXY(5, $yPos);
+    $pdf->MultiCell(62, 4, 
+        "Nome Pai: " . $row_p['vch_nome_pai'] . "\n" .
+        "Nome Mãe: " . $row_p['vch_nome_mae'] . "\n" .
+        "Data Nascimento: " . date("d/m/Y", strtotime($row_p['sdt_nascimento'])) . "\n" .
+        "Endereço: " . $row_p['endereco'] . " " . $row_p['bairro'] . "\n" .
+        "Telefone: " . formatarTelefone($row_p['vch_telefone'])  . "\n" .
+        "Tipo Sanguíneo: " . $row_p['vch_tipo_sanguineo'], 0, 'L');
+} else {
+    // Adicionar o verso do crachá e colocar as informações lá
+    $pdf->AddBackground();
+    $pdf->SetFont('helvetica', '', 8);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->SetXY(5, 20);
+    $pdf->MultiCell(62, 4, 
+        "Nome Pai: " . $row_p['vch_nome_pai'] . "\n" .
+        "Nome Mãe: " . $row_p['vch_nome_mae'] . "\n" .
+        "Data Nascimento: " . date("d/m/Y", strtotime($row_p['sdt_nascimento'])) . "\n" .
+        "Endereço: " . $row_p['endereco'] . " " . $row_p['bairro'] . "\n" .
+        "Telefone: " . formatarTelefone($row_p['vch_telefone'])  . "\n" .
+        "Tipo Sanguíneo: " . $row_p['vch_tipo_sanguineo'], 0, 'L');
+}
 
 // Posicionar o texto na parte inferior da primeira página
 $pdf->SetTextColor(255, 255, 0);
@@ -128,7 +147,9 @@ $pdf->SetXY(0, 104);
 $pdf->Cell(72, 10, 'ATENDIMENTO PRIORITÁRIO LEI Nº 13.977/2020', 0, 1, 'C');
 
 // Adicionar o verso do crachá
-$pdf->AddBackground();
+if ($yPos < $maxY) {
+    $pdf->AddBackground();
+}
 $pdf->SetFont('helvetica', '', 8);
 $pdf->SetTextColor(0, 0, 0);
 $pdf->SetXY(5, 60);
@@ -147,4 +168,5 @@ $pdf->Cell(72, 10, 'ATENDIMENTO PRIORITÁRIO LEI Nº 13.977/2020', 0, 1, 'C');
 
 ob_end_clean();
 $pdf->Output('identificacao.pdf', 'I');
+
 ?>

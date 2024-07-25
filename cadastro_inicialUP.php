@@ -246,23 +246,32 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
 
         .message {
             color: #28a745;
-            font-size: 14px;
+            font-size: 18px;
             margin-top: 10px;
+            padding: 10px;
+            border: 2px solid #28a745;
+            background-color: #e6ffe6;
+            border-radius: 5px;
         }
 
         .message.error {
             color: #dc3545;
+            border-color: #dc3545;
+            background-color: #ffe6e6;
             font-size: 24px;
             font-weight: bold;
         }
+
         .observation-message {
             font-size: 24px;
             font-weight: bold;
             color: #dc3545;
         }
+
         .observation-message::before {
             content: "Documento Recusado: ";
         }
+
         .pending-message {
             font-size: 24px;
             font-weight: bold;
@@ -370,8 +379,9 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                         <input type="file" id="requerimento_upload" name="requerimento_upload" data-cod_tipo_documento="5" style="display:none;">
                         <p>Clique ou arraste o requerimento assinado aqui para enviar.</p>
                         <div class="uploaded-file" id="requerimento-uploaded"><?php if ($result_d5) { echo '<p>Arquivo enviado: ' . $result_d5['vch_documento'] . '</p>'; } ?></div>
+                        <div class="message" id="requerimento-upload-message" style="display:none;"></div>
                     </div>
-                    <button type="button" id="uploadButtonRequerimento" class="btn btn-primary">Enviar Requerimento</button>
+                    <button type="button" id="uploadButtonRequerimento" class="btn btn-primary" disabled>Enviar Requerimento</button>
                     <div class="message" id="requerimento-message"></div>
                     <?php 
                     $observacoes_d5 = buscarObservacao($cod_pessoa, 5);
@@ -406,8 +416,9 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                             <img src="images/exemplo3.4.png" alt="Exemplo de Foto 3/4">
                         <?php endif; ?>
                         <div class="uploaded-file" id="foto-34-uploaded"><?php if ($result_d1) { echo '<p>Arquivo enviado: ' . $result_d1['vch_documento'] . '</p>'; } ?></div>
+                        <div class="message" id="foto-upload-message" style="display:none;"></div>
                     </div>
-                    <button type="button" id="uploadButtonFoto" class="btn btn-primary">Enviar Foto 3x4</button>
+                    <button type="button" id="uploadButtonFoto" class="btn btn-primary" disabled>Enviar Foto 3x4</button>
                     <button type="button" class="view-button <?php echo $result_d1 ? '' : 'disabled'; ?>" <?php echo $result_d1 ? 'onclick="window.open(\'uploads/' . $result_d1['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Foto Enviada</button>
                     <div class="message" id="foto-message"></div>
                     <?php 
@@ -443,8 +454,9 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                             <img src="images/novacarteira.jpeg" alt="Exemplo de Documento de Identidade">
                         <?php endif; ?>
                         <div class="uploaded-file" id="documento-identidade-uploaded"><?php if ($result_d4) { echo '<p>Arquivo enviado: ' . $result_d4['vch_documento'] . '</p>'; } ?></div>
+                        <div class="message" id="identidade-upload-message" style="display:none;"></div>
                     </div>
-                    <button type="button" id="uploadButtonIdentidade" class="btn btn-primary">Enviar Documento de Identidade</button>
+                    <button type="button" id="uploadButtonIdentidade" class="btn btn-primary" disabled>Enviar Documento de Identidade</button>
                     <button type="button" class="view-button <?php echo $result_d4 ? '' : 'disabled'; ?>" <?php echo $result_d4 ? 'onclick="window.open(\'uploads/' . $result_d4['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Documento de Identidade Enviado</button>
                     <div class="message" id="identidade-message"></div>
                     <?php 
@@ -480,8 +492,9 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                             <img src="images/comprovante-residencia.webp" alt="Exemplo de Comprovante de Residência">
                         <?php endif; ?>
                         <div class="uploaded-file" id="comprovante-residencia-uploaded"><?php if ($result_d3) { echo '<p>Arquivo enviado: ' . $result_d3['vch_documento'] . '</p>'; } ?></div>
+                        <div class="message" id="residencia-upload-message" style="display:none;"></div>
                     </div>
-                    <button type="button" id="uploadButtonResidencia" class="btn btn-primary">Enviar Comprovante de Residência</button>
+                    <button type="button" id="uploadButtonResidencia" class="btn btn-primary" disabled>Enviar Comprovante de Residência</button>
                     <button type="button" class="view-button <?php echo $result_d3 ? '' : 'disabled'; ?>" <?php echo $result_d3 ? 'onclick="window.open(\'uploads/' . $result_d3['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Comprovante de Residência Enviado</button>
                     <div class="message" id="residencia-message"></div>
                     <?php 
@@ -515,8 +528,9 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                             <img src="uploads/<?php echo $result_d2['vch_documento']; ?>" alt="Laudo Médico">
                         <?php endif; ?>
                         <div class="uploaded-file" id="laudo-medico-uploaded"><?php if ($result_d2) { echo '<p>Arquivo enviado: ' . $result_d2['vch_documento'] . '</p>'; } ?></div>
+                        <div class="message" id="laudo-upload-message" style="display:none;"></div>
                     </div>
-                    <button type="button" id="uploadButtonLaudo" class="btn btn-primary">Enviar Laudo Médico</button>
+                    <button type="button" id="uploadButtonLaudo" class="btn btn-primary" disabled>Enviar Laudo Médico</button>
                     <button type="button" class="view-button <?php echo $result_d2 ? '' : 'disabled'; ?>" <?php echo $result_d2 ? 'onclick="window.open(\'uploads/' . $result_d2['vch_documento'] . '\', \'_blank\');"' : ''; ?>>Ver Laudo Médico Enviado</button>
                     <div class="message" id="laudo-message"></div>
                     <?php 
@@ -582,7 +596,36 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                     var element = document.getElementById(elementId);
                     element.textContent = message;
                     element.classList.toggle('error', isError);
+                    element.style.display = 'block';
                 }
+
+                function validateAndEnableButton(fileInputId, buttonId, messageElementId, validFileTypes) {
+                    var fileInput = document.getElementById(fileInputId);
+                    var button = document.getElementById(buttonId);
+                    var messageElement = document.getElementById(messageElementId);
+
+                    fileInput.addEventListener('change', function () {
+                        var file = fileInput.files[0];
+                        if (file) {
+                            if (!validFileTypes.includes(file.type)) {
+                                showMessage(messageElementId, 'Por favor, selecione um arquivo válido.', true);
+                                button.disabled = true;
+                            } else {
+                                showMessage(messageElementId, 'Arquivo selecionado: ' + file.name + '. Por favor, clique em "Enviar" para fazer o upload.');
+                                button.disabled = false;
+                            }
+                        } else {
+                            showMessage(messageElementId, 'Por favor, selecione um arquivo.', true);
+                            button.disabled = true;
+                        }
+                    });
+                }
+
+                validateAndEnableButton('requerimento_upload', 'uploadButtonRequerimento', 'requerimento-upload-message', ['image/jpeg', 'image/png', 'application/pdf']);
+                validateAndEnableButton('foto-34', 'uploadButtonFoto', 'foto-upload-message', ['image/jpeg', 'image/png']);
+                validateAndEnableButton('documento-identidade', 'uploadButtonIdentidade', 'identidade-upload-message', ['image/jpeg', 'image/png', 'application/pdf']);
+                validateAndEnableButton('comprovante-residencia', 'uploadButtonResidencia', 'residencia-upload-message', ['image/jpeg', 'image/png', 'application/pdf']);
+                validateAndEnableButton('laudo-medico', 'uploadButtonLaudo', 'laudo-upload-message', ['image/jpeg', 'image/png', 'application/pdf']);
 
                 $('#uploadButtonRequerimento').click(function () {
                     var fileInput = $('#requerimento_upload')[0];
@@ -591,11 +634,6 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                         return;
                     }
                     var file = fileInput.files[0];
-                    var validFileTypes = ['image/jpeg', 'image/png', 'application/pdf'];
-                    if (!validFileTypes.includes(file.type)) {
-                        showMessage('requerimento-message', 'Por favor, selecione um arquivo JPG, PNG ou PDF.', true);
-                        return;
-                    }
                     var formData = new FormData();
                     formData.append('file', file);
                     formData.append('cod_tipo_documento', fileInput.getAttribute('data-cod_tipo_documento'));
@@ -626,11 +664,6 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                         return;
                     }
                     var file = fileInput.files[0];
-                    var validFileTypes = ['image/jpeg', 'image/png'];
-                    if (!validFileTypes.includes(file.type)) {
-                        showMessage('foto-message', 'Por favor, selecione um arquivo JPG ou PNG.', true);
-                        return;
-                    }
                     var formData = new FormData();
                     formData.append('file', file);
                     formData.append('cod_tipo_documento', fileInput.getAttribute('data-cod_tipo_documento'));
@@ -662,11 +695,6 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                         return;
                     }
                     var file = fileInput.files[0];
-                    var validFileTypes = ['image/jpeg', 'image/png', 'application/pdf'];
-                    if (!validFileTypes.includes(file.type)) {
-                        showMessage('identidade-message', 'Por favor, selecione um arquivo JPG, PNG ou PDF.', true);
-                        return;
-                    }
                     var formData = new FormData();
                     formData.append('file', file);
                     formData.append('cod_tipo_documento', fileInput.getAttribute('data-cod_tipo_documento'));
@@ -698,11 +726,6 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                         return;
                     }
                     var file = fileInput.files[0];
-                    var validFileTypes = ['image/jpeg', 'image/png', 'application/pdf'];
-                    if (!validFileTypes.includes(file.type)) {
-                        showMessage('residencia-message', 'Por favor, selecione um arquivo JPG, PNG ou PDF.', true);
-                        return;
-                    }
                     var formData = new FormData();
                     formData.append('file', file);
                     formData.append('cod_tipo_documento', fileInput.getAttribute('data-cod_tipo_documento'));
@@ -734,11 +757,6 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                         return;
                     }
                     var file = fileInput.files[0];
-                    var validFileTypes = ['image/jpeg', 'image/png', 'application/pdf'];
-                    if (!validFileTypes.includes(file.type)) {
-                        showMessage('laudo-message', 'Por favor, selecione um arquivo JPG, PNG ou PDF.', true);
-                        return;
-                    }
                     var formData = new FormData();
                     formData.append('file', file);
                     formData.append('cod_tipo_documento', fileInput.getAttribute('data-cod_tipo_documento'));
@@ -763,27 +781,7 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                     });
                 });
 
-                $('#requerimento_upload').on('change', function () {
-                    var fileName = $(this).val().split('\\').pop();
-                    $('#requerimento-uploaded').html('<p>Arquivo selecionado: ' + fileName + '</p>');
-                });
-                $('#foto-34').on('change', function () {
-                    var fileName = $(this).val().split('\\').pop();
-                    $('#foto-34-uploaded').html('<p>Arquivo selecionado: ' + fileName + '</p>');
-                });
-                $('#documento-identidade').on('change', function () {
-                    var fileName = $(this).val().split('\\').pop();
-                    $('#documento-identidade-uploaded').html('<p>Arquivo selecionado: ' + fileName + '</p>');
-                });
-                $('#comprovante-residencia').on('change', function () {
-                    var fileName = $(this).val().split('\\').pop();
-                    $('#comprovante-residencia-uploaded').html('<p>Arquivo selecionado: ' + fileName + '</p>');
-                });
-                $('#laudo-medico').on('change', function () {
-                    var fileName = $(this).val().split('\\').pop();
-                    $('#laudo-medico-uploaded').html('<p>Arquivo selecionado: ' + fileName + '</p>');
-                });
-
+                
                 $('#generateCardButton').click(function () {
                     $.ajax({
                         url: 'processamento/verificar_documentos.php',
@@ -818,6 +816,7 @@ $allDocumentsCompleted = isset($result_d1['status']) && $result_d1['status'] == 
                         }
                     });
                 });
+
 
                 <?php if ($result_d5): ?>
                     updateIcon('requerimento-icon', <?php echo $result_d5['status']; ?>);
